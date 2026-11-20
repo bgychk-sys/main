@@ -413,6 +413,9 @@ svg.chart{width:100%;height:210px;display:block;overflow:visible}
   .sheet{width:100%!important;max-height:90vh;padding:18px 16px calc(16px + env(safe-area-inset-bottom));border-radius:26px}
   .usage{grid-template-columns:1fr}
   .rowx{flex-wrap:wrap}
+  .rowx .custom{flex:1 1 100%;min-width:0}
+  .custom .pick{flex:1 1 auto;min-width:0}
+  .custom .pick select{width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   input,select,textarea{font-size:16px!important}
   .toast{bottom:calc(20px + env(safe-area-inset-bottom));white-space:normal;text-align:center;border-radius:18px}
 }
@@ -526,7 +529,13 @@ function parseNames(txt) {
   for (const raw of String(txt).split(/[\s,;]+/)) { if (!raw) continue; const m = raw.match(/tiktok\.com\/@([A-Za-z0-9._]+)/i); const n = m ? m[1] : raw.replace(/^@/, ""); if (/^[A-Za-z0-9._]{2,30}$/.test(n)) out.push(n.toLowerCase()); }
   return [...new Set(out)];
 }
-function openUrl(u) { if (!/^https:\/\//.test(u)) return; if (bridge) bridge.open_url(u); else window.open(u, "_blank", "noopener"); }
+function openUrl(u) {
+  if (!/^https:\/\//.test(u)) return;
+  if (bridge) return bridge.open_url(u);
+  // a real link click: iOS home-screen apps open a blank page for window.open(…, "noopener")
+  const a = Object.assign(document.createElement("a"), { href: u, target: "_blank", rel: "noopener noreferrer" });
+  document.body.appendChild(a); a.click(); a.remove();
+}
 
 /* ================= Apify ================= */
 const API = "https://api.apify.com/v2";
@@ -906,9 +915,9 @@ function renderSide() {
   renderBusy();
 }
 function renderBusy() {
-  const b = $("#toolbar [data-a='lightall']");
+  const b = $("[data-a='lightall']");
   if (b) { b.classList.toggle("running", busy); b.innerHTML = ICON.refresh + (busy ? "Обновляю…" : "Обновить все"); b.disabled = busy || !Object.keys(S.accounts).length; }
-  const fa = $("#toolbar [data-a='fullall']"); if (fa) fa.disabled = busy || !Object.keys(S.accounts).length;
+  const fa = $("[data-a='fullall']"); if (fa) fa.disabled = busy || !Object.keys(S.accounts).length;
   $("#statusbar").classList.toggle("running", busy);
   $$(".acc").forEach(el => { const on = busyNames.includes(el.dataset.n); const sp = el.querySelector(".spin"); if (on && !sp) el.insertAdjacentHTML("beforeend", '<span class="spin"></span>'); if (!on && sp) sp.remove(); });
   $$("[data-a='light'],[data-a='full']").forEach(x => x.disabled = busy);
@@ -928,12 +937,9 @@ function tilesHtml(t, d, keyp) {
 }
 function renderToolbar() {
   const tb = $("#toolbar");
-  if (!view.acct) {
-    tb.innerHTML = `<div class="crumb">Обзор</div><div class="search">${ICON.search}<input id="q" placeholder="Поиск по аккаунтам и описаниям видео" value="${esc(view.q)}"></div>
-      <div class="seg" id="asort"><button data-k="v">Просмотры</button><button data-k="f">Подписчики</button><button data-k="g">Рост за 24 ч</button></div>
-      <button class="btn blue" data-a="lightall">${ICON.refresh}Обновить все</button><button class="btn" data-a="fullall" title="Полный скан всех">${ICON.scan}<span class="lbl">Полный скан</span></button>`;
-    segSet($("#asort"), view.asort);
-  } else {
+  tb.hidden = !view.acct;
+  if (!view.acct) { tb.innerHTML = ""; view.q = ""; renderBusy(); return; }
+  {
     const a = S.accounts[view.acct];
     tb.innerHTML = `<button class="btn icon" id="back" title="Все аккаунты">${ICON.back}</button><div class="crumb">${avatar(a)}@${esc(a.username)}</div>
       <div class="search">${ICON.search}<input id="q" placeholder="Фильтр видео по описанию" value="${esc(view.q)}"></div>
@@ -958,7 +964,9 @@ function overviewHtml() {
   const grow = []; for (const a of accs) for (const v of Object.values(a.videos || {})) if (v.pv != null && v.v > v.pv && (!q || (v.text || "").toLowerCase().includes(q) || a.username.includes(q))) grow.push([a, v]);
   grow.sort((x, y) => (y[1].v - y[1].pv) - (x[1].v - x[1].pv));
   return tilesHtml(t, hasD ? d : null, "all.") +
-    card("accs", `<h3>Аккаунты</h3><span class="note">нажми, чтобы открыть видео и графики</span>`, () => `<div class="agrid stagger">${list.map((a, i) => acardHtml(a, i)).join("") || '<div style="color:var(--text3)">Ничего не найдено</div>'}</div>`) +
+    card("accs", `<h3>Аккаунты</h3><span class="note">нажми, чтобы открыть видео и графики</span>
+      <div class="seg mini" id="asort">${[["v", "Просмотры"], ["f", "Подписчики"], ["g", "Рост за 24 ч"]].map(([k, l]) => `<button data-k="${k}" class="${view.asort === k ? "on" : ""}">${l}</button>`).join("")}</div>
+      <button class="btn blue" data-a="lightall">${ICON.refresh}Обновить все</button><button class="btn icon" data-a="fullall" title="Полный скан всех аккаунтов">${ICON.scan}</button>`, () => `<div class="agrid stagger">${list.map((a, i) => acardHtml(a, i)).join("") || '<div style="color:var(--text3)">Ничего не найдено</div>'}</div>`) +
     card("grow", `<h3>Растут сейчас</h3><span class="note">видео с самым большим приростом с прошлой проверки</span>`, () => grow.length ? `<div class="vgrid stagger">${grow.slice(0, 24).map(([a, v], i) => vtileHtml(v, i, a)).join("")}</div>` : '<div style="color:var(--text3);padding:2px 0 4px">Появится после следующего обновления</div>');
 }
 function acardHtml(a, i) {
@@ -1067,21 +1075,24 @@ $("#toolbar").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   if (b.id === "back") return openAcct(null);
   if (b.parentElement.id === "vsort") { view.sort = b.dataset.k; view.shown = 60; segSet(b.parentElement, view.sort); return redrawBody(); }
-  if (b.parentElement.id === "asort") { view.asort = b.dataset.k; segSet(b.parentElement, view.asort); return redrawBody(); }
-  if (b.dataset.a === "lightall") return refresh(Object.keys(S.accounts), { kind: "light", manual: true });
-  if (b.dataset.a === "fullall") { const all = Object.keys(S.accounts); if (!all.length) return; ask("Полный скан всех аккаунтов", `Все видео всех аккаунтов. Примерно ${usd(estimate(all, "full") + estimate(all, "profile"))}.`, "Запустить").then(ok => ok && refresh(all, { kind: "full", manual: true })); return; }
   if (b.dataset.a && view.acct) cardAction(b.dataset.a, view.acct);
 });
+function overviewAction(b) {
+  if (b.parentElement.id === "asort") { view.asort = b.dataset.k; segSet(b.parentElement, view.asort); return redrawBody(); }
+  if (b.dataset.a === "lightall") return refresh(Object.keys(S.accounts), { kind: "light", manual: true });
+  if (b.dataset.a === "fullall") { const all = Object.keys(S.accounts); if (!all.length) return; ask("Полный скан всех аккаунтов", `Все видео всех аккаунтов. Примерно ${usd(estimate(all, "full") + estimate(all, "profile"))}.`, "Запустить").then(ok => ok && refresh(all, { kind: "full", manual: true })); }
+}
 $("#toolbar").addEventListener("input", e => { if (e.target.id === "q") { view.q = e.target.value; view.shown = 60; clearTimeout(redrawBody.t); redrawBody.t = setTimeout(redrawBody, 120); } });
 function redrawBody() { const v = $("#view"); const y = v.scrollTop; v.innerHTML = view.acct ? accountHtml(S.accounts[view.acct]) : overviewHtml(); v.scrollTop = y; countUp(); segPills(v); renderBusy(); }
 $("#view").addEventListener("click", e => {
   const t = e.target.closest("[data-url]"); if (t) return openUrl(t.dataset.url);
   const o = e.target.closest("[data-open]"); if (o) return openAcct(o.dataset.open);
+  const ob = e.target.closest("#asort button,[data-a='lightall'],[data-a='fullall']"); if (ob) return overviewAction(ob);
   const m = e.target.closest("#mseg button"); if (m) { view.metric = m.dataset.k; segSet(m.parentElement, view.metric); const c = m.closest(".card"); c.querySelector("svg.chart,.chart-empty").outerHTML = chart(S.accounts[view.acct].hist || [], view.metric); return; }
   const cb = e.target.closest("[data-a='calib']"); if (cb) return calibrate(S.accounts[view.acct]);
   const mo = e.target.closest("[data-a='more']"); if (mo) { view.shown += 60; redrawBody(); return; }
   const h = e.target.closest("[data-toggle]");
-  if (h && !e.target.closest(".seg")) {
+  if (h && !e.target.closest(".seg,button")) {
     const c = h.closest(".card"), id = c.dataset.card, closing = !c.classList.contains("closed");
     UIS()["c_" + id] = closing; save();
     if (!closing && !c.querySelector(".cpad").children.length) { redrawBody(); return; }
@@ -1121,7 +1132,7 @@ function actorPick(id, val, allowEmpty) {
 }
 function openSettings(hint) {
   const s = S.settings;
-  const o = sheet(head("⚙", "Настройки", hint ? `<span style="color:var(--gold)">${esc(hint)}</span>` : "Всё хранится только на этом Mac, в папке программы") + `<div class="form">
+  const o = sheet(head("⚙", "Настройки", hint ? `<span style="color:var(--gold)">${esc(hint)}</span>` : (bridge ? "Токен и данные лежат на этом Маке, в папке программы" : "Токен хранится только на этом устройстве") + (S.settings.sync !== false ? " · аккаунты синхронизируются через твой Apify" : "")) + `<div class="form">
     <div class="field"><label>Apify API token</label><div class="hint">console.apify.com → Settings → API &amp; Integrations → Personal API token. $5 в месяц бесплатно.</div><input id="sToken" type="password" value="${esc(s.token)}" placeholder="apify_api_…" autocomplete="off" spellcheck="false"><div class="res" id="rToken"></div></div>
     <div class="group"><h4>Обновления</h4>
       <div class="rowx"><div class="l">Режим<div class="sub">Экономный: свежие видео каждый раз, все видео — по расписанию</div></div><div class="seg mini" id="sMode"><button data-k="smart" class="${s.mode === "smart" ? "on" : ""}">Экономный</button><button data-k="full" class="${s.mode === "full" ? "on" : ""}">Полный</button></div></div>
@@ -1221,7 +1232,7 @@ function openFaq() {
 }
 
 /* ================= label wrapping ================= */
-const LABELS = ".btn,.seg button,.round,.mode,.badge,.dp,.tl,.tr,.x,.stepper button,.stepper>span,.crumb";
+const LABELS = ".btn,.seg button,.round,.mode,.badge,.dp,.tl,.tr,.x,.stepper button,.stepper>span";
 function wrapLabels(root) {
   const els = root.matches && root.matches(LABELS) ? [root, ...root.querySelectorAll(LABELS)] : root.querySelectorAll ? root.querySelectorAll(LABELS) : [];
   for (const el of els) for (const n of [...el.childNodes]) if (n.nodeType === 3 && n.textContent.trim()) { const sp = document.createElement("span"); sp.className = "t"; n.replaceWith(sp); sp.appendChild(n); }
