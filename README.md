@@ -1,7 +1,7 @@
 # Views Tracker
 
-Просмотры, лайки, подписчики, виральность и примерный доход TikTok-аккаунтов. Данные собираются через [Apify](https://apify.com).
+Views, likes, followers, virality and estimated income of TikTok accounts. Data is collected through [Apify](https://apify.com).
 
-Открыть: https://bgychk-sys.github.io/main/ — на телефоне «Поделиться» → «На экран Домой».
+Open: https://bgychk-sys.github.io/main/ — on a phone use Share → Add to Home Screen.
 
-Токен Apify хранится только на устройстве. Аккаунты и история синхронизируются через хранилище «views-tracker» в твоём Apify.
+The Apify token stays on your device. Accounts and history sync through the "views-tracker" key-value store in your own Apify account.

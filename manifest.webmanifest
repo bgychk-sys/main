@@ -1,14 +1,14 @@
 {
   "name": "Views Tracker",
   "short_name": "Views",
-  "description": "Просмотры, лайки, подписчики, виральность и доход TikTok-аккаунтов через Apify",
+  "description": "Views, likes, followers, virality and income of TikTok accounts via Apify",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a1636",
   "theme_color": "#0a1636",
-  "lang": "ru",
+  "lang": "en",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

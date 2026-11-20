@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Views Tracker</title>
 <style>
-/* Layout: Print Finder «Полночь» — sidebar (add, accounts, options, main button) + main (toolbar, scrolling view, status bar). */
+/* Layout: Print Finder "Midnight" — sidebar (add, accounts, options, main button) + main (toolbar, scrolling view, status bar). */
 :root{
   --text:#f5f5f7; --text2:rgba(235,235,245,.66); --text3:rgba(235,235,245,.38);
   --accent:#0a84ff; --accent-ink:#9ccaff; --green:#6ff08c; --red:#ff8a80; --gold:#ffc56b; --pink:#ff6ba6;
@@ -241,7 +241,7 @@ svg.chart{width:100%;height:210px;display:block;overflow:visible}
   .vt.show .cap{opacity:1}
   .vt.show .tl,.vt.show .tr,.vt.show .who,.vt.show .bt,.vt.show .ph,.vt.show .mini{opacity:0}
   .vt.show .cap .rw{bottom:26px}
-  .vt .cap::after{content:"ещё раз — открыть";position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:9.5px;font-weight:500;color:rgba(255,255,255,.5)}
+  .vt .cap::after{content:"tap again to open";position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:9.5px;font-weight:500;color:rgba(255,255,255,.5)}
 }
 .vt .tl,.vt .tr,.vt .who,.vt .bt{transition:opacity .2s}
 @media (hover:hover){.vt:hover .tl,.vt:hover .tr,.vt:hover .who,.vt:hover .bt,.vt:hover .ph{opacity:0}}
@@ -263,7 +263,8 @@ svg.chart{width:100%;height:210px;display:block;overflow:visible}
 .kbox .krow{display:flex;align-items:center;gap:12px}
 .kbox .krow b{display:block;font-size:15px;margin-bottom:2px}
 .kbox.money .kv{color:#8ef5a5}
-.kbox .btn{align-self:flex-start;height:30px;font-size:12px;padding:0 12px;margin-top:2px}
+.kbox .btn{align-self:flex-start;height:30px;font-size:12px;padding:0 14px;margin-top:2px;max-width:100%}
+.kbox .btn .t{white-space:normal;text-align:center}
 .ring{flex:none;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--c) calc(var(--v)*1%),rgba(255,255,255,.12) 0)}
 .ring::after{content:"";position:absolute;inset:5px;border-radius:50%;background:rgba(18,30,66,.92);box-shadow:inset 0 1px 0 var(--inner-top)}
 .ring span{position:relative;z-index:1;font-weight:700;font-size:17px;font-variant-numeric:tabular-nums}
@@ -404,13 +405,15 @@ svg.chart{width:100%;height:210px;display:block;overflow:visible}
   .card-head .note{display:none}
   .card-head{flex-wrap:wrap}
   .card-head .seg{order:3;flex:1 1 100%;overflow-x:auto}
+  .card-head .seg button{flex:1}
+  .card-head #rdelta{display:block;order:2;flex:1 1 100%;font-size:12px}
   .kgrid{grid-template-columns:1fr 1fr;gap:8px}
   .kbox{padding:11px 12px}
   .kbox .kv{font-size:18px}
   .kbox .krow{flex-direction:column;align-items:flex-start;gap:6px}
   .kbox .kv{white-space:normal}
   .kbox .kv small{display:block;margin-top:2px;white-space:normal}
-  .kbox .btn{white-space:normal;height:auto;min-height:30px;padding:6px 10px;max-width:100%;text-align:left}
+  .kbox .btn{white-space:normal;height:auto;min-height:32px;padding:7px 12px;align-self:stretch;text-align:center}
   .card-head h3{flex:1}
   .agrid{grid-template-columns:1fr}
   .vgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
@@ -439,24 +442,24 @@ svg.chart{width:100%;height:210px;display:block;overflow:visible}
     <div class="brand">
       <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg></div>
       <div><h1>Views Tracker</h1><p>TikTok · Apify</p></div>
-      <button class="round" id="setBtn" title="Настройки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-      <button class="round" id="logBtn" title="Журнал запусков и расход"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg></button>
-      <button class="round" id="faqBtn" title="Как это работает">?</button>
+      <button class="round" id="setBtn" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+      <button class="round" id="logBtn" title="Run log and spending"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg></button>
+      <button class="round" id="faqBtn" title="How it works">?</button>
     </div>
 
     <section>
-      <h3>Добавить аккаунт</h3>
-      <form class="addf" id="addForm"><input id="addInput" placeholder="@username или ссылка" autocomplete="off" spellcheck="false"><button class="round" title="Добавить"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></form>
+      <h3>Add account</h3>
+      <form class="addf" id="addForm"><input id="addInput" placeholder="@username or profile link" autocomplete="off" spellcheck="false"><button class="round" title="Add"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></form>
     </section>
 
     <section class="accs">
-      <div class="sec-head"><h3>Аккаунты</h3><span class="n" id="accN"></span></div>
+      <div class="sec-head"><h3>Accounts</h3><span class="n" id="accN"></span></div>
       <div class="scroll" id="accList"></div>
     </section>
 
     <section class="opts">
-      <div class="opt"><span>Режим<div class="sub" id="modeSub"></div></span><div class="seg mini" id="optMode"><button data-k="smart">Экономный</button><button data-k="full">Полный</button></div></div>
-      <div class="opt"><span>Автообновление<div class="sub">пока окно открыто</div></span><label class="pick"><select id="optAuto"></select></label></div>
+      <div class="opt"><span>Mode<div class="sub" id="modeSub"></div></span><div class="seg mini" id="optMode"><button data-k="smart">Smart</button><button data-k="full">Full</button></div></div>
+      <div class="opt"><span>Auto refresh<div class="sub">while the window is open</div></span><label class="pick"><select id="optAuto"></select></label></div>
     </section>
 
     <div class="est" id="est"></div>
@@ -467,10 +470,10 @@ svg.chart{width:100%;height:210px;display:block;overflow:visible}
     <div class="view" id="view"></div>
     <div class="glass statusbar" id="statusbar">
       <div class="progress"><div id="bar"></div></div>
-      <span id="status">Готов к работе</span>
-      <span class="mode" id="spendChip" title="Расход Apify за месяц — открыть журнал"></span>
-      <span class="mode" id="autoChip" title="Автообновление — открыть настройки"></span>
-      <span class="mode sync" id="syncChip" title="Синхронизация через Apify — нажми, чтобы синхронизировать сейчас"></span>
+      <span id="status">Ready</span>
+      <span class="mode" id="spendChip" title="Apify spending this month — open the log"></span>
+      <span class="mode" id="autoChip" title="Auto refresh — open settings"></span>
+      <span class="mode sync" id="syncChip" title="Sync via Apify — click to sync now"></span>
     </div>
   </main>
 </div>
@@ -517,21 +520,21 @@ function load() { return parseState(localStorage.getItem(LS)); }
 let saveT;
 function save() {
   queuePush();
-  if (!bridge) { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) { toast("Не удалось сохранить: " + e.message); } return; }
-  clearTimeout(saveT); saveT = setTimeout(() => bridge.save(JSON.stringify(S)).catch(e => toast("Не удалось сохранить: " + e)), 250);
+  if (!bridge) { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) { toast("Could not save: " + e.message); } return; }
+  clearTimeout(saveT); saveT = setTimeout(() => bridge.save(JSON.stringify(S)).catch(e => toast("Could not save: " + e)), 250);
 }
 
 /* ================= helpers ================= */
-function fmt(n) { n = +n || 0; const a = Math.abs(n); if (a >= 1e9) return (n / 1e9).toFixed(a >= 1e10 ? 0 : 1).replace(".", ",") + " млрд"; if (a >= 1e6) return (n / 1e6).toFixed(a >= 1e7 ? 1 : 2).replace(".", ",") + " млн"; if (a >= 1e4) return (n / 1e3).toFixed(a >= 1e5 ? 0 : 1).replace(".", ",") + " тыс"; return Math.round(n).toLocaleString("ru-RU"); }
-function short(n) { n = +n || 0; const a = Math.abs(n); if (a >= 1e6) return (n / 1e6).toFixed(a >= 1e7 ? 0 : 1).replace(".", ",") + "M"; if (a >= 1e4) return Math.round(n / 1e3) + "K"; if (a >= 1e3) return (n / 1e3).toFixed(1).replace(".", ",").replace(",0", "") + "K"; return String(Math.round(n)); }
-const full = n => Math.round(+n || 0).toLocaleString("ru-RU");
+function fmt(n) { n = +n || 0; const a = Math.abs(n); if (a >= 1e9) return (n / 1e9).toFixed(a >= 1e10 ? 0 : 1) + "B"; if (a >= 1e6) return (n / 1e6).toFixed(a >= 1e7 ? 1 : 2) + "M"; if (a >= 1e4) return (n / 1e3).toFixed(a >= 1e5 ? 0 : 1) + "K"; return Math.round(n).toLocaleString("en-US"); }
+function short(n) { n = +n || 0; const a = Math.abs(n); if (a >= 1e6) return (n / 1e6).toFixed(a >= 1e7 ? 0 : 1) + "M"; if (a >= 1e4) return Math.round(n / 1e3) + "K"; if (a >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K"; return String(Math.round(n)); }
+const full = n => Math.round(+n || 0).toLocaleString("en-US");
 function dpill(n) { if (n == null || !isFinite(n)) return ""; if (n === 0) return '<span class="dp zero">±0</span>'; return `<span class="dp ${n > 0 ? "up" : "down"}">${n > 0 ? "+" : "−"}${fmt(Math.abs(n))}</span>`; }
 const usd3 = n => "$" + (n >= 1 ? n.toFixed(2) : n.toFixed(3));
 const usd = n => "$" + (n >= 1 ? n.toFixed(2) : n >= 0.1 ? n.toFixed(3) : n.toFixed(4));
-function ago(t) { if (!t) return "никогда"; const m = Math.round((now() - t) / 60000); if (m < 1) return "только что"; if (m < 60) return m + " мин назад"; const h = Math.round(m / 60); if (h < 24) return h + " ч назад"; return Math.round(h / 24) + " дн назад"; }
-const dstr = t => new Date(t).toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
-const dtstr = t => new Date(t).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-function plural(n, a, b, c) { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? a : m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20) ? b : c; }
+function ago(t) { if (!t) return "never"; const m = Math.round((now() - t) / 60000); if (m < 1) return "just now"; if (m < 60) return m + " min ago"; const h = Math.round(m / 60); if (h < 24) return h + " h ago"; return Math.round(h / 24) + " d ago"; }
+const dstr = t => new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+const dtstr = t => new Date(t).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+function plural(n, a, b, c) { return n === 1 ? a : c; }
 function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 2800); }
 function parseNames(txt) {
   const out = [];
@@ -552,15 +555,15 @@ async function api(path, opt = {}) {
   let status, txt;
   if (bridge) {
     const r = await bridge.apify(opt.method || "GET", path, opt.body || null, S.settings.token.trim());
-    if (r.error) throw new Error("нет связи с Apify (" + r.error + ")");
+    if (r.error) throw new Error("can't reach Apify (" + r.error + ")");
     status = r.status; txt = r.text;
   } else {
     let r; try { r = await fetch(API + path, { ...opt, headers: { Authorization: "Bearer " + S.settings.token.trim(), "Content-Type": "application/json" } }); }
-    catch (e) { throw new Error("нет связи с Apify (" + e.message + ")"); }
+    catch (e) { throw new Error("can't reach Apify (" + e.message + ")"); }
     status = r.status; txt = await r.text();
   }
   let j = null; try { j = JSON.parse(txt); } catch (e) {}
-  if (status < 200 || status >= 300) { if (status === 401) throw new Error("неверный токен Apify"); throw new Error((j && j.error && j.error.message) || "Apify HTTP " + status); }
+  if (status < 200 || status >= 300) { if (status === 401) throw new Error("invalid Apify token"); throw new Error((j && j.error && j.error.message) || "Apify HTTP " + status); }
   return j;
 }
 const DONE = ["SUCCEEDED", "FAILED", "ABORTED", "TIMED-OUT"];
@@ -570,21 +573,21 @@ async function runActor(actor, input, maxUsd, label) {
   const run = (await api(`/acts/${id}/runs?memory=1024&timeout=900&maxTotalChargeUsd=${maxUsd.toFixed(4)}`, { method: "POST", body: JSON.stringify(input) })).data;
   let r = run; const t0 = now();
   while (!DONE.includes(r.status)) {
-    await sleep(RUN_POLL_MS); setStatus(`${label} · ${Math.round((now() - t0) / 1000)} с`, "running");
+    await sleep(RUN_POLL_MS); setStatus(`${label} · ${Math.round((now() - t0) / 1000)} s`, "running");
     r = (await api("/actor-runs/" + run.id)).data;
-    if (now() - t0 > 960e3) throw new Error("Apify не ответил за 16 минут");
+    if (now() - t0 > 960e3) throw new Error("Apify did not answer in 16 minutes");
   }
   const items = await api(`/datasets/${r.defaultDatasetId}/items?clean=1&format=json`);
   await sleep(RUN_POLL_MS / 2); try { r = (await api("/actor-runs/" + run.id)).data; } catch (e) {}
   return { status: r.status, items: Array.isArray(items) ? items : [], usd: +r.usageTotalUsd || 0, runId: run.id };
 }
 const PRESETS = {
-  "igolaizola/tiktok-scraper": { label: "igolaizola — видео, точные цифры (~$0.30/1000)", perVideo: 0.0003,
+  "igolaizola/tiktok-scraper": { label: "igolaizola — videos, exact numbers (~$0.30/1000)", perVideo: 0.0003,
     videos: (profiles, limit) => ({ profiles, maxVideosPerInput: limit, profileVideoSort: "latest" }) },
-  "dami_studio/tiktok-scraper": { label: "dami_studio — профиль, до 10 видео (~$0.25/1000)", perVideo: 0.00025,
+  "dami_studio/tiktok-scraper": { label: "dami_studio — profile, up to 10 videos (~$0.25/1000)", perVideo: 0.00025,
     profile: profiles => ({ profiles, resultsPerInput: 1, maxRunSeconds: 60 }),
     videos: (profiles, limit) => ({ profiles, resultsPerInput: limit, maxRunSeconds: 120 }) },
-  "clockworks/tiktok-scraper": { label: "clockworks — надёжный, дорогой (~$3.70/1000)", perVideo: 0.0037,
+  "clockworks/tiktok-scraper": { label: "clockworks — reliable, pricey (~$3.70/1000)", perVideo: 0.0037,
     profile: profiles => ({ profiles, resultsPerPage: 1, profileSorting: "latest", shouldDownloadVideos: false, shouldDownloadCovers: false, shouldDownloadAvatars: false }),
     videos: (profiles, limit) => ({ profiles, resultsPerPage: limit, profileSorting: "latest", excludePinnedPosts: false, shouldDownloadVideos: false, shouldDownloadCovers: false, shouldDownloadAvatars: false, shouldDownloadSlideshowImages: false }) },
 };
@@ -592,7 +595,7 @@ function inputFor(actor, kind, profiles, limit) {
   const p = PRESETS[actor];
   if (p) { if (kind === "profile") return p.profile ? p.profile(profiles) : p.videos(profiles, 1); return (p.videos || p.profile)(profiles, limit); }
   const tpl = S.settings.customInput.replace(/"?\{\{profiles\}\}"?/g, JSON.stringify(profiles)).replace(/"?\{\{limit\}\}"?/g, String(kind === "profile" ? 1 : limit));
-  try { return JSON.parse(tpl); } catch (e) { throw new Error("шаблон input для своего actor'а — не JSON"); }
+  try { return JSON.parse(tpl); } catch (e) { throw new Error("custom actor input template is not valid JSON"); }
 }
 const perVideo = actor => (PRESETS[actor] || {}).perVideo || 0.001;
 function pick(o, paths) { for (const p of paths) { const v = p.split(".").reduce((a, k) => a == null ? a : a[k], o); if (v !== undefined && v !== null && v !== "") return v; } }
@@ -641,15 +644,15 @@ function estimate(names, kind) {
 async function step(kind, names, log) {
   const actorMain = kind === "profile" ? S.settings.profileActor : S.settings.videoActor;
   const limit = kind === "full" ? fullLimit : kind === "light" ? Math.max(...names.map(freshLimit)) : 1;
-  const label = { profile: "Профили", light: "Свежие видео", full: "Полный скан" }[kind];
+  const label = { profile: "Profiles", light: "Fresh videos", full: "Full scan" }[kind];
   let todo = names.slice(); const tried = [];
   for (const actor of [actorMain, S.settings.backupActor]) {
     if (!todo.length || !actor || tried.includes(actor)) continue; tried.push(actor);
     const est = Math.max(estimate(todo, kind) * (actor === actorMain ? 1 : perVideo(actor) / perVideo(actorMain)), 0.002);
     const cap = Math.min(Math.max(est * 1.6 + 0.01, 0.02), Math.max(S.settings.maxChargeRun, 0.02));
     let res;
-    try { res = await runActor(actor, inputFor(actor, kind, todo, limit), cap, label + (actor !== actorMain ? " (запасной)" : "")); }
-    catch (e) { log.steps.push({ kind, actor, err: e.message }); if (/токен/.test(e.message)) throw e; continue; }
+    try { res = await runActor(actor, inputFor(actor, kind, todo, limit), cap, label + (actor !== actorMain ? " (backup)" : "")); }
+    catch (e) { log.steps.push({ kind, actor, err: e.message }); if (/token/.test(e.message)) throw e; continue; }
     res.usd = Math.max(res.usd, 0.001 + res.items.length * perVideo(actor)); // Apify finalizes usage with a lag
     log.usd += res.usd;
     const { videos, profiles } = normalize(res.items);
@@ -657,7 +660,7 @@ async function step(kind, names, log) {
     log.steps.push({ kind, actor, usd: res.usd, items: res.items.length, status: res.status, accts: got.length });
     todo = todo.filter(n => !got.includes(n));
   }
-  for (const n of todo) S.accounts[n].error = { t: now(), msg: `${label}: ни один actor не отдал данные` };
+  for (const n of todo) S.accounts[n].error = { t: now(), msg: `${label}: no actor returned data` };
   return names.filter(n => !todo.includes(n));
 }
 function applyResults(kind, names, videos, profiles, backup) {
@@ -700,8 +703,8 @@ function snapshot(n) {
 function d24(a, key) { const h = a.hist || []; if (h.length < 2) return null; const cur = h[h.length - 1]; const target = cur.t - 864e5; let base = h[0]; for (const p of h) { if (p.t <= target) base = p; else break; } if (base === cur) return null; return cur[key] - base[key]; }
 
 async function refresh(names, { kind = "auto", manual = false } = {}) {
-  if (busy) { toast("Уже обновляется — подожди"); return; }
-  if (!S.settings.token.trim()) { openSettings("Сначала вставь токен Apify"); return; }
+  if (busy) { toast("Already refreshing — hang on"); return; }
+  if (!S.settings.token.trim()) { openSettings("Paste your Apify token first"); return; }
   names = names.filter(n => S.accounts[n]);
   if (!manual) names = names.filter(n => now() - (S.accounts[n].lastAt || 0) > S.settings.minGapMin * 60e3);
   if (!names.length) return;
@@ -725,8 +728,8 @@ async function refresh(names, { kind = "auto", manual = false } = {}) {
     }
     if (fullL.length) {
       const est = estimate(fullL, "full");
-      if (est > S.settings.maxChargeRun && !(manual && await ask("Полный скан дороже лимита", `Оценка ≈ ${usd(est)}, лимит на запуск ${usd(S.settings.maxChargeRun)}. Запустить один раз с лимитом ${usd(est * 1.6)}?`, "Запустить"))) {
-        log.steps.push({ kind: "full", skipped: "дороже лимита " + usd(S.settings.maxChargeRun) });
+      if (est > S.settings.maxChargeRun && !(manual && await ask("Full scan is over the limit", `Estimate ≈ ${usd(est)}, limit per run ${usd(S.settings.maxChargeRun)}. Run once with a ${usd(est * 1.6)} limit?`, "Run"))) {
+        log.steps.push({ kind: "full", skipped: "over the limit " + usd(S.settings.maxChargeRun) });
       } else {
         const keep = S.settings.maxChargeRun; if (est > keep) S.settings.maxChargeRun = est * 1.6;
         try { await step("full", fullL, log); } finally { S.settings.maxChargeRun = keep; }
@@ -735,11 +738,11 @@ async function refresh(names, { kind = "auto", manual = false } = {}) {
     }
     for (const n of names) if (S.accounts[n].lastAt >= log.t || S.accounts[n].profile?.at >= log.t) snapshot(n);
     if (log.steps.some(s => s.err) && !log.steps.some(s => s.items)) log.ok = false;
-  } catch (e) { log.ok = false; log.err = e.message; toast("Ошибка: " + e.message); }
+  } catch (e) { log.ok = false; log.err = e.message; toast("Error: " + e.message); }
   finally {
     S.runs.unshift(log); S.runs = S.runs.slice(0, 300); S.meta.lastRunAt = now();
     busy = false; busyNames = []; save(); render(); usage();
-    const sp = log.steps.find(s => s.kind === "spike"); if (sp) toast(`⚡ @${sp.acct}: стрельнуло старое видео — сделал полный скан`);
+    const sp = log.steps.find(s => s.kind === "spike"); if (sp) toast(`⚡ @${sp.acct}: an old video took off — ran a full scan`);
   }
 }
 async function usage() {
@@ -754,8 +757,8 @@ async function usage() {
 /* ================= virality & income ================= */
 const median = arr => { if (!arr.length) return 0; const s = arr.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 const clamp01 = x => Math.max(0, Math.min(1, x));
-const pct = x => (x * 100).toFixed(x >= 0.1 ? 0 : 1).replace(".", ",") + "%";
-const money = n => n == null ? "—" : "$" + (n >= 100 ? Math.round(n).toLocaleString("ru-RU") : n >= 10 ? n.toFixed(1) : n.toFixed(2)).replace(".", ",");
+const pct = x => (x * 100).toFixed(x >= 0.1 ? 0 : 1) + "%";
+const money = n => n == null ? "—" : "$" + (n >= 100 ? Math.round(n).toLocaleString("en-US") : n >= 10 ? n.toFixed(1) : n.toFixed(2));
 const ST = new WeakMap();
 function acctStats(a) {
   const key = a.videos; let st = ST.get(key);
@@ -771,7 +774,7 @@ function viral(v, a) {
   const speed = v.pv != null && v.pat && v.at > v.pat && v.v >= v.pv ? (v.v - v.pv) / ((v.at - v.pat) / 3600e3) : null;
   return { score, ratio, er, sr, reach, avgSpeed: ageH ? v.v / ageH : null, speed };
 }
-const vLabel = s => s >= 75 ? "вирусное" : s >= 50 ? "заходит" : s >= 25 ? "норм" : "слабое";
+const vLabel = s => s >= 75 ? "viral" : s >= 50 ? "doing well" : s >= 25 ? "okay" : "weak";
 const vColor = s => s >= 75 ? "#ff6b6b" : s >= 50 ? "#ffb84d" : s >= 25 ? "#5ac8fa" : "#8e8e93";
 function monet(v) { if (!S.settings.incMinOnly) return true; if (v.d == null) return null; return v.d >= 60; }
 const rpmOf = a => a.rpm ?? S.settings.rpm;
@@ -796,31 +799,31 @@ function ring(score, size = 54) { return `<div class="ring" style="--v:${score};
 function viralIncomeHtml(a) {
   const V = acctViral(a); if (!V) return "";
   const M = acctMoney(a); const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc].map(c => 127397 + c.charCodeAt(0))) : "";
-  return card("viral", `<h3>Виральность и доход</h3><span class="note">оценка по публичным цифрам · доход — по ставке ${money(rpmOf(a))} за 1000 засчитанных${a.rpm != null ? " (твоя, откалибрована)" : ""}</span>`, () => `<div class="kgrid stagger">
-    <div class="kbox" style="--i:0"><div class="kh">Виральность</div><div class="krow">${ring(V.score)}<div><b style="color:${vColor(V.score)}">${vLabel(V.score)}</b><small>средний балл 10 последних видео</small></div></div></div>
-    <div class="kbox" style="--i:1"><div class="kh">Выстрелы</div><div class="kv">${V.hits}<small> ${plural(V.hits, "видео", "видео", "видео")} ×2+ от обычного</small></div><small>лучшее: ×${V.best.x.ratio.toFixed(1).replace(".", ",")} · ${short(V.best.v.v)} просмотров</small></div>
-    <div class="kbox" style="--i:2"><div class="kh">Вовлечённость</div><div class="kv">${pct(V.er)}<small> лайки+комменты+репосты</small></div><small>репосты ${pct(V.sr)} от просмотров</small></div>
-    <div class="kbox" style="--i:3"><div class="kh">Охват</div><div class="kv">${V.reach == null ? "—" : "×" + V.reach.toFixed(V.reach >= 10 ? 0 : 1).replace(".", ",")}<small> просмотров на подписчика</small></div><small>${V.reach == null ? "нет данных о подписчиках" : V.reach >= 1 ? "видео уходят дальше подписчиков" : "смотрят в основном подписчики"}</small></div>
-    <div class="kbox money" style="--i:4"><div class="kh">Доход ≈</div><div class="kv">${money(M.total)}<small> всего</small></div><small>за 30 дн ≈ <b>${money(M.m30)}</b> · ${M.eligible} из ${M.count} видео ≥ 1 мин${M.unknown ? ` · у ${M.unknown} нет длительности — нужен полный скан` : ""}</small><button class="btn" data-a="calib">Указать реальный доход</button></div>
-    <div class="kbox" style="--i:5"><div class="kh">Гео заливки</div><div class="kv">${V.geo.length ? V.geo.slice(0, 3).map(([c, n]) => `${flag(c)} ${c}`).join(" ") : "—"}</div><small>${V.geo.length ? "страна, из которой залиты видео: " + V.geo.slice(0, 4).map(([c, n]) => c + " " + n).join(", ") : "появится после обновления"} · откуда зрители — только в TikTok Studio</small></div>
+  return card("viral", `<h3>Virality & income</h3><span class="note">estimated from public numbers · income at ${money(rpmOf(a))} per 1,000 qualified views${a.rpm != null ? " (yours, calibrated)" : ""}</span>`, () => `<div class="kgrid stagger">
+    <div class="kbox" style="--i:0"><div class="kh">Virality</div><div class="krow">${ring(V.score)}<div><b style="color:${vColor(V.score)}">${vLabel(V.score)}</b><small>average score of the last 10 videos</small></div></div></div>
+    <div class="kbox" style="--i:1"><div class="kh">Hits</div><div class="kv">${V.hits}<small> ${plural(V.hits, "video", "videos", "videos")} at ×2+ the usual</small></div><small>best: ×${V.best.x.ratio.toFixed(1)} · ${short(V.best.v.v)} views</small></div>
+    <div class="kbox" style="--i:2"><div class="kh">Engagement</div><div class="kv">${pct(V.er)}<small> likes + comments + shares</small></div><small>shares are ${pct(V.sr)} of views</small></div>
+    <div class="kbox" style="--i:3"><div class="kh">Reach</div><div class="kv">${V.reach == null ? "—" : "×" + V.reach.toFixed(V.reach >= 10 ? 0 : 1)}<small> views per follower</small></div><small>${V.reach == null ? "no follower data" : V.reach >= 1 ? "videos travel beyond followers" : "mostly watched by followers"}</small></div>
+    <div class="kbox money" style="--i:4"><div class="kh">Income ≈</div><div class="kv">${money(M.total)}<small> all time</small></div><small>last 30 days ≈ <b>${money(M.m30)}</b> · ${M.eligible} of ${M.count} videos ≥ 1 min${M.unknown ? ` · ${M.unknown} without length — run a full scan` : ""}</small><button class="btn" data-a="calib">Enter payout</button></div>
+    <div class="kbox" style="--i:5"><div class="kh">Upload geo</div><div class="kv">${V.geo.length ? V.geo.slice(0, 3).map(([c, n]) => `${flag(c)} ${c}`).join(" ") : "—"}</div><small>${V.geo.length ? "country the videos were posted from: " + V.geo.slice(0, 4).map(([c, n]) => c + " " + n).join(", ") : "shows up after a refresh"} · viewer countries are only in TikTok Studio</small></div>
   </div>`);
 }
 async function calibrate(a) {
-  const o = sheet(head("$", "Реальный доход @" + esc(a.username), "Посмотри в TikTok Studio → Creator Rewards, сколько пришло за последние 30 дней. Программа вычислит твою реальную ставку за 1000 просмотров и будет считать по ней.", "green") +
-    `<div class="field"><label>Пришло за последние 30 дней, $</label><input id="cPaid" type="number" step="0.01" min="0" placeholder="например 12.50"></div><div class="res" id="cRes"></div>
-     <div class="sheet-actions"><button class="btn blue" id="cOk">Посчитать</button>${a.rpm != null ? '<button class="btn" id="cReset">Сбросить на общую ставку</button>' : ""}</div>`, 520);
+  const o = sheet(head("$", "Real payout · @" + esc(a.username), "Check TikTok Studio → Creator Rewards for what you earned in the last 30 days. The app works out your real rate per 1,000 views and uses it from now on.", "green") +
+    `<div class="field"><label>Earned in the last 30 days, $</label><input id="cPaid" type="number" step="0.01" min="0" placeholder="e.g. 12.50"></div><div class="res" id="cRes"></div>
+     <div class="sheet-actions"><button class="btn blue" id="cOk">Calculate</button>${a.rpm != null ? '<button class="btn" id="cReset">Back to default rate</button>' : ""}</div>`, 520);
   o.querySelector("#cOk").onclick = () => {
     const paid = +o.querySelector("#cPaid").value; const cut = now() / 1000 - 30 * 86400;
     const views = Object.values(a.videos || {}).filter(v => v.t > cut && monet(v)).reduce((s, v) => s + v.v, 0) * S.settings.qualPct / 100;
     const r = o.querySelector("#cRes");
-    if (!(paid > 0)) { r.className = "res bad"; r.textContent = "Впиши сумму больше 0"; return; }
-    if (!views) { r.className = "res bad"; r.textContent = "За 30 дней нет видео ≥ 1 мин с данными — сделай полный скан"; return; }
-    a.rpm = paid / (views / 1000); save(); closeSheet(o); redrawBody(); toast(`Твоя ставка: ${money(a.rpm)} за 1000 засчитанных просмотров`);
+    if (!(paid > 0)) { r.className = "res bad"; r.textContent = "Enter an amount above 0"; return; }
+    if (!views) { r.className = "res bad"; r.textContent = "No videos ≥ 1 min in the last 30 days — run a full scan"; return; }
+    a.rpm = paid / (views / 1000); save(); closeSheet(o); redrawBody(); toast(`Your rate: ${money(a.rpm)} per 1,000 qualified views`);
   };
-  const rs = o.querySelector("#cReset"); if (rs) rs.onclick = () => { delete a.rpm; save(); closeSheet(o); redrawBody(); toast("Ставка сброшена"); };
+  const rs = o.querySelector("#cReset"); if (rs) rs.onclick = () => { delete a.rpm; save(); closeSheet(o); redrawBody(); toast("Rate reset"); };
   setTimeout(() => o.querySelector("#cPaid").focus(), 60);
 }
-/* ================= sync Mac ↔ phone через хранилище Apify ================= */
+/* ================= sync Mac ↔ phone via the Apify key-value store ================= */
 const SYNC_STORE = "views-tracker", SYNC_KEY = "data";
 let pushT = null, syncBusy = false, lastPushed = "";
 const syncOn = () => S.settings.sync !== false && !!S.settings.token.trim();
@@ -863,16 +866,16 @@ async function syncPull(quiet) {
   try {
     const id = await kvId(); let R = null;
     try { R = await api(`/key-value-stores/${id}/records/${SYNC_KEY}`); } catch (e) { if (!/not found|404/i.test(e.message)) throw e; }
-    if (R && mergeRemote(R)) { syncBusy = false; save(); render(); if (!quiet) toast("Синхронизировано с другими устройствами"); }
+    if (R && mergeRemote(R)) { syncBusy = false; save(); render(); if (!quiet) toast("Synced with your other devices"); }
     S.meta.syncAt = now(); S.meta.syncErr = null;
   } catch (e) { S.meta.syncErr = e.message; }
   finally { syncBusy = false; renderStatus(); syncPush(); }
 }
 /* ================= UI state ================= */
-let view = { acct: null, metric: "v", sort: "new", asort: "v", q: "", shown: 60 };
+let view = { acct: null, metric: "v", range: "all", sort: "new", asort: "v", q: "", shown: 60 };
 let lastKey = null;
 const NUMS = {};
-const METRICS = [["v", "Просмотры"], ["h", "Лайки"], ["f", "Подписчики"], ["c", "Комменты"], ["s", "Репосты"], ["n", "Видео"]];
+const METRICS = [["v", "Views"], ["h", "Likes"], ["f", "Followers"], ["c", "Comments"], ["s", "Shares"], ["n", "Videos"]];
 
 function avatar(a, cls = "") {
   const l = esc((a.username || "?")[0].toUpperCase()); const h = hue(a.username || "");
@@ -902,30 +905,46 @@ const UIS = () => (S.meta.ui = S.meta.ui || {});
 const isClosed = id => !!UIS()["c_" + id];
 function card(id, head, body) {
   const closed = isClosed(id);
-  return `<div class="glass card ${closed ? "closed" : ""}" data-card="${id}"><div class="card-head" data-toggle>${head}<span class="chev" title="${closed ? "Развернуть" : "Свернуть"}">${ICON.chev}</span></div><div class="cbody"><div class="cin"><div class="cpad">${closed && id === "videos" ? "" : body()}</div></div></div></div>`;
+  return `<div class="glass card ${closed ? "closed" : ""}" data-card="${id}"><div class="card-head" data-toggle>${head}<span class="chev" title="${closed ? "Expand" : "Collapse"}">${ICON.chev}</span></div><div class="cbody"><div class="cin"><div class="cpad">${closed && id === "videos" ? "" : body()}</div></div></div></div>`;
+}
+const RANGES = [["d", "Day", 864e5], ["w", "Week", 7 * 864e5], ["m", "Month", 30 * 864e5], ["all", "All time", 0]];
+function inRange(h) {
+  const r = RANGES.find(x => x[0] === view.range); if (!r || !r[2] || !h.length) return h;
+  const cut = now() - r[2]; let i = h.findIndex(p => p.t >= cut); if (i < 0) return h.slice(-1);
+  return h.slice(Math.max(0, i - 1)); // keep the last point before the window so the change is visible
+}
+function rangeDelta(a) {
+  const h = inRange(a.hist || []); if (h.length < 2) return "";
+  const d = h[h.length - 1][view.metric] - h[0][view.metric]; const lbl = { d: "today", w: "this week", m: "this month", all: "since tracking began" }[view.range];
+  return `${dpill(d)} ${lbl}`;
+}
+function redrawChart() {
+  const a = S.accounts[view.acct]; const c = $("[data-card='chart']"); if (!a || !c) return;
+  const el = c.querySelector("svg.chart,.chart-empty"); if (el) el.outerHTML = chart(inRange(a.hist || []), view.metric);
+  const n = c.querySelector("#rdelta"); if (n) n.innerHTML = rangeDelta(a);
 }
 /* ================= render ================= */
 function render() { renderSide(); renderMain(); renderStatus(); }
 function renderSide() {
   const accs = Object.values(S.accounts).sort((a, b) => totals(b).v - totals(a).v);
-  $("#accN").textContent = accs.length ? accs.length + " " + plural(accs.length, "аккаунт", "аккаунта", "аккаунтов") : "";
+  $("#accN").textContent = accs.length ? accs.length + " " + plural(accs.length, "account", "accounts", "accounts") : "";
   const seen = renderSide.seen || (renderSide.seen = new Set());
   const all = { v: 0 }; accs.forEach(a => all.v += totals(a).v);
-  $("#accList").innerHTML = (accs.length ? `<button class="acc ${!view.acct ? "on" : ""}" data-n=""><span class="avatar all">${ICON.grid}</span><span class="info"><span class="u">Все аккаунты</span><span class="s"><b>${fmt(all.v)}</b> просмотров</span></span></button>` : "") +
+  $("#accList").innerHTML = (accs.length ? `<button class="acc ${!view.acct ? "on" : ""}" data-n=""><span class="avatar all">${ICON.grid}</span><span class="info"><span class="u">All accounts</span><span class="s"><b>${fmt(all.v)}</b> views</span></span></button>` : "") +
     accs.map(a => { const x = totals(a); const d = d24(a, "v"); const isNew = !seen.has(a.username); seen.add(a.username);
-      return `<button class="acc ${view.acct === a.username ? "on" : ""} ${isNew && renderSide.ready ? "enter" : ""}" data-n="${esc(a.username)}">${avatar(a)}<span class="info"><span class="u">@${esc(a.username)}</span><span class="s"><b>${fmt(x.v)}</b>${d ? ` · <span style="color:${d > 0 ? "var(--green)" : "var(--red)"}">${d > 0 ? "+" : "−"}${short(Math.abs(d))}</span> за 24 ч` : !a.lastFullAt ? " · ждёт скан" : ""}</span></span>${busyNames.includes(a.username) ? '<span class="spin"></span>' : ""}</button>`; }).join("");
+      return `<button class="acc ${view.acct === a.username ? "on" : ""} ${isNew && renderSide.ready ? "enter" : ""}" data-n="${esc(a.username)}">${avatar(a)}<span class="info"><span class="u">@${esc(a.username)}</span><span class="s"><b>${fmt(x.v)}</b>${d ? ` · <span style="color:${d > 0 ? "var(--green)" : "var(--red)"}">${d > 0 ? "+" : "−"}${short(Math.abs(d))}</span> in 24 h` : !a.lastFullAt ? " · waiting for scan" : ""}</span></span>${busyNames.includes(a.username) ? '<span class="spin"></span>' : ""}</button>`; }).join("");
   renderSide.ready = true;
   segSet($("#optMode"), S.settings.mode);
-  $("#modeSub").textContent = S.settings.mode === "smart" ? "свежие видео + скан раз в " + S.settings.fullEveryDays + " дн" : "каждый раз все видео";
-  const sel = $("#optAuto"); if (!sel.options.length) sel.innerHTML = [[0, "выкл"], [60, "1 ч"], [120, "2 ч"], [180, "3 ч"], [360, "6 ч"], [720, "12 ч"], [1440, "24 ч"]].map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
+  $("#modeSub").textContent = S.settings.mode === "smart" ? "fresh videos + full scan every " + S.settings.fullEveryDays + " d" : "all videos every time";
+  const sel = $("#optAuto"); if (!sel.options.length) sel.innerHTML = [[0, "off"], [60, "1 h"], [120, "2 h"], [180, "3 h"], [360, "6 h"], [720, "12 h"], [1440, "24 h"]].map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
   sel.value = String(S.settings.autoMin);
   const names = Object.keys(S.accounts);
-  $("#est").innerHTML = names.length ? `Обновление ≈ <b>${usd3(estimate(names, "profile") + estimate(names, S.settings.mode === "full" ? "full" : "light"))}</b> · полный скан ≈ <b>${usd3(estimate(names, "profile") + estimate(names, "full"))}</b>` : S.settings.token ? "Добавь аккаунт — первый скан ≈ 2 цента" : "Вставь токен Apify в ⚙ Настройках";
+  $("#est").innerHTML = names.length ? `Refresh ≈ <b>${usd3(estimate(names, "profile") + estimate(names, S.settings.mode === "full" ? "full" : "light"))}</b> · full scan ≈ <b>${usd3(estimate(names, "profile") + estimate(names, "full"))}</b>` : S.settings.token ? "Add an account — first scan ≈ 2 cents" : "Paste your Apify token in ⚙ Settings";
   renderBusy();
 }
 function renderBusy() {
   const b = $("[data-a='lightall']");
-  if (b) { b.classList.toggle("running", busy); b.innerHTML = ICON.refresh + (busy ? "Обновляю…" : "Обновить все"); b.disabled = busy || !Object.keys(S.accounts).length; }
+  if (b) { b.classList.toggle("running", busy); b.innerHTML = ICON.refresh + (busy ? "Refreshing…" : "Refresh all"); b.disabled = busy || !Object.keys(S.accounts).length; }
   const fa = $("[data-a='fullall']"); if (fa) fa.disabled = busy || !Object.keys(S.accounts).length;
   $("#statusbar").classList.toggle("running", busy);
   $$(".acc").forEach(el => { const on = busyNames.includes(el.dataset.n); const sp = el.querySelector(".spin"); if (on && !sp) el.insertAdjacentHTML("beforeend", '<span class="spin"></span>'); if (!on && sp) sp.remove(); });
@@ -942,7 +961,7 @@ function renderMain() {
   countUp(); segPills(v);
 }
 function tilesHtml(t, d, keyp) {
-  return `<div class="tiles stagger">${METRICS.map(([k, l], i) => `<div class="glass tile" style="--i:${i}"><div class="k">${l}</div><div class="v" title="${full(t[k])}" data-num="${t[k]}" data-key="${keyp}${k}">${fmt(NUMS[keyp + k] ?? 0)}</div><div class="d">${d && d[k] != null ? dpill(d[k]) + " за 24 ч" : "&nbsp;"}</div></div>`).join("")}</div>`;
+  return `<div class="tiles stagger">${METRICS.map(([k, l], i) => `<div class="glass tile" style="--i:${i}"><div class="k">${l}</div><div class="v" title="${full(t[k])}" data-num="${t[k]}" data-key="${keyp}${k}">${fmt(NUMS[keyp + k] ?? 0)}</div><div class="d">${d && d[k] != null ? dpill(d[k]) + " in 24 h" : "&nbsp;"}</div></div>`).join("")}</div>`;
 }
 function renderToolbar() {
   const tb = $("#toolbar");
@@ -950,11 +969,11 @@ function renderToolbar() {
   if (!view.acct) { tb.innerHTML = ""; view.q = ""; renderBusy(); return; }
   {
     const a = S.accounts[view.acct];
-    tb.innerHTML = `<button class="btn icon" id="back" title="Все аккаунты">${ICON.back}</button><div class="crumb">${avatar(a)}@${esc(a.username)}</div>
-      <div class="search">${ICON.search}<input id="q" placeholder="Фильтр видео по описанию" value="${esc(view.q)}"></div>
-      <div class="seg" id="vsort"><button data-k="new">Новые</button><button data-k="top">Топ</button><button data-k="grow">Растут</button><button data-k="viral">🔥</button></div>
-      <button class="btn" data-a="light" title="Обновить">${ICON.refresh}<span class="lbl">Обновить</span></button><button class="btn" data-a="full" title="Полный скан">${ICON.scan}<span class="lbl">Полный скан</span></button>
-      <button class="btn icon" data-a="tt" title="Открыть в TikTok">${ICON.ext}</button><button class="btn icon danger" data-a="del" title="Удалить аккаунт">${ICON.trash}</button>`;
+    tb.innerHTML = `<button class="btn icon" id="back" title="All accounts">${ICON.back}</button><div class="crumb">${avatar(a)}@${esc(a.username)}</div>
+      <div class="search">${ICON.search}<input id="q" placeholder="Filter videos by caption" value="${esc(view.q)}"></div>
+      <div class="seg" id="vsort"><button data-k="new">New</button><button data-k="top">Top</button><button data-k="grow">Rising</button><button data-k="viral">🔥</button></div>
+      <button class="btn" data-a="light" title="Refresh">${ICON.refresh}<span class="lbl">Refresh</span></button><button class="btn" data-a="full" title="Full scan">${ICON.scan}<span class="lbl">Full scan</span></button>
+      <button class="btn icon" data-a="tt" title="Open in TikTok">${ICON.ext}</button><button class="btn icon danger" data-a="del" title="Delete account">${ICON.trash}</button>`;
     segSet($("#vsort"), view.sort);
     tb.querySelector(".crumb .avatar").style.cssText += ";width:26px;height:26px;font-size:11px";
   }
@@ -964,7 +983,7 @@ function updateToolbar() { const g = $("#vsort") || $("#asort"); if (g) segSet(g
 
 function overviewHtml() {
   const accs = Object.values(S.accounts);
-  if (!accs.length) return `<div class="empty"><div class="big">${ICON.film}</div><h2>${S.settings.token ? "Добавь первый аккаунт" : "Подключи Apify"}</h2><p>${S.settings.token ? "Впиши @username в поле «Добавить аккаунт». Программа сделает первый полный скан — все видео, подписчики и лайки (≈ 2 цента за 70 видео)." : "Открой ⚙ Настройки и вставь Personal API token с console.apify.com → Settings → API & Integrations."}</p>${S.settings.token ? "" : '<button class="btn blue" onclick="openSettings()">Открыть настройки</button>'}</div>`;
+  if (!accs.length) return `<div class="empty"><div class="big">${ICON.film}</div><h2>${S.settings.token ? "Add your first account" : "Connect Apify"}</h2><p>${S.settings.token ? "Type an @username into “Add account”. The app runs a first full scan — all videos, followers and likes (≈ 2 cents per 70 videos)." : "Open ⚙ Settings and paste your Personal API token from console.apify.com → Settings → API & Integrations."}</p>${S.settings.token ? "" : '<button class="btn blue" onclick="openSettings()">Open settings</button>'}</div>`;
   const t = { f: 0, h: 0, v: 0, c: 0, s: 0, n: 0 }, d = { f: 0, h: 0, v: 0, c: 0, s: 0, n: 0 }; let hasD = false;
   for (const a of accs) { const x = totals(a); for (const k in t) { t[k] += x[k]; const dd = d24(a, k); if (dd != null) { d[k] += dd; hasD = true; } } }
   const q = view.q.trim().toLowerCase();
@@ -973,25 +992,25 @@ function overviewHtml() {
   const grow = []; for (const a of accs) for (const v of Object.values(a.videos || {})) if (v.pv != null && v.v > v.pv && (!q || (v.text || "").toLowerCase().includes(q) || a.username.includes(q))) grow.push([a, v]);
   grow.sort((x, y) => (y[1].v - y[1].pv) - (x[1].v - x[1].pv));
   return tilesHtml(t, hasD ? d : null, "all.") +
-    card("accs", `<h3>Аккаунты</h3><span class="note">нажми, чтобы открыть видео и графики</span>
-      <div class="seg mini" id="asort">${[["v", "Просмотры"], ["f", "Подписчики"], ["g", "Рост за 24 ч"]].map(([k, l]) => `<button data-k="${k}" class="${view.asort === k ? "on" : ""}">${l}</button>`).join("")}</div>
-      <button class="btn blue" data-a="lightall">${ICON.refresh}Обновить все</button><button class="btn icon" data-a="fullall" title="Полный скан всех аккаунтов">${ICON.scan}</button>`, () => `<div class="agrid stagger">${list.map((a, i) => acardHtml(a, i)).join("") || '<div style="color:var(--text3)">Ничего не найдено</div>'}</div>`) +
-    card("grow", `<h3>Растут сейчас</h3><span class="note">видео с самым большим приростом с прошлой проверки</span>`, () => grow.length ? `<div class="vgrid stagger">${grow.slice(0, 24).map(([a, v], i) => vtileHtml(v, i, a)).join("")}</div>` : '<div style="color:var(--text3);padding:2px 0 4px">Появится после следующего обновления</div>');
+    card("accs", `<h3>Accounts</h3><span class="note">tap one to see its videos and charts</span>
+      <div class="seg mini" id="asort">${[["v", "Views"], ["f", "Followers"], ["g", "24 h growth"]].map(([k, l]) => `<button data-k="${k}" class="${view.asort === k ? "on" : ""}">${l}</button>`).join("")}</div>
+      <button class="btn blue" data-a="lightall">${ICON.refresh}Refresh all</button><button class="btn icon" data-a="fullall" title="Full scan of all accounts">${ICON.scan}</button>`, () => `<div class="agrid stagger">${list.map((a, i) => acardHtml(a, i)).join("") || '<div style="color:var(--text3)">Nothing found</div>'}</div>`) +
+    card("grow", `<h3>Rising now</h3><span class="note">videos that gained the most since the last check</span>`, () => grow.length ? `<div class="vgrid stagger">${grow.slice(0, 24).map(([a, v], i) => vtileHtml(v, i, a)).join("")}</div>` : '<div style="color:var(--text3);padding:2px 0 4px">Shows up after the next refresh</div>');
 }
 function acardHtml(a, i) {
   const x = totals(a); const h = (a.hist || []).slice(-60);
   const b = badgesHtml(a);
   return `<button class="acard" style="--i:${i}" data-open="${esc(a.username)}"><div class="top">${avatar(a)}<div style="min-width:0;flex:1"><div class="u">@${esc(a.username)}</div><div class="nk">${esc(a.nick || "")}${a.lastAt ? " · " + ago(a.lastAt) : ""}</div>${(V => V ? `<div class="vi"><span style="color:${vColor(V.score)}">🔥 ${V.score} · ${vLabel(V.score)}</span><span>💰 ≈ ${money(acctMoney(a).total)}</span></div>` : "")(acctViral(a))}</div></div>
     ${b ? `<div class="badges">${b}</div>` : ""}
-    <div class="st3"><div>Просмотры<b>${fmt(x.v)}</b>${dpill(d24(a, "v"))}</div><div>Подписчики<b>${fmt(x.f)}</b>${dpill(d24(a, "f"))}</div><div>Лайки<b>${fmt(x.h)}</b>${dpill(d24(a, "h"))}</div></div>${spark(h.map(p => p.v), a.username)}</button>`;
+    <div class="st3"><div>Views<b>${fmt(x.v)}</b>${dpill(d24(a, "v"))}</div><div>Followers<b>${fmt(x.f)}</b>${dpill(d24(a, "f"))}</div><div>Likes<b>${fmt(x.h)}</b>${dpill(d24(a, "h"))}</div></div>${spark(h.map(p => p.v), a.username)}</button>`;
 }
 function badgesHtml(a) {
   const b = [];
-  if (!a.lastFullAt) b.push('<span class="badge warn">ждёт первый скан</span>');
-  if (a.spike && now() - a.spike.t < 864e5) b.push(`<span class="badge hot">⚡ стрельнуло старое видео · +${short(a.spike.extra)} лайков</span>`);
-  if (a.backupUsed && now() - a.backupUsed < 864e5) b.push('<span class="badge warn">работал запасной actor</span>');
+  if (!a.lastFullAt) b.push('<span class="badge warn">waiting for first scan</span>');
+  if (a.spike && now() - a.spike.t < 864e5) b.push(`<span class="badge hot">⚡ an old video took off · +${short(a.spike.extra)} likes</span>`);
+  if (a.backupUsed && now() - a.backupUsed < 864e5) b.push('<span class="badge warn">backup actor was used</span>');
   if (a.error && now() - a.error.t < 864e5) b.push(`<span class="badge bad">${esc(a.error.msg)}</span>`);
-  if (a.guarded) b.push(`<span class="badge warn">отброшено кривых цифр: ${a.guarded}</span>`);
+  if (a.guarded) b.push(`<span class="badge warn">bad numbers ignored: ${a.guarded}</span>`);
   return b.join("");
 }
 function spark(vals, id) {
@@ -1003,7 +1022,7 @@ function spark(vals, id) {
   return `<svg class="spark" viewBox="0 0 300 38" preserveAspectRatio="none"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ac8fa" stop-opacity=".35"/><stop offset="1" stop-color="#5ac8fa" stop-opacity="0"/></linearGradient></defs><path d="${d}L300 38L0 38Z" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="#5ac8fa" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
 }
 function chart(points, key) {
-  if (points.length < 2) return `<div class="chart-empty">График появится после второго обновления</div>`;
+  if (points.length < 2) return `<div class="chart-empty">${view.range !== "all" && points.length ? "No changes in this period yet — try All time" : "The chart appears after the second refresh"}</div>`;
   const W = Math.max(320, Math.round(($("#view").clientWidth || 900) - 44)), H = 210, P = 8, PR = 84; const lab = v => r < mx * 0.05 ? full(v) : fmt(v);
   const xs = points.map(p => p.t), ys = points.map(p => p[key]); const x0 = xs[0], x1 = xs[xs.length - 1]; const mn = Math.min(...ys), mx = Math.max(...ys), r = mx - mn || Math.max(1, mx * 0.01);
   const X = t => P + (t - x0) / (x1 - x0 || 1) * (W - P - PR), Y = v => H - 24 - (v - mn) / r * (H - 44);
@@ -1021,11 +1040,11 @@ function vtileHtml(v, i, a) {
   const url = v.url || `https://www.tiktok.com/@${a.username}/video/${v.id}`;
   return `<button class="vt" style="--i:${Math.min(i, 18)};--h:${200 + hue(v.id) % 90}" data-url="${esc(url)}" title="${esc((v.text || "").slice(0, 120))}">
     <span class="ph">${ICON.play}</span>${v.cover ? `<img src="${esc(v.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
-    ${a && view.acct ? (v.t > cut ? '<span class="tl new">новое</span>' : `<span class="tl">${v.t ? dstr(v.t * 1000) : ""}</span>`) : `<span class="who">@${esc(a.username)}</span>`}
+    ${a && view.acct ? (v.t > cut ? '<span class="tl new">new</span>' : `<span class="tl">${v.t ? dstr(v.t * 1000) : ""}</span>`) : `<span class="who">@${esc(a.username)}</span>`}
     ${dv > 0 ? `<span class="tr">+${short(dv)}</span>` : ""}<span class="mini" style="--c:${vColor(x.score)}">🔥${x.score}</span>
-    <span class="bt"><span class="views">${ICON.play}${short(v.v)}${x.score >= 75 ? '<span class="fire">🔥</span>' : ""}</span><span class="sm"><span>♥ ${short(v.l)}</span><span class="cm">💬 ${short(v.c)}</span><span class="inc">${m === null ? "" : m === false ? "<1 мин" : "≈ " + money(inc)}</span></span></span>
+    <span class="bt"><span class="views">${ICON.play}${short(v.v)}${x.score >= 75 ? '<span class="fire">🔥</span>' : ""}</span><span class="sm"><span>♥ ${short(v.l)}</span><span class="cm">💬 ${short(v.c)}</span><span class="inc">${m === null ? "" : m === false ? "<1 min" : "≈ " + money(inc)}</span></span></span>
     <span class="cap" style="--c:${vColor(x.score)}"><span class="sc">${x.score}</span><span class="lb">${vLabel(x.score)}</span>
-      <span class="rw"><span title="во столько раз больше просмотров, чем у обычного видео аккаунта">×${x.ratio.toFixed(1).replace(".", ",")}</span><span>${m === null ? "—" : m === false ? "&lt;1 мин" : "≈ " + money(inc)}</span></span></span></button>`;
+      <span class="rw"><span title="how many times more views than this account's typical video">×${x.ratio.toFixed(1)}</span><span>${m === null ? "—" : m === false ? "&lt;1 min" : "≈ " + money(inc)}</span></span></span></button>`;
 }
 function accountHtml(a) {
   const x = totals(a); const d = {}; for (const [k] of METRICS) d[k] = d24(a, k);
@@ -1035,41 +1054,41 @@ function accountHtml(a) {
   const missing = (a.profile?.videoCount || 0) - (a.fullCount || 0);
   const b = badgesHtml(a);
   return `<div class="glass hero">${avatar(a)}<div style="min-width:0"><h2>@${esc(a.username)}</h2><p>${esc(a.nick || "")}</p>${b ? `<div class="badges">${b}</div>` : ""}</div>
-    <div class="meta">обновлено <b>${ago(a.lastAt)}</b><br>полный скан: <b>${a.lastFullAt ? ago(a.lastFullAt) : "ещё не было"}</b>${a.fullCount ? `<br>TikTok отдал <b>${a.fullCount}</b> из ${a.profile?.videoCount || a.fullCount} видео` : ""}</div></div>
+    <div class="meta">refreshed <b>${ago(a.lastAt)}</b><br>full scan: <b>${a.lastFullAt ? ago(a.lastFullAt) : "not yet"}</b>${a.fullCount ? `<br>TikTok returned <b>${a.fullCount}</b> of ${a.profile?.videoCount || a.fullCount} videos` : ""}</div></div>
    ${tilesHtml(x, d, a.username + ".")}
    ${viralIncomeHtml(a)}
-   ${card("chart", `<h3>Динамика</h3><span class="note"></span><div class="seg mini" id="mseg">${METRICS.slice(0, 5).map(([k, l]) => `<button data-k="${k}" class="${view.metric === k ? "on" : ""}">${l}</button>`).join("")}</div>`, () => chart(a.hist || [], view.metric))}
-   ${card("videos", `<h3>Видео · ${vs.length}</h3><span class="note">${missing > 0 ? `≈${missing} видео TikTok не отдаёт (карусели/скрытые) — их просмотры не в total · ` : ""}свежие (за ${S.settings.freshDays} дн) обновляются каждый раз</span>`,
-     () => vs.length ? `<div class="vgrid stagger">${vs.slice(0, view.shown).map((v, i) => vtileHtml(v, i, a)).join("")}</div>${vs.length > view.shown ? `<div class="more"><button class="btn" data-a="more">Показать ещё ${Math.min(60, vs.length - view.shown)}</button></div>` : ""}` : `<div style="color:var(--text3);padding:2px 0 6px">${a.lastFullAt ? "Ничего не найдено" : "Видео появятся после первого скана"}</div>`)}`;
+   ${card("chart", `<h3>Trends</h3><span class="note" id="rdelta">${rangeDelta(a)}</span><div class="seg mini" id="rseg">${RANGES.map(([k, l]) => `<button data-k="${k}" class="${view.range === k ? "on" : ""}">${l}</button>`).join("")}</div><div class="seg mini" id="mseg">${METRICS.slice(0, 5).map(([k, l]) => `<button data-k="${k}" class="${view.metric === k ? "on" : ""}">${l}</button>`).join("")}</div>`, () => chart(inRange(a.hist || []), view.metric))}
+   ${card("videos", `<h3>Videos · ${vs.length}</h3><span class="note">${missing > 0 ? `≈${missing} videos aren't returned by TikTok (carousels/hidden) — their views aren't in the total · ` : ""}fresh ones (last ${S.settings.freshDays} d) refresh every time</span>`,
+     () => vs.length ? `<div class="vgrid stagger">${vs.slice(0, view.shown).map((v, i) => vtileHtml(v, i, a)).join("")}</div>${vs.length > view.shown ? `<div class="more"><button class="btn" data-a="more">Show ${Math.min(60, vs.length - view.shown)} more</button></div>` : ""}` : `<div style="color:var(--text3);padding:2px 0 6px">${a.lastFullAt ? "Nothing found" : "Videos show up after the first scan"}</div>`)}`;
 }
 function renderStatus() {
   const last = S.runs[0];
-  if (!busy) setStatus(last ? (last.ok ? "Обновлено " : "Ошибка · ") + ago(last.t) + (last.ok ? ` · ${usd(last.usd)}` : last.err ? " · " + last.err : "") : S.settings.token ? "Готов к работе" : "Нужен токен Apify — ⚙ Настройки", last && !last.ok ? "err" : "");
+  if (!busy) setStatus(last ? (last.ok ? "Refreshed " : "Error · ") + ago(last.t) + (last.ok ? ` · ${usd(last.usd)}` : last.err ? " · " + last.err : "") : S.settings.token ? "Ready" : "Apify token needed — ⚙ Settings", last && !last.ok ? "err" : "");
   const u = S.meta.usage, sc = $("#spendChip");
-  if (!S.settings.token) { sc.className = "mode warn"; sc.textContent = "Apify не подключён"; }
-  else if (!u) { sc.className = "mode"; sc.textContent = S.meta.usageErr ? "Apify: " + S.meta.usageErr : "Apify: загружаю…"; }
-  else { const fr = u.limit ? u.spent / u.limit : 0; sc.className = "mode " + (fr > .8 ? "warn" : "ok"); sc.innerHTML = `Apify ${esc(u.plan)} · ${usd(u.spent)} из ${usd(u.limit)} <span class="m"><i style="width:${Math.min(100, fr * 100).toFixed(1)}%"></i></span>`; }
+  if (!S.settings.token) { sc.className = "mode warn"; sc.textContent = "Apify not connected"; }
+  else if (!u) { sc.className = "mode"; sc.textContent = S.meta.usageErr ? "Apify: " + S.meta.usageErr : "Apify: loading…"; }
+  else { const fr = u.limit ? u.spent / u.limit : 0; sc.className = "mode " + (fr > .8 ? "warn" : "ok"); sc.innerHTML = `Apify ${esc(u.plan)} · ${usd(u.spent)} of ${usd(u.limit)} <span class="m"><i style="width:${Math.min(100, fr * 100).toFixed(1)}%"></i></span>`; }
   const ac = $("#autoChip"); const m = S.settings.autoMin;
-  const sy = $("#syncChip"); if (sy) { if (!syncOn()) { sy.className = "mode sync off"; sy.textContent = "☁︎ выкл"; } else if (S.meta.syncErr) { sy.className = "mode sync warn"; sy.textContent = "☁︎ ошибка"; sy.title = S.meta.syncErr; } else { sy.className = "mode sync ok"; sy.textContent = "☁︎ " + (S.meta.syncAt ? ago(S.meta.syncAt) : "…"); } }
-  ac.className = "mode" + (m ? " ok" : ""); ac.textContent = m ? "Авто · каждые " + (m >= 60 ? m / 60 + " ч" : m + " мин") : "Авто выкл";
+  const sy = $("#syncChip"); if (sy) { if (!syncOn()) { sy.className = "mode sync off"; sy.textContent = "☁︎ off"; } else if (S.meta.syncErr) { sy.className = "mode sync warn"; sy.textContent = "☁︎ error"; sy.title = S.meta.syncErr; } else { sy.className = "mode sync ok"; sy.textContent = "☁︎ " + (S.meta.syncAt ? ago(S.meta.syncAt) : "…"); } }
+  ac.className = "mode" + (m ? " ok" : ""); ac.textContent = m ? "Auto · every " + (m >= 60 ? m / 60 + " h" : m + " min") : "Auto off";
 }
 function setStatus(t, cls) { $("#status").textContent = t; const sb = $("#statusbar"); sb.classList.toggle("err", cls === "err"); if (cls === "running") sb.classList.add("running"); }
 
 /* ================= actions ================= */
 async function cardAction(act, n) {
   const a = S.accounts[n];
-  if (act === "del") { if (await ask("Удалить @" + n + "?", "Вся история и графики этого аккаунта удалятся из программы.", "Удалить", "red")) { delete S.accounts[n]; (S.meta.deleted = S.meta.deleted || {})[n] = now(); view.acct = null; save(); render(); toast("Удалено"); } return; }
+  if (act === "del") { if (await ask("Delete @" + n + "?", "All history and charts for this account will be removed from the app.", "Delete", "red")) { delete S.accounts[n]; (S.meta.deleted = S.meta.deleted || {})[n] = now(); view.acct = null; save(); render(); toast("Deleted"); } return; }
   if (act === "tt") return openUrl("https://www.tiktok.com/@" + n);
-  if (act === "full") { const est = estimate([n], "full") + estimate([n], "profile"); if (!(await ask("Полный скан @" + n, `Все видео аккаунта (~${Math.max(a.profile?.videoCount || 0, Object.keys(a.videos || {}).length)} шт). Примерно ${usd(est)}.`, "Запустить"))) return; return refresh([n], { kind: "full", manual: true }); }
-  if (a.lastAt && now() - a.lastAt < S.settings.minGapMin * 60e3 && !(await ask("Только что обновлялось", `@${n} обновлялся ${ago(a.lastAt)}. Всё равно обновить (≈ ${usd(estimate([n], "light") + estimate([n], "profile"))})?`, "Обновить"))) return;
+  if (act === "full") { const est = estimate([n], "full") + estimate([n], "profile"); if (!(await ask("Full scan @" + n, `Every video on the account (~${Math.max(a.profile?.videoCount || 0, Object.keys(a.videos || {}).length)}). About ${usd(est)}.`, "Run"))) return; return refresh([n], { kind: "full", manual: true }); }
+  if (a.lastAt && now() - a.lastAt < S.settings.minGapMin * 60e3 && !(await ask("Just refreshed", `@${n} was refreshed ${ago(a.lastAt)}. Refresh anyway (≈ ${usd(estimate([n], "light") + estimate([n], "profile"))})?`, "Refresh"))) return;
   refresh([n], { kind: "light", manual: true });
 }
 async function addAccounts(txt) {
   const names = parseNames(txt).filter(n => !S.accounts[n]);
-  if (!names.length) { toast("Не вижу новых @username"); return; }
-  if (!S.settings.token.trim()) { openSettings("Сначала вставь токен Apify"); return; }
+  if (!names.length) { toast("No new @usernames found"); return; }
+  if (!S.settings.token.trim()) { openSettings("Paste your Apify token first"); return; }
   for (const n of names) S.accounts[n] = { username: n, addedAt: now(), videos: {}, hist: [] };
-  $("#addInput").value = ""; save(); render(); toast("Добавлено: " + names.map(n => "@" + n).join(", ") + " — делаю первый скан");
+  $("#addInput").value = ""; save(); render(); toast("Added " + names.map(n => "@" + n).join(", ") + " — running the first scan");
   refresh(names, { kind: "full", manual: true });
 }
 function openAcct(n) { if (view.acct === n) return; view.acct = n || null; view.q = ""; render(); }
@@ -1077,7 +1096,7 @@ function openAcct(n) { if (view.acct === n) return; view.acct = n || null; view.
 $("#addForm").onsubmit = e => { e.preventDefault(); addAccounts($("#addInput").value); };
 $("#accList").onclick = e => { const b = e.target.closest(".acc"); if (b) openAcct(b.dataset.n); };
 $("#optMode").onclick = e => { const b = e.target.closest("button"); if (!b) return; S.settings.mode = b.dataset.k; S.meta.settingsAt = now(); save(); renderSide(); };
-$("#optAuto").onchange = e => { S.settings.autoMin = +e.target.value; S.meta.lastAutoAt = now(); S.meta.settingsAt = now(); save(); renderStatus(); toast(S.settings.autoMin ? "Автообновление включено" : "Автообновление выключено"); };
+$("#optAuto").onchange = e => { S.settings.autoMin = +e.target.value; S.meta.lastAutoAt = now(); S.meta.settingsAt = now(); save(); renderStatus(); toast(S.settings.autoMin ? "Auto refresh on" : "Auto refresh off"); };
 $("#setBtn").onclick = () => openSettings(); $("#logBtn").onclick = openLog; $("#faqBtn").onclick = openFaq;
 $("#spendChip").onclick = openLog; $("#syncChip").onclick = () => { if (!syncOn()) return openSettings(); syncPull(); }; $("#autoChip").onclick = () => openSettings();
 $("#toolbar").addEventListener("click", e => {
@@ -1089,7 +1108,7 @@ $("#toolbar").addEventListener("click", e => {
 function overviewAction(b) {
   if (b.parentElement.id === "asort") { view.asort = b.dataset.k; segSet(b.parentElement, view.asort); return redrawBody(); }
   if (b.dataset.a === "lightall") return refresh(Object.keys(S.accounts), { kind: "light", manual: true });
-  if (b.dataset.a === "fullall") { const all = Object.keys(S.accounts); if (!all.length) return; ask("Полный скан всех аккаунтов", `Все видео всех аккаунтов. Примерно ${usd(estimate(all, "full") + estimate(all, "profile"))}.`, "Запустить").then(ok => ok && refresh(all, { kind: "full", manual: true })); }
+  if (b.dataset.a === "fullall") { const all = Object.keys(S.accounts); if (!all.length) return; ask("Full scan of all accounts", `Every video on every account. About ${usd(estimate(all, "full") + estimate(all, "profile"))}.`, "Run").then(ok => ok && refresh(all, { kind: "full", manual: true })); }
 }
 $("#toolbar").addEventListener("input", e => { if (e.target.id === "q") { view.q = e.target.value; view.shown = 60; clearTimeout(redrawBody.t); redrawBody.t = setTimeout(redrawBody, 120); } });
 function redrawBody() { const v = $("#view"); const y = v.scrollTop; v.innerHTML = view.acct ? accountHtml(S.accounts[view.acct]) : overviewHtml(); v.scrollTop = y; countUp(); segPills(v); renderBusy(); }
@@ -1103,7 +1122,8 @@ $("#view").addEventListener("click", e => {
   $$(".vt.show").forEach(x => x.classList.remove("show"));
   const o = e.target.closest("[data-open]"); if (o) return openAcct(o.dataset.open);
   const ob = e.target.closest("#asort button,[data-a='lightall'],[data-a='fullall']"); if (ob) return overviewAction(ob);
-  const m = e.target.closest("#mseg button"); if (m) { view.metric = m.dataset.k; segSet(m.parentElement, view.metric); const c = m.closest(".card"); c.querySelector("svg.chart,.chart-empty").outerHTML = chart(S.accounts[view.acct].hist || [], view.metric); return; }
+  const m = e.target.closest("#mseg button"); if (m) { view.metric = m.dataset.k; segSet(m.parentElement, view.metric); redrawChart(); return; }
+  const rg = e.target.closest("#rseg button"); if (rg) { view.range = rg.dataset.k; segSet(rg.parentElement, view.range); redrawChart(); return; }
   const cb = e.target.closest("[data-a='calib']"); if (cb) return calibrate(S.accounts[view.acct]);
   const mo = e.target.closest("[data-a='more']"); if (mo) { view.shown += 60; redrawBody(); return; }
   const h = e.target.closest("[data-toggle]");
@@ -1111,14 +1131,14 @@ $("#view").addEventListener("click", e => {
     const c = h.closest(".card"), id = c.dataset.card, closing = !c.classList.contains("closed");
     UIS()["c_" + id] = closing; save();
     if (!closing && !c.querySelector(".cpad").children.length) { redrawBody(); return; }
-    c.classList.toggle("closed", closing); c.querySelector(".chev").title = closing ? "Развернуть" : "Свернуть";
+    c.classList.toggle("closed", closing); c.querySelector(".chev").title = closing ? "Expand" : "Collapse";
   }
 });
 addEventListener("keydown", e => {
   if (e.key === "Escape") { const o = $$(".overlay").pop(); if (o) closeSheet(o); else if (view.acct) openAcct(null); }
   if ((e.metaKey || e.ctrlKey) && e.key === "r") { e.preventDefault(); if (!busy) refresh(Object.keys(S.accounts), { kind: "light", manual: true }); }
 });
-let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { segPills(); if (view.acct) { const c = $("#mseg"); if (c) c.closest(".card").querySelector("svg.chart,.chart-empty").outerHTML = chart(S.accounts[view.acct].hist || [], view.metric); } }, 150); });
+let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { segPills(); if (view.acct) redrawChart(); }, 150); });
 
 /* ================= sheets ================= */
 function sheet(html, width = 640) {
@@ -1133,7 +1153,7 @@ function closeSheet(o) { if (o.classList.contains("closing")) return; o.classLis
 const head = (icon, title, sub, cls = "") => `<div class="sheet-head"><div class="icon ${cls}">${icon}</div><div><h2>${title}</h2><p>${sub}</p></div><button class="x" data-close>✕</button></div>`;
 function ask(title, text, ok = "OK", tone = "") {
   return new Promise(res => {
-    const o = sheet(head(tone === "red" ? "!" : "?", esc(title), esc(text), tone) + `<div class="sheet-actions" style="justify-content:flex-end"><button class="btn" data-r="0">Отмена</button><button class="btn blue" data-r="1">${esc(ok)}</button></div>`, 460);
+    const o = sheet(head(tone === "red" ? "!" : "?", esc(title), esc(text), tone) + `<div class="sheet-actions" style="justify-content:flex-end"><button class="btn" data-r="0">Cancel</button><button class="btn blue" data-r="1">${esc(ok)}</button></div>`, 460);
     let done = false; const fin = v => { if (!done) { done = true; res(v); } };
     o._onclose = () => fin(false);
     o.querySelectorAll("[data-r]").forEach(b => b.onclick = () => { fin(b.dataset.r === "1"); closeSheet(o); });
@@ -1143,38 +1163,38 @@ function ask(title, text, ok = "OK", tone = "") {
 function stepper(id, val, unit, step, mn, mx, dec = 0) { return `<div class="stepper" data-id="${id}" data-step="${step}" data-min="${mn}" data-max="${mx}" data-dec="${dec}"><button data-d="-1">−</button><span data-v="${val}">${val.toFixed ? (+val).toFixed(dec) : val}${unit}</span><button data-d="1">+</button></div>`; }
 function actorPick(id, val, allowEmpty) {
   const known = Object.keys(PRESETS); const custom = val && !known.includes(val);
-  return `<div class="custom"><label class="pick"><select id="${id}">${allowEmpty ? `<option value="">— нет —</option>` : ""}${known.map(k => `<option value="${k}" ${k === val ? "selected" : ""}>${esc(PRESETS[k].label)}</option>`).join("")}<option value="__custom" ${custom ? "selected" : ""}>Свой actor…</option></select></label><input id="${id}C" placeholder="user/actor-name" value="${custom ? esc(val) : ""}" ${custom ? "" : "hidden"}></div>`;
+  return `<div class="custom"><label class="pick"><select id="${id}">${allowEmpty ? `<option value="">— none —</option>` : ""}${known.map(k => `<option value="${k}" ${k === val ? "selected" : ""}>${esc(PRESETS[k].label)}</option>`).join("")}<option value="__custom" ${custom ? "selected" : ""}>Custom actor…</option></select></label><input id="${id}C" placeholder="user/actor-name" value="${custom ? esc(val) : ""}" ${custom ? "" : "hidden"}></div>`;
 }
 function openSettings(hint) {
   const s = S.settings;
-  const o = sheet(head("⚙", "Настройки", hint ? `<span style="color:var(--gold)">${esc(hint)}</span>` : (bridge ? "Токен и данные лежат на этом Маке, в папке программы" : "Токен хранится только на этом устройстве") + (S.settings.sync !== false ? " · аккаунты синхронизируются через твой Apify" : "")) + `<div class="form">
-    <div class="field"><label>Apify API token</label><div class="hint">console.apify.com → Settings → API &amp; Integrations → Personal API token. $5 в месяц бесплатно.</div><input id="sToken" type="password" value="${esc(s.token)}" placeholder="apify_api_…" autocomplete="off" spellcheck="false"><div class="res" id="rToken"></div></div>
-    <div class="group"><h4>Обновления</h4>
-      <div class="rowx"><div class="l">Режим<div class="sub">Экономный: свежие видео каждый раз, все видео — по расписанию</div></div><div class="seg mini" id="sMode"><button data-k="smart" class="${s.mode === "smart" ? "on" : ""}">Экономный</button><button data-k="full" class="${s.mode === "full" ? "on" : ""}">Полный</button></div></div>
-      <div class="rowx"><div class="l">Автообновление<div class="sub">пока приложение открыто</div></div><label class="pick"><select id="sAuto">${[[0, "выкл"], [60, "1 ч"], [120, "2 ч"], [180, "3 ч"], [360, "6 ч"], [720, "12 ч"], [1440, "24 ч"]].map(([v, l]) => `<option value="${v}" ${+s.autoMin === v ? "selected" : ""}>${l}</option>`).join("")}</select></label></div>
-      <div class="rowx"><div class="l">Свежие видео — за сколько дней<div class="sub">они обновляются каждый раз</div></div>${stepper("freshDays", s.freshDays, " дн", 1, 1, 60)}</div>
-      <div class="rowx"><div class="l">…и не меньше скольких видео</div>${stepper("freshMin", s.freshMin, " шт", 1, 3, 80)}</div>
-      <div class="rowx"><div class="l">Полный скан всех видео — раз в<div class="sub">в экономном режиме</div></div>${stepper("fullEveryDays", s.fullEveryDays, " дн", 1, 1, 60)}</div>
-      <div class="rowx"><div class="l">Ловить «стрельнувшие» старые видео<div class="sub">если общие лайки выросли больше, чем на свежих видео — сразу полный скан</div></div><input type="checkbox" class="switch" id="sSpike" ${s.spikeFull ? "checked" : ""}></div>
-      <div class="rowx"><div class="l">Не обновлять акк чаще, чем раз в<div class="sub">защита от лишних трат при автообновлении</div></div>${stepper("minGapMin", s.minGapMin, " мин", 5, 0, 600)}</div>
-      <div class="rowx"><div class="l">Лимит трат на один запуск<div class="sub">actor не потратит больше, даже если глюканёт</div></div>${stepper("maxChargeRun", s.maxChargeRun, " $", 0.05, 0.05, 20, 2)}</div>
+  const o = sheet(head("⚙", "Settings", hint ? `<span style="color:var(--gold)">${esc(hint)}</span>` : (bridge ? "Token and data live on this Mac, in the app folder" : "The token is stored only on this device") + (S.settings.sync !== false ? " · accounts sync through your Apify" : "")) + `<div class="form">
+    <div class="field"><label>Apify API token</label><div class="hint">console.apify.com → Settings → API &amp; Integrations → Personal API token. $5 a month free.</div><input id="sToken" type="password" value="${esc(s.token)}" placeholder="apify_api_…" autocomplete="off" spellcheck="false"><div class="res" id="rToken"></div></div>
+    <div class="group"><h4>Refreshing</h4>
+      <div class="rowx"><div class="l">Mode<div class="sub">Smart: fresh videos every time, all videos on a schedule</div></div><div class="seg mini" id="sMode"><button data-k="smart" class="${s.mode === "smart" ? "on" : ""}">Smart</button><button data-k="full" class="${s.mode === "full" ? "on" : ""}">Full</button></div></div>
+      <div class="rowx"><div class="l">Auto refresh<div class="sub">while the app is open</div></div><label class="pick"><select id="sAuto">${[[0, "off"], [60, "1 h"], [120, "2 h"], [180, "3 h"], [360, "6 h"], [720, "12 h"], [1440, "24 h"]].map(([v, l]) => `<option value="${v}" ${+s.autoMin === v ? "selected" : ""}>${l}</option>`).join("")}</select></label></div>
+      <div class="rowx"><div class="l">Fresh videos — how many days back<div class="sub">these refresh every time</div></div>${stepper("freshDays", s.freshDays, " d", 1, 1, 60)}</div>
+      <div class="rowx"><div class="l">…and at least this many videos</div>${stepper("freshMin", s.freshMin, "", 1, 3, 80)}</div>
+      <div class="rowx"><div class="l">Full scan of all videos every<div class="sub">in Smart mode</div></div>${stepper("fullEveryDays", s.fullEveryDays, " d", 1, 1, 60)}</div>
+      <div class="rowx"><div class="l">Catch old videos taking off<div class="sub">if total likes grew more than fresh videos explain, run a full scan right away</div></div><input type="checkbox" class="switch" id="sSpike" ${s.spikeFull ? "checked" : ""}></div>
+      <div class="rowx"><div class="l">Don't refresh an account more often than<div class="sub">avoids wasted spend on auto refresh</div></div>${stepper("minGapMin", s.minGapMin, " min", 5, 0, 600)}</div>
+      <div class="rowx"><div class="l">Spending limit per run<div class="sub">an actor can't spend more even if it glitches</div></div>${stepper("maxChargeRun", s.maxChargeRun, " $", 0.05, 0.05, 20, 2)}</div>
     </div>
-    <div class="group"><h4>Доход (оценка)</h4>
-      <div class="rowx"><div class="l">Ставка за 1000 засчитанных просмотров<div class="sub">Creator Rewards обычно $0.40–1.00; у аккаунта можно откалибровать по реальным выплатам</div></div>${stepper("rpm", s.rpm, " $", 0.05, 0.05, 10, 2)}</div>
-      <div class="rowx"><div class="l">Какая доля просмотров засчитывается<div class="sub">TikTok платит за просмотры от 5 сек из стран программы — обычно ~50%</div></div>${stepper("qualPct", s.qualPct, " %", 5, 5, 100)}</div>
-      <div class="rowx"><div class="l">Считать только видео от 1 минуты<div class="sub">Creator Rewards не платит за ролики короче минуты</div></div><input type="checkbox" class="switch" id="sMinOnly" ${s.incMinOnly ? "checked" : ""}></div>
+    <div class="group"><h4>Income (estimate)</h4>
+      <div class="rowx"><div class="l">Rate per 1,000 qualified views<div class="sub">Creator Rewards is usually $0.40–1.00; calibrate per account from real payouts</div></div>${stepper("rpm", s.rpm, " $", 0.05, 0.05, 10, 2)}</div>
+      <div class="rowx"><div class="l">Share of views that qualify<div class="sub">TikTok pays for 5 s+ views from eligible countries — usually ~50%</div></div>${stepper("qualPct", s.qualPct, " %", 5, 5, 100)}</div>
+      <div class="rowx"><div class="l">Only count videos of 1 minute or longer<div class="sub">Creator Rewards doesn't pay for shorter videos</div></div><input type="checkbox" class="switch" id="sMinOnly" ${s.incMinOnly ? "checked" : ""}></div>
     </div>
-    <div class="group"><h4>Кто собирает данные</h4>
-      <div class="rowx"><div class="l">Видео</div>${actorPick("aV", s.videoActor)}</div>
-      <div class="rowx"><div class="l">Профиль<div class="sub">подписчики, лайки</div></div>${actorPick("aP", s.profileActor)}</div>
-      <div class="rowx"><div class="l">Запасной<div class="sub">если основной сломался</div></div>${actorPick("aB", s.backupActor, true)}</div>
-      <div class="field" id="tplWrap" hidden><div class="hint" style="margin-top:8px">Input для своего actor'а (JSON). <b>{{profiles}}</b> — список аккаунтов, <b>{{limit}}</b> — сколько видео.</div><textarea id="sTpl">${esc(s.customInput)}</textarea></div>
+    <div class="group"><h4>Data sources (actors)</h4>
+      <div class="rowx"><div class="l">Videos</div>${actorPick("aV", s.videoActor)}</div>
+      <div class="rowx"><div class="l">Profile<div class="sub">followers, likes</div></div>${actorPick("aP", s.profileActor)}</div>
+      <div class="rowx"><div class="l">Backup<div class="sub">used if the main one fails</div></div>${actorPick("aB", s.backupActor, true)}</div>
+      <div class="field" id="tplWrap" hidden><div class="hint" style="margin-top:8px">Input for your custom actor (JSON). <b>{{profiles}}</b> — list of accounts, <b>{{limit}}</b> — how many videos.</div><textarea id="sTpl">${esc(s.customInput)}</textarea></div>
     </div>
-    <div class="group"><h4>Данные</h4>
-      <div class="rowx"><div class="l">Синхронизация Мак ↔ телефон<div class="sub">аккаунты, история и настройки лежат в твоём Apify (хранилище «views-tracker»); токен не синхронизируется — вставь его на каждом устройстве</div></div><input type="checkbox" class="switch" id="sSync" ${s.sync !== false ? "checked" : ""}></div>
-      <div class="rowx"><div class="l">Резервная копия<div class="sub">${bridge ? "программа и так каждый день кладёт копию в папку «Резервные копии»" : "файл со всеми аккаунтами и историей"}</div></div><div style="display:flex;gap:6px"><button class="btn" id="sExp">Сохранить в файл</button><button class="btn" id="sImp">Загрузить</button></div></div>
+    <div class="group"><h4>Data</h4>
+      <div class="rowx"><div class="l">Sync Mac ↔ phone<div class="sub">accounts, history and settings live in your Apify (store “views-tracker”); the token is not synced — paste it on each device</div></div><input type="checkbox" class="switch" id="sSync" ${s.sync !== false ? "checked" : ""}></div>
+      <div class="rowx"><div class="l">Backup<div class="sub">${bridge ? "the app also saves a daily copy to the “Backups” folder" : "a file with all accounts and history"}</div></div><div style="display:flex;gap:6px"><button class="btn" id="sExp">Export</button><button class="btn" id="sImp">Import</button></div></div>
     </div></div>
-    <div class="sheet-actions"><button class="btn blue" id="sSave">Сохранить</button><button class="btn" id="sCheck">Проверить токен</button></div>`);
+    <div class="sheet-actions"><button class="btn blue" id="sSave">Save</button><button class="btn" id="sCheck">Check token</button></div>`);
   o.querySelector("#sMode").onclick = e => { const b = e.target.closest("button"); if (b) segSet(o.querySelector("#sMode"), b.dataset.k); };
   requestAnimationFrame(() => segPills(o));
   o.querySelectorAll(".stepper").forEach(st => st.onclick = e => {
@@ -1187,9 +1207,9 @@ function openSettings(hint) {
   ["aV", "aP", "aB"].forEach(id => o.querySelector("#" + id).onchange = syncTpl); syncTpl();
   const actorVal = id => { const v = o.querySelector("#" + id).value; return v === "__custom" ? o.querySelector("#" + id + "C").value.trim() : v; };
   o.querySelector("#sCheck").onclick = async () => {
-    const r = o.querySelector("#rToken"); r.className = "res"; r.textContent = "Проверяю…";
+    const r = o.querySelector("#rToken"); r.className = "res"; r.textContent = "Checking…";
     const keep = S.settings.token; S.settings.token = o.querySelector("#sToken").value.trim();
-    try { const me = await api("/users/me"); r.className = "res ok"; r.textContent = `✓ Работает: ${me.data.username}, план ${me.data.plan?.id || "?"}`; }
+    try { const me = await api("/users/me"); r.className = "res ok"; r.textContent = `✓ Works: ${me.data.username}, plan ${me.data.plan?.id || "?"}`; }
     catch (e) { r.className = "res bad"; r.textContent = "✕ " + e.message; }
     S.settings.token = keep;
   };
@@ -1198,12 +1218,12 @@ function openSettings(hint) {
     const sv = id => +o.querySelector(`.stepper[data-id="${id}"] > span`).dataset.v;
     Object.assign(S.settings, { token: o.querySelector("#sToken").value.trim(), freshDays: sv("freshDays"), freshMin: sv("freshMin"), fullEveryDays: sv("fullEveryDays"), minGapMin: sv("minGapMin"), maxChargeRun: sv("maxChargeRun"), mode: o.querySelector("#sMode .on").dataset.k, autoMin: +o.querySelector("#sAuto").value, sync: o.querySelector("#sSync").checked, spikeFull: o.querySelector("#sSpike").checked, rpm: sv("rpm"), qualPct: sv("qualPct"), incMinOnly: o.querySelector("#sMinOnly").checked,
       videoActor: actorVal("aV") || DEF.videoActor, profileActor: actorVal("aP") || DEF.profileActor, backupActor: actorVal("aB"), customInput: o.querySelector("#sTpl").value });
-    S.meta.settingsAt = now(); save(); closeSheet(o); render(); usage(); if (syncOn()) syncPull(true); toast("Настройки сохранены");
+    S.meta.settingsAt = now(); save(); closeSheet(o); render(); usage(); if (syncOn()) syncPull(true); toast("Settings saved");
   };
 }
 async function exportData() {
   const txt = JSON.stringify(S, (k, v) => k === "token" ? undefined : v, 1); const name = `views-tracker-${new Date().toISOString().slice(0, 10)}.json`;
-  if (bridge) { const p = await bridge.export_file(name, txt); if (p) toast("Сохранено: " + p.split("/").pop()); return; }
+  if (bridge) { const p = await bridge.export_file(name, txt); if (p) toast("Saved: " + p.split("/").pop()); return; }
   const u = URL.createObjectURL(new Blob([txt], { type: "application/json" })); Object.assign(document.createElement("a"), { href: u, download: name }).click(); setTimeout(() => URL.revokeObjectURL(u), 2000);
 }
 async function importData(o) {
@@ -1211,9 +1231,9 @@ async function importData(o) {
   if (bridge) txt = await bridge.import_file();
   else txt = await new Promise(r => { const i = Object.assign(document.createElement("input"), { type: "file", accept: ".json" }); i.onchange = async () => r(i.files[0] ? await i.files[0].text() : null); i.click(); });
   if (!txt) return;
-  try { const d = JSON.parse(txt); if (!d.accounts) throw new Error("это не файл Views Tracker");
-    if (!(await ask("Загрузить копию?", `Аккаунтов в файле: ${Object.keys(d.accounts).length}. Текущие данные заменятся.`, "Загрузить"))) return;
-    S = { settings: { ...DEF, ...d.settings, token: S.settings.token }, accounts: d.accounts, runs: d.runs || [], meta: d.meta || {} }; save(); closeSheet(o); view.acct = null; lastKey = null; render(); toast("Загружено");
+  try { const d = JSON.parse(txt); if (!d.accounts) throw new Error("this is not a Views Tracker file");
+    if (!(await ask("Import backup?", `Accounts in the file: ${Object.keys(d.accounts).length}. Current data will be replaced.`, "Import"))) return;
+    S = { settings: { ...DEF, ...d.settings, token: S.settings.token }, accounts: d.accounts, runs: d.runs || [], meta: d.meta || {} }; save(); closeSheet(o); view.acct = null; lastKey = null; render(); toast("Imported");
   } catch (e) { toast("✕ " + e.message); }
 }
 function openLog() {
@@ -1221,29 +1241,30 @@ function openLog() {
   const spentApp = runs.reduce((s, r) => s + r.usd, 0); const fr = u && u.limit ? u.spent / u.limit : 0;
   const days = u ? Math.max((now() - u.start) / 864e5, .5) : 1, cyc = u ? (u.end - u.start) / 864e5 : 30, fc = u ? u.spent / days * cyc : 0;
   const vids = Object.values(S.accounts).reduce((s, a) => s + Object.keys(a.videos || {}).length, 0);
-  const K = { auto: ["k-auto", "Авто"], light: ["k-light", "Обновление"], full: ["k-full", "Полный скан"] }, SK = { profile: "профили", light: "свежие видео", full: "все видео" };
-  const rows = S.runs.slice(0, 150).map(r => `<div class="lg ${r.ok ? "" : "bad"}"><span class="t">${dtstr(r.t)}</span><span class="k ${K[r.kind][0]}">${K[r.kind][1]}</span><span class="m">${r.accounts.map(a => "@" + esc(a)).join(", ")}<small>${r.steps.map(s => s.kind === "spike" ? `⚡ @${esc(s.acct)}: +${short(s.extra)} лайков не от свежих видео → полный скан` : `${SK[s.kind]}: ${esc((s.actor || "").split("/")[0])} ${s.err ? "✕ " + esc(s.err) : s.skipped ? "пропущено, " + esc(s.skipped) : `${s.items} ${plural(s.items, "строка", "строки", "строк")}`}`).join(" · ")}${r.err ? " · ✕ " + esc(r.err) : ""}</small></span><span class="c">${usd(r.usd)}</span></div>`).join("");
-  const o = sheet(head("≡", "Журнал", "Каждый запуск и сколько он стоил · расход Apify за месяц") +
-    `<div class="usage"><div class="ucard"><div class="uh">Apify · ${u ? esc(u.plan) : "—"}</div><div class="big">${u ? usd(u.spent) : "—"} <small>из ${u ? usd(u.limit) : "—"}</small></div><div class="meter"><i class="${fr > .8 ? "warn" : ""}" style="width:0" data-w="${Math.min(100, fr * 100)}"></i></div><div class="ur">прогноз на месяц ≈ <b>${u ? usd(fc) : "—"}</b> · сброс <b>${u ? dstr(u.end + 1000) : "—"}</b></div></div>
-     <div class="ucard"><div class="uh">Эта программа</div><div class="big">${runs.length} <small>${plural(runs.length, "запуск", "запуска", "запусков")}</small></div><div class="ur">потрачено ≈ <b>${usd(spentApp)}</b></div><div class="ur">в среднем ≈ <b>${usd(runs.length ? spentApp / runs.length : 0)}</b> за запуск</div></div>
-     <div class="ucard"><div class="uh">Под наблюдением</div><div class="big">${Object.keys(S.accounts).length} <small>${plural(Object.keys(S.accounts).length, "аккаунт", "аккаунта", "аккаунтов")}</small></div><div class="ur"><b>${vids}</b> видео в базе</div><div class="ur">обновление всех ≈ <b>${usd(estimate(Object.keys(S.accounts), "profile") + estimate(Object.keys(S.accounts), "light"))}</b></div></div></div>
-     <div class="logbox">${rows || '<div style="padding:30px;text-align:center;color:var(--text3)">Пока пусто — запусков ещё не было</div>'}</div>
-     <div class="sheet-actions"><button class="btn" id="lBal">Обновить баланс</button>${bridge ? '<button class="btn" id="lFolder">Папка с данными</button>' : ""}</div>`, 940);
+  const K = { auto: ["k-auto", "Auto"], light: ["k-light", "Refresh"], full: ["k-full", "Full scan"] }, SK = { profile: "profiles", light: "fresh videos", full: "all videos" };
+  const rows = S.runs.slice(0, 150).map(r => `<div class="lg ${r.ok ? "" : "bad"}"><span class="t">${dtstr(r.t)}</span><span class="k ${K[r.kind][0]}">${K[r.kind][1]}</span><span class="m">${r.accounts.map(a => "@" + esc(a)).join(", ")}<small>${r.steps.map(s => s.kind === "spike" ? `⚡ @${esc(s.acct)}: +${short(s.extra)} likes not from fresh videos → full scan` : `${SK[s.kind]}: ${esc((s.actor || "").split("/")[0])} ${s.err ? "✕ " + esc(s.err) : s.skipped ? "skipped, " + esc(s.skipped) : `${s.items} ${plural(s.items, "row", "rows", "rows")}`}`).join(" · ")}${r.err ? " · ✕ " + esc(r.err) : ""}</small></span><span class="c">${usd(r.usd)}</span></div>`).join("");
+  const o = sheet(head("≡", "Log", "Every run and what it cost · Apify spending this month") +
+    `<div class="usage"><div class="ucard"><div class="uh">Apify · ${u ? esc(u.plan) : "—"}</div><div class="big">${u ? usd(u.spent) : "—"} <small>of ${u ? usd(u.limit) : "—"}</small></div><div class="meter"><i class="${fr > .8 ? "warn" : ""}" style="width:0" data-w="${Math.min(100, fr * 100)}"></i></div><div class="ur">month forecast ≈ <b>${u ? usd(fc) : "—"}</b> · resets <b>${u ? dstr(u.end + 1000) : "—"}</b></div></div>
+     <div class="ucard"><div class="uh">This app</div><div class="big">${runs.length} <small>${plural(runs.length, "run", "runs", "runs")}</small></div><div class="ur">spent ≈ <b>${usd(spentApp)}</b></div><div class="ur">average ≈ <b>${usd(runs.length ? spentApp / runs.length : 0)}</b> per run</div></div>
+     <div class="ucard"><div class="uh">Tracking</div><div class="big">${Object.keys(S.accounts).length} <small>${plural(Object.keys(S.accounts).length, "account", "accounts", "accounts")}</small></div><div class="ur"><b>${vids}</b> videos stored</div><div class="ur">refreshing all ≈ <b>${usd(estimate(Object.keys(S.accounts), "profile") + estimate(Object.keys(S.accounts), "light"))}</b></div></div></div>
+     <div class="logbox">${rows || '<div style="padding:30px;text-align:center;color:var(--text3)">Nothing yet — no runs so far</div>'}</div>
+     <div class="sheet-actions"><button class="btn" id="lBal">Refresh balance</button>${bridge ? '<button class="btn" id="lFolder">Data folder</button>' : ""}</div>`, 940);
   o.querySelector(".sheet").style.height = "min(720px,100%)";
   requestAnimationFrame(() => requestAnimationFrame(() => o.querySelectorAll("[data-w]").forEach(i => i.style.width = i.dataset.w + "%")));
   o.querySelector("#lBal").onclick = async () => { await usage(); closeSheet(o); setTimeout(openLog, 200); };
   const f = o.querySelector("#lFolder"); if (f) f.onclick = () => bridge.reveal_data();
 }
 function openFaq() {
-  sheet(head("?", "Как это работает", "Коротко о каждой функции Views Tracker") + `<div class="faq">
-    <h4>📥 Откуда цифры</h4><p>Программа не заходит в твой TikTok. Данные собирают «actors» на <b>Apify</b>: <b>igolaizola</b> — видео (точные просмотры, лайки, комменты, репосты), <b>dami_studio</b> — профиль (подписчики, общие лайки, число видео). Если один сломался — сам включится запасной <b>clockworks</b> (дороже, но надёжный).</p>
-    <h4>👁 Тотал просмотров</h4><p>TikTok не показывает общие просмотры аккаунта — программа складывает просмотры всех видео. Пару видео (карусели, скрытые) TikTok не отдаёт — их просмотры не попадают в тотал, это видно в шапке аккаунта.</p>
-    <h4>💸 Экономный режим</h4><ul><li><b>Первый раз</b> — полный скан: все видео (≈ 2 цента за 70 видео).</li><li><b>Дальше</b> — только свежие видео (за 7 дн, минимум 10) + подписчики: ≈ 0,3 цента на акк. Старые видео берутся из памяти.</li><li><b>Раз в неделю</b> — снова полный скан для сверки.</li><li><b>«Полный»</b> режим — каждый раз все видео: точнее, но в 5–7 раз дороже.</li></ul>
-    <h4>⚡ Стрельнувшие старые видео</h4><p>Если общие лайки аккаунта выросли сильно больше, чем лайки на свежих видео — значит, «выстрелило» что-то старое. Программа сама делает полный скан и показывает это видео первым во вкладке <b>Растут</b>.</p>
-    <h4>🛡 Защита от трат и мусора</h4><ul><li><b>Лимит на запуск</b> — actor физически не потратит больше.</li><li>Автообновление не трогает акк, если он обновлялся недавно (15 мин).</li><li>Если просмотры видео вдруг «упали» — это сбой, программа оставит прошлые цифры.</li></ul>
-    <h4>🔁 Автообновление</h4><p>Слева внизу — интервал. Работает, пока окно программы открыто. <span style="white-space:nowrap"><b>⌘R</b></span> — обновить все вручную.</p>
-    <h4>🎞 Видео</h4><p>Плитки: ▶ просмотры, ♥ лайки, 💬 комменты, ↗ репосты. Зелёная метка — прирост с прошлой проверки. Наведи — увидишь описание, нажми — откроется в TikTok. Сортировка: <b>Новые / Топ / Растут</b>.</p>
-    <h4>≡ Журнал</h4><p>Каждый запуск: что обновлялось, какие actors, сколько строк и сколько $ ушло. Сверху — расход Apify за месяц и прогноз.</p></div>`, 740);
+  sheet(head("?", "How it works", "A quick tour of Views Tracker") + `<div class="faq">
+    <h4>📥 Where the numbers come from</h4><p>The app never logs into your TikTok. Data is collected by “actors” on <b>Apify</b>: <b>igolaizola</b> for videos (exact views, likes, comments, shares) and <b>dami_studio</b> for the profile (followers, total likes, video count). If one breaks, the backup <b>clockworks</b> kicks in automatically (pricier, but reliable).</p>
+    <h4>👁 Total views</h4><p>TikTok doesn’t show an account’s total views, so the app adds up the views of every video. A few videos (carousels, hidden) aren’t returned by TikTok — their views aren’t in the total; the account header shows how many.</p>
+    <h4>💸 Smart mode</h4><ul><li><b>First time</b> — a full scan of every video (≈ 2 cents per 70 videos).</li><li><b>After that</b> — only fresh videos (last 7 days, at least 10) plus followers: ≈ 0.3 cents per account. Older videos come from memory.</li><li><b>Once a week</b> — another full scan to stay exact.</li><li><b>Full</b> mode — all videos every time: more exact, but 5–7× pricier.</li></ul>
+    <h4>⚡ Old videos taking off</h4><p>If an account’s total likes grow much more than its fresh videos explain, an older video is blowing up. The app runs a full scan on its own and shows that video first under <b>Rising</b>.</p>
+    <h4>🔥 Virality & 💰 income</h4><p>The virality score (0–100) combines how far a video beats the account’s typical video, engagement, share rate and reach. Income is an estimate: views × share that qualifies × rate per 1,000, only for videos of 1 minute or longer. Use <b>Enter payout</b> on an account to calibrate it with what TikTok actually paid.</p>
+    <h4>🛡 Spending and bad data</h4><ul><li><b>Limit per run</b> — an actor physically can’t spend more.</li><li>Auto refresh skips accounts refreshed in the last 15 minutes.</li><li>If a video’s views suddenly “drop”, that’s a glitch — the app keeps the previous numbers.</li></ul>
+    <h4>🔁 Auto refresh</h4><p>Set the interval in ⚙ Settings. It runs while the app is open. <span style="white-space:nowrap"><b>⌘R</b></span> refreshes everything by hand.</p>
+    <h4>🎞 Videos</h4><p>Tiles show ▶ views, ♥ likes and income. The green badge is the gain since the last check. Hover (or tap on the phone) for virality and income; click (tap again) to open it in TikTok. Sort by <b>New / Top / Rising / 🔥</b>.</p>
+    <h4>≡ Log</h4><p>Every run: what was refreshed, which actors, how many rows and how much it cost. At the top — Apify spending this month and a forecast.</p></div>`, 740);
 }
 
 /* ================= label wrapping ================= */
@@ -1264,7 +1285,7 @@ async function boot() {
   if (NATIVE) {
     await new Promise(r => { if (window.pywebview && window.pywebview.api && window.pywebview.api.load) r(); else addEventListener("pywebviewready", r, { once: true }); });
     bridge = window.pywebview.api;
-    try { S = parseState(await bridge.load()); } catch (e) { toast("Не удалось прочитать данные: " + e); }
+    try { S = parseState(await bridge.load()); } catch (e) { toast("Could not read data: " + e); }
   } else S = load();
   render(); usage(); syncPull(true);
   setInterval(() => { if (document.visibilityState === "visible") syncPull(true); }, 5 * 60e3);
