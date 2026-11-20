@@ -234,6 +234,15 @@ svg.chart{width:100%;height:210px;display:block;overflow:visible}
 .vt .cap{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px;color:#fff;
   background:rgba(6,12,32,.78);opacity:0;transition:opacity .2s}
 @media (hover:hover){.vt:hover .cap{opacity:1}}
+.vt .inc{display:none;color:#8ef5a5;font-weight:600}
+@media (hover:none){
+  .vt .cm{display:none}
+  .vt .inc{display:inline}
+  .vt.show .cap{opacity:1}
+  .vt.show .tl,.vt.show .tr,.vt.show .who,.vt.show .bt,.vt.show .ph,.vt.show .mini{opacity:0}
+  .vt.show .cap .rw{bottom:26px}
+  .vt .cap::after{content:"ещё раз — открыть";position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:9.5px;font-weight:500;color:rgba(255,255,255,.5)}
+}
 .vt .tl,.vt .tr,.vt .who,.vt .bt{transition:opacity .2s}
 @media (hover:hover){.vt:hover .tl,.vt:hover .tr,.vt:hover .who,.vt:hover .bt,.vt:hover .ph{opacity:0}}
 .vt .who{position:absolute;left:7px;top:7px;z-index:2;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:rgba(10,132,255,.85);color:#fff;max-width:calc(100% - 60px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1014,7 +1023,7 @@ function vtileHtml(v, i, a) {
     <span class="ph">${ICON.play}</span>${v.cover ? `<img src="${esc(v.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
     ${a && view.acct ? (v.t > cut ? '<span class="tl new">новое</span>' : `<span class="tl">${v.t ? dstr(v.t * 1000) : ""}</span>`) : `<span class="who">@${esc(a.username)}</span>`}
     ${dv > 0 ? `<span class="tr">+${short(dv)}</span>` : ""}<span class="mini" style="--c:${vColor(x.score)}">🔥${x.score}</span>
-    <span class="bt"><span class="views">${ICON.play}${short(v.v)}${x.score >= 75 ? '<span class="fire">🔥</span>' : ""}</span><span class="sm"><span>♥ ${short(v.l)}</span><span>💬 ${short(v.c)}</span></span></span>
+    <span class="bt"><span class="views">${ICON.play}${short(v.v)}${x.score >= 75 ? '<span class="fire">🔥</span>' : ""}</span><span class="sm"><span>♥ ${short(v.l)}</span><span class="cm">💬 ${short(v.c)}</span><span class="inc">${m === null ? "" : m === false ? "<1 мин" : "≈ " + money(inc)}</span></span></span>
     <span class="cap" style="--c:${vColor(x.score)}"><span class="sc">${x.score}</span><span class="lb">${vLabel(x.score)}</span>
       <span class="rw"><span title="во столько раз больше просмотров, чем у обычного видео аккаунта">×${x.ratio.toFixed(1).replace(".", ",")}</span><span>${m === null ? "—" : m === false ? "&lt;1 мин" : "≈ " + money(inc)}</span></span></span></button>`;
 }
@@ -1085,7 +1094,13 @@ function overviewAction(b) {
 $("#toolbar").addEventListener("input", e => { if (e.target.id === "q") { view.q = e.target.value; view.shown = 60; clearTimeout(redrawBody.t); redrawBody.t = setTimeout(redrawBody, 120); } });
 function redrawBody() { const v = $("#view"); const y = v.scrollTop; v.innerHTML = view.acct ? accountHtml(S.accounts[view.acct]) : overviewHtml(); v.scrollTop = y; countUp(); segPills(v); renderBusy(); }
 $("#view").addEventListener("click", e => {
-  const t = e.target.closest("[data-url]"); if (t) return openUrl(t.dataset.url);
+  const t = e.target.closest("[data-url]");
+  if (t) {
+    // on touch screens the first tap shows virality + income, the second opens TikTok
+    if (matchMedia("(hover:none)").matches && !t.classList.contains("show")) { $$(".vt.show").forEach(x => x.classList.remove("show")); t.classList.add("show"); return; }
+    t.classList.remove("show"); return openUrl(t.dataset.url);
+  }
+  $$(".vt.show").forEach(x => x.classList.remove("show"));
   const o = e.target.closest("[data-open]"); if (o) return openAcct(o.dataset.open);
   const ob = e.target.closest("#asort button,[data-a='lightall'],[data-a='fullall']"); if (ob) return overviewAction(ob);
   const m = e.target.closest("#mseg button"); if (m) { view.metric = m.dataset.k; segSet(m.parentElement, view.metric); const c = m.closest(".card"); c.querySelector("svg.chart,.chart-empty").outerHTML = chart(S.accounts[view.acct].hist || [], view.metric); return; }
