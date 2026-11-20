@@ -360,7 +360,9 @@ svg.chart{width:100%;height:210px;display:block;overflow:visible}
 @media (max-width:760px){
   html,body{height:auto;overflow:auto}
   body{font-size:14px}
-  .app{flex-direction:column;height:auto;min-height:100vh;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));gap:10px}
+  .app{flex-direction:column;height:auto;min-height:100vh;padding:calc(env(safe-area-inset-top) + 14px) max(10px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));gap:10px}
+  body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:calc(env(safe-area-inset-top) + 8px);pointer-events:none;
+    background:linear-gradient(180deg,#060d24 0%,#060d24 calc(100% - 8px),rgba(6,13,36,0) 100%)}
   .glass{-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%)}
   .sidebar{width:auto;padding:14px;gap:12px;border-radius:24px}
   .accs{min-height:0;flex:none}
@@ -947,7 +949,7 @@ function updateToolbar() { const g = $("#vsort") || $("#asort"); if (g) segSet(g
 
 function overviewHtml() {
   const accs = Object.values(S.accounts);
-  if (!accs.length) return `<div class="empty"><div class="big">${ICON.film}</div><h2>${S.settings.token ? "Добавь первый аккаунт" : "Подключи Apify"}</h2><p>${S.settings.token ? "Впиши @username слева в «Добавить аккаунт». Программа сделает первый полный скан — все видео, подписчики и лайки (≈ 2 цента за 70 видео)." : "Открой ⚙ Настройки и вставь Personal API token с console.apify.com → Settings → API & Integrations."}</p>${S.settings.token ? "" : '<button class="btn blue" onclick="openSettings()">Открыть настройки</button>'}</div>`;
+  if (!accs.length) return `<div class="empty"><div class="big">${ICON.film}</div><h2>${S.settings.token ? "Добавь первый аккаунт" : "Подключи Apify"}</h2><p>${S.settings.token ? "Впиши @username в поле «Добавить аккаунт». Программа сделает первый полный скан — все видео, подписчики и лайки (≈ 2 цента за 70 видео)." : "Открой ⚙ Настройки и вставь Personal API token с console.apify.com → Settings → API & Integrations."}</p>${S.settings.token ? "" : '<button class="btn blue" onclick="openSettings()">Открыть настройки</button>'}</div>`;
   const t = { f: 0, h: 0, v: 0, c: 0, s: 0, n: 0 }, d = { f: 0, h: 0, v: 0, c: 0, s: 0, n: 0 }; let hasD = false;
   for (const a of accs) { const x = totals(a); for (const k in t) { t[k] += x[k]; const dd = d24(a, k); if (dd != null) { d[k] += dd; hasD = true; } } }
   const q = view.q.trim().toLowerCase();
