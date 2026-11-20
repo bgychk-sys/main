@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a1636">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Views Tracker">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<title>Views Tracker</title>
+<style>
+/* Layout: Print Finder «Полночь» — sidebar (add, accounts, options, main button) + main (toolbar, scrolling view, status bar). */
+:root{
+  --text:#f5f5f7; --text2:rgba(235,235,245,.66); --text3:rgba(235,235,245,.38);
+  --accent:#0a84ff; --accent-ink:#9ccaff; --green:#6ff08c; --red:#ff8a80; --gold:#ffc56b; --pink:#ff6ba6;
+  --glass:linear-gradient(140deg,rgba(255,255,255,.13),rgba(255,255,255,.04));
+  --glass-strong:rgba(30,44,86,.6);
+  --rim-a:rgba(255,255,255,.36); --rim-b:rgba(255,255,255,.04); --rim-c:rgba(255,255,255,.16);
+  --inner-top:rgba(255,255,255,.2); --shadow:0 12px 40px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.2);
+  --chip:rgba(255,255,255,.08); --chip-border:rgba(255,255,255,.14);
+  --row-hover:rgba(255,255,255,.06); --row-sel:rgba(10,132,255,.24);
+  --spring:cubic-bezier(.3,1.3,.5,1); --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;background:#0a1636}
+body{height:100%;overflow:hidden;color:var(--text);
+  background:linear-gradient(160deg,#060d24 0%,#0d2259 50%,#1b4fb8 100%);
+  font:13px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Helvetica Neue",sans-serif;
+  -webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input,select,textarea{font:inherit;color:inherit}
+input,textarea{user-select:text;-webkit-user-select:text}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.t,.lbl{display:inline-block;line-height:1.2;text-box:trim-both cap alphabetic;white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+
+.bg{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none}
+.blob{position:absolute;border-radius:50%}
+.b1{background:radial-gradient(closest-side,#2f80ff,rgba(47,128,255,0));width:70vmax;height:70vmax;left:-24vmax;bottom:-26vmax;opacity:.55}
+.b2{background:radial-gradient(closest-side,#22d3ee,rgba(34,211,238,0));width:56vmax;height:56vmax;right:-18vmax;top:-22vmax;opacity:.4}
+.b3{background:radial-gradient(closest-side,#1e3a8a,rgba(30,58,138,0));width:60vmax;height:60vmax;left:24vmax;top:4vmax;opacity:.45}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(5vmax,-3vmax) scale(1.06)}100%{transform:translate(-3vmax,4vmax) scale(.96)}}
+
+.glass{position:relative;background:var(--glass);border-radius:26px;box-shadow:var(--shadow),inset 0 1px 1px var(--inner-top);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%)}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(150deg,var(--rim-a),var(--rim-b) 38%,var(--rim-b) 62%,var(--rim-c));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.app{position:relative;z-index:1;display:flex;gap:14px;height:100%;padding:14px}
+
+/* ---------- sidebar */
+.sidebar{width:300px;flex:none;display:flex;flex-direction:column;padding:18px 16px 16px;gap:16px;min-height:0;animation:fadeIn .5s var(--ease) both;opacity:0}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;
+  background:linear-gradient(145deg,#5ac8fa,#0a84ff 55%,#5e5ce6);box-shadow:inset 0 1px 1px rgba(255,255,255,.6),0 6px 16px rgba(10,132,255,.4)}
+.logo svg{width:21px;height:21px}
+.brand h1{font-size:15.5px;font-weight:700;letter-spacing:-.2px;white-space:nowrap}
+.brand p{font-size:11.5px;color:var(--text2)}
+.round{flex:none;width:31px;height:31px;border-radius:50%;font-weight:700;font-size:14px;display:grid;place-items:center;
+  background:var(--chip);border:1px solid var(--chip-border);box-shadow:inset 0 1px 0 var(--inner-top);transition:all .15s}
+.round:hover{background:var(--accent);border-color:transparent;transform:translateY(-1px)}
+.round:active{transform:scale(.92)}
+.round svg{width:16px;height:16px}
+.brand .round:first-of-type{margin-left:auto}
+h3{font-size:10.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text2);margin-bottom:8px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline}
+.sec-head .n{font-size:11px;color:var(--accent-ink);font-weight:600}
+
+.addf{display:flex;gap:6px;align-items:center;height:38px;padding:0 4px 0 13px;border-radius:999px;background:rgba(0,0,0,.22);border:1px solid var(--chip-border);transition:border-color .2s}
+.addf:focus-within{border-color:rgba(100,176,255,.6)}
+.addf input{flex:1;min-width:0;border:0;outline:0;background:none}
+.addf input::placeholder{color:var(--text3)}
+.addf .round{width:30px;height:30px;background:var(--accent);border:0;font-size:18px;font-weight:500}
+
+.accs{flex:1;min-height:100px;display:flex;flex-direction:column}
+.scroll{overflow:auto;flex:1;margin:0 -8px;padding:0 4px}
+.acc{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 10px;border-radius:16px;transition:background .2s,transform .15s;position:relative}
+.acc:hover{background:var(--row-hover)}
+.acc:active{transform:scale(.98)}
+.acc.on{background:var(--row-sel)}
+.acc .info{flex:1;min-width:0}
+.acc .u{display:block;font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc .s{display:block;font-size:11.5px;color:var(--text2);white-space:nowrap}
+.acc .s b{color:var(--text);font-weight:600}
+.acc .spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent-ink);animation:spin .8s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.acc.enter{animation:pop .45s var(--spring) both}
+.avatar{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:700;font-size:14px;color:#fff;object-fit:cover;
+  background:linear-gradient(145deg,hsl(var(--h,210) 85% 62%),hsl(calc(var(--h,210) + 40) 80% 48%));
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.5),0 3px 10px rgba(0,0,0,.3)}
+.avatar.all{border-radius:11px;background:linear-gradient(145deg,#5ac8fa,#0a84ff 55%,#5e5ce6)}
+.avatar.all svg{width:17px;height:17px}
+
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;gap:8px}
+.sub{font-size:10.5px;color:var(--text3);margin-top:1px}
+.switch{appearance:none;-webkit-appearance:none;flex:none;width:42px;height:25px;border-radius:999px;position:relative;cursor:pointer;background:rgba(255,255,255,.2);transition:background .2s}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .22s var(--spring)}
+.switch:checked{background:#34c759}
+.switch:checked::after{transform:translateX(17px)}
+.seg{position:relative;display:flex;padding:3px;border-radius:999px;background:rgba(0,0,0,.2);gap:2px;isolation:isolate}
+.seg button{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 12px;border-radius:999px;font-size:12.5px;font-weight:500;color:var(--text2);transition:color .25s;white-space:nowrap}
+.seg button.on{color:var(--text)}
+.seg .pill{position:absolute;z-index:0;top:3px;left:0;width:0;border-radius:999px;background:rgba(255,255,255,.16);
+  box-shadow:0 2px 8px rgba(0,0,0,.15),inset 0 1px 0 var(--inner-top);transition:transform .38s var(--spring),width .38s var(--spring)}
+.seg.mini button{height:26px;padding:0 10px;font-size:12px}
+.pick{display:flex;align-items:center;gap:6px;height:31px;padding:0 4px 0 4px;border-radius:999px;background:var(--chip);border:1px solid var(--chip-border);box-shadow:inset 0 1px 0 var(--inner-top);font-size:12px;color:var(--text2)}
+.pick select{appearance:none;-webkit-appearance:none;border:0;outline:0;font:inherit;font-weight:600;color:var(--text);cursor:pointer;
+  padding:4px 22px 4px 9px;border-radius:999px;background:rgba(255,255,255,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23bbb' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 8px center}
+.pick select option{background:#14244f;color:#fff}
+.est{font-size:11.5px;color:var(--text2);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-top:2px}
+.est b{color:var(--text)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:999px;height:36px;padding:0 15px;font-weight:600;font-size:13px;background:var(--chip);border:1px solid var(--chip-border);
+  box-shadow:inset 0 1px 0 var(--inner-top),0 1px 3px rgba(0,0,0,.1);transition:transform .15s,opacity .15s,background .15s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)} .btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;pointer-events:none}
+.btn.blue.running{opacity:1!important;background:linear-gradient(110deg,#3d9bff,#0a6cff,#3d9bff);background-size:200% 100%;animation:flow 1.4s linear infinite}
+.btn.blue{background:var(--accent);color:#fff;border-color:transparent;box-shadow:inset 0 1px 1px rgba(255,255,255,.4),0 4px 14px rgba(10,132,255,.35)}
+.btn.danger:hover{background:rgba(255,59,48,.35)}
+.btn.icon{width:36px;padding:0}
+.btn svg{width:15px;height:15px;flex:none;display:block}
+.primary{width:100%;padding:13px;font-size:14.5px;color:#fff;border:0;
+  background:linear-gradient(180deg,rgba(80,165,255,.98),rgba(10,120,255,.98));
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.55),inset 0 -2px 6px rgba(0,40,120,.25),0 8px 22px rgba(10,132,255,.42)}
+.primary.running{background:linear-gradient(110deg,rgba(80,165,255,.75),rgba(10,120,255,.95),rgba(80,165,255,.75));background-size:200% 100%;animation:flow 1.4s linear infinite;pointer-events:none}
+
+/* ---------- main */
+main{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;animation:fadeIn .5s .08s var(--ease) both;opacity:0}
+.toolbar{display:flex;align-items:center;gap:8px;padding:8px;border-radius:999px;min-height:52px}
+.toolbar>*{flex:none}
+.search{flex:1 1 auto!important;min-width:0;display:flex;align-items:center;gap:8px;padding:0 14px;height:36px;border-radius:999px;
+  background:var(--chip);border:1px solid var(--chip-border);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}
+.search svg{width:15px;height:15px;opacity:.55;flex:none}
+.search input{flex:1;border:0;outline:0;background:none;min-width:0;height:100%;padding-top:1px}
+.search input::placeholder{color:var(--text3)}
+@media (max-width:1240px){.toolbar .lbl{display:none}.toolbar .btn:has(.lbl){padding:8px 10px}}
+.crumb{display:flex;align-items:center;gap:8px;padding-left:6px;font-weight:600;font-size:14px;max-width:260px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+.view{flex:1;min-height:0;overflow:auto;padding:8px 12px 18px;margin:-8px -12px -6px;scroll-behavior:smooth}
+.view .glass{box-shadow:0 8px 22px rgba(0,0,0,.22),0 1px 3px rgba(0,0,0,.12),inset 0 1px 1px var(--inner-top)}
+.view.in-r,.view.in-l{animation:viewIn .32s var(--ease) both}
+@keyframes viewIn{from{opacity:0}to{opacity:1}}
+@keyframes inR{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes inL{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+@keyframes slideR{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes flow{to{background-position:-200% 0}}
+.stagger>*{animation:pop .4s var(--spring) both;animation-delay:calc(var(--i,0) * 20ms)}
+.stagger>.glass{animation-name:fadeIn;opacity:0}
+.stagger>*:nth-child(n+25){animation:none;opacity:1}
+
+.hero{display:flex;align-items:center;gap:16px;padding:18px 20px;margin-bottom:12px}
+.hero .avatar{width:64px;height:64px;font-size:24px}
+.hero h2{font-size:21px;font-weight:700;letter-spacing:-.3px}
+.hero p{color:var(--text2);font-size:12.5px;margin-top:2px}
+.hero .meta{margin-left:auto;text-align:right;font-size:11.5px;color:var(--text2);line-height:1.6}
+.hero .meta b{color:var(--text);font-weight:600}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.badge{display:inline-flex;align-items:center;height:19px;font-size:10.5px;font-weight:600;padding:0 8px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--text2)}
+.badge.hot{color:#ffb3d1;background:rgba(255,45,120,.22)} .badge.warn{color:var(--gold);background:rgba(255,159,10,.2)}
+.badge.bad{color:var(--red);background:rgba(255,59,48,.2)} .badge.ok{color:var(--green);background:rgba(52,199,89,.2)}
+
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.tile{padding:14px 16px;border-radius:22px}
+.tile .k{font-size:10.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text2)}
+.tile .v{font-size:24px;font-weight:700;letter-spacing:-.5px;margin-top:5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tile .d{margin-top:6px;font-size:11px;color:var(--text3);white-space:nowrap}
+.dp{display:inline-flex;align-items:center;vertical-align:middle;height:17px;font-weight:600;padding:0 7px;border-radius:999px;margin-right:3px}
+.dp.up{color:var(--green);background:rgba(52,199,89,.2)} .dp.down{color:var(--red);background:rgba(255,59,48,.2)} .dp.zero{color:var(--text2);background:rgba(255,255,255,.08)}
+
+.card{padding:16px 18px 18px;margin-bottom:12px}
+.card-head{display:flex;align-items:center;gap:10px;min-height:30px}
+.card-head[data-toggle]{cursor:pointer}
+.chev{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--chip);border:1px solid var(--chip-border);transition:transform .35s var(--spring),background .15s}
+.card-head:hover .chev{background:rgba(255,255,255,.16)}
+.chev svg{width:13px;height:13px}
+.card.closed .chev{transform:rotate(-90deg)}
+.cbody{display:grid;grid-template-rows:1fr;transition:grid-template-rows .38s var(--ease)}
+.card.closed .cbody{grid-template-rows:0fr}
+.cin{min-height:0;overflow:hidden;margin:0 -6px}
+.cpad{padding:12px 6px 4px}
+.card-head h3{margin:0}
+.card-head .note{font-size:11.5px;color:var(--text3);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+svg.chart{width:100%;height:210px;display:block;overflow:visible}
+.chart .line{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.1s var(--ease) .1s forwards}
+.chart .area{opacity:0;animation:fadeIn .8s .5s forwards}
+.chart .dot{opacity:0;animation:fadeIn .3s 1s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadeIn{to{opacity:1}}
+.chart-empty{height:120px;display:grid;place-items:center;text-align:center;color:var(--text3);font-size:12.5px}
+
+/* accounts overview grid */
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.acard{position:relative;padding:14px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid var(--chip-border);box-shadow:inset 0 1px 0 var(--inner-top);
+  cursor:pointer;transition:transform .2s var(--spring),background .2s;text-align:left;width:100%}
+.acard:hover{transform:translateY(-3px);background:rgba(255,255,255,.1)}
+.acard .top{display:flex;align-items:center;gap:10px}
+.acard .u{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acard .nk{font-size:11.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acard .st3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.acard .st3 div{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+.acard .st3 b{display:block;font-size:16px;color:var(--text);letter-spacing:-.3px;text-transform:none;margin:2px 0 3px}
+.acard .st3 .dp{font-size:10.5px;letter-spacing:0;text-transform:none}
+.spark{width:100%;height:38px;margin-top:10px;display:block}
+
+/* video tiles */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.vt{position:relative;aspect-ratio:9/14;border-radius:16px;overflow:hidden;cursor:pointer;display:block;width:100%;
+  background:linear-gradient(160deg,hsl(var(--h,220) 45% 30%),hsl(calc(var(--h,220) + 30) 55% 16%));
+  box-shadow:0 6px 18px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.15);transition:transform .25s var(--spring);content-visibility:auto;contain-intrinsic-size:auto 180px}
+@media (hover:hover){.vt:hover{transform:translateY(-4px) scale(1.03);outline:1.5px solid rgba(156,202,255,.6);outline-offset:-1.5px}}
+.vt:active{transform:scale(.97)}
+.vt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+@media (hover:hover){.vt:hover img{transform:scale(1.06)}}
+.vt .ph{position:absolute;inset:0;display:grid;place-items:center;opacity:.35}
+.vt .ph svg{width:30px;height:30px}
+.vt::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,transparent 26%,transparent 50%,rgba(0,0,0,.82) 100%);pointer-events:none}
+.vt .tl,.vt .tr{position:absolute;top:7px;z-index:2;display:inline-flex;align-items:center;height:18px;font-size:10px;font-weight:700;padding:0 7px;border-radius:999px}
+.vt .tl{left:7px;background:rgba(0,0,0,.55);color:#fff}
+.vt .tl.new{background:rgba(34,211,238,.85);color:#032}
+.vt .tr{right:7px;background:rgba(52,199,89,.88);color:#04210c}
+.vt .bt{position:absolute;left:8px;right:8px;bottom:7px;z-index:2;text-align:left}
+.vt .views{display:flex;align-items:center;gap:4px;font-weight:700;font-size:13.5px;letter-spacing:-.2px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.vt .views svg{width:11px;height:11px;flex:none}
+.vt .sm{display:flex;gap:8px;font-size:10.5px;color:rgba(255,255,255,.78);margin-top:1px;white-space:nowrap;overflow:hidden}
+.vt .cap{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px;color:#fff;
+  background:rgba(6,12,32,.78);opacity:0;transition:opacity .2s}
+@media (hover:hover){.vt:hover .cap{opacity:1}}
+.vt .tl,.vt .tr,.vt .who,.vt .bt{transition:opacity .2s}
+@media (hover:hover){.vt:hover .tl,.vt:hover .tr,.vt:hover .who,.vt:hover .bt,.vt:hover .ph{opacity:0}}
+.vt .who{position:absolute;left:7px;top:7px;z-index:2;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:rgba(10,132,255,.85);color:#fff;max-width:calc(100% - 60px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.more{text-align:center;padding:12px 0 2px}
+.vt .cap .sc{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:18px;font-weight:700;border:2.5px solid var(--c);box-shadow:0 0 18px color-mix(in srgb,var(--c) 45%,transparent)}
+.vt .cap .lb{font-size:11.5px;font-weight:600;color:var(--c)}
+.vt .cap .rw{position:absolute;left:8px;right:8px;bottom:9px;display:flex;justify-content:space-between;font-size:11.5px;font-weight:600}
+.vt .cap .rw span:last-child{color:#8ef5a5}
+.vt .fire{margin-left:3px;font-size:12px}
+.acard .vi{display:flex;gap:10px;margin-top:3px;font-size:11.5px;font-weight:600;color:var(--green)}
+.kgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kbox{padding:13px 14px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid var(--chip-border);box-shadow:inset 0 1px 0 var(--inner-top);min-width:0;display:flex;flex-direction:column;gap:6px}
+.kbox .kh{font-size:10.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text2)}
+.kbox .kv{font-size:21px;font-weight:700;letter-spacing:-.3px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kbox .kv small{font-size:11.5px;font-weight:500;color:var(--text2);letter-spacing:0}
+.kbox>small,.kbox .krow small{font-size:11.5px;color:var(--text2);line-height:1.4}
+.kbox small b{color:var(--text)}
+.kbox .krow{display:flex;align-items:center;gap:12px}
+.kbox .krow b{display:block;font-size:15px;margin-bottom:2px}
+.kbox.money .kv{color:#8ef5a5}
+.kbox .btn{align-self:flex-start;height:30px;font-size:12px;padding:0 12px;margin-top:2px}
+.ring{flex:none;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--c) calc(var(--v)*1%),rgba(255,255,255,.12) 0)}
+.ring::after{content:"";position:absolute;inset:5px;border-radius:50%;background:rgba(18,30,66,.92);box-shadow:inset 0 1px 0 var(--inner-top)}
+.ring span{position:relative;z-index:1;font-weight:700;font-size:17px;font-variant-numeric:tabular-nums}
+@media (max-width:1180px){.kgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text2);text-align:center;padding:60px 30px;min-height:100%}
+.empty .big{width:72px;height:72px;border-radius:22px;display:grid;place-items:center;background:var(--chip);border:1px solid var(--chip-border);animation:float 4s ease-in-out infinite}
+.empty .big svg{width:34px;height:34px;opacity:.7}
+@keyframes float{50%{transform:translateY(-6px)}}
+.empty h2{font-size:17px;color:var(--text);font-weight:650}
+.empty p{max-width:420px;line-height:1.5}
+
+/* ---------- status bar */
+.statusbar{display:flex;align-items:center;gap:12px;padding:9px 10px 9px 18px;border-radius:999px}
+.progress{width:140px;flex:none;height:6px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden}
+#bar{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,#5ac8fa,#0a84ff);transition:width .4s ease,opacity .3s;opacity:.35}
+.running #bar{opacity:1;background:linear-gradient(90deg,#5ac8fa,#0a84ff,#5ac8fa);background-size:200% 100%;animation:flow 1.2s linear infinite}
+.err #bar{background:#ff453a;opacity:.8}
+#status{flex:1;min-width:0;font-size:12.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mode{flex:none;display:flex;align-items:center;gap:7px;height:24px;font-size:11px;font-weight:600;padding:0 10px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--text2);cursor:pointer;transition:background .2s}
+.mode:hover{background:rgba(255,255,255,.18)}
+.mode.ok{background:rgba(52,199,89,.2);color:var(--green)}
+.mode.warn{background:rgba(255,159,10,.2);color:var(--gold)}
+.mode .m{width:46px;height:4px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden}
+.mode .m i{display:block;height:100%;background:currentColor;border-radius:999px;transition:width .6s var(--ease)}
+
+.toast{position:fixed;left:50%;bottom:78px;transform:translate(-50%,20px);opacity:0;z-index:30;padding:10px 18px;border-radius:999px;
+  font-weight:500;transition:all .3s var(--spring);pointer-events:none;--glass:rgba(20,34,72,.92);max-width:80vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- sheets */
+.overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:26px;
+  background:rgba(2,6,20,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadeIn .2s ease both;opacity:0}
+.overlay.closing{animation:fadeOut .18s ease forwards}
+.overlay.closing .sheet{animation:sink .18s ease forwards}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+@keyframes sink{to{opacity:0;transform:translateY(10px) scale(.98)}}
+.sheet{width:min(640px,100%);max-height:100%;display:flex;flex-direction:column;padding:22px 22px 18px;border-radius:30px;
+  --glass:linear-gradient(140deg,rgba(28,44,92,.95),rgba(12,22,52,.95));animation:rise .34s var(--spring) both}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.sheet-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.sheet-head .icon{width:44px;height:44px;border-radius:14px;flex:none;display:grid;place-items:center;font-size:20px;font-weight:700;
+  background:linear-gradient(145deg,#5ac8fa,#0a84ff 55%,#5e5ce6);box-shadow:inset 0 1px 1px rgba(255,255,255,.6),0 6px 16px rgba(10,132,255,.3)}
+.sheet-head .icon.green{background:linear-gradient(145deg,#34c759,#30b0c7)}
+.sheet-head .icon.red{background:linear-gradient(145deg,#ff6b5e,#ff2d55)}
+.sheet-head h2{font-size:19px;font-weight:700;letter-spacing:-.2px}
+.sheet-head p{color:var(--text2);font-size:12.5px;margin-top:3px;line-height:1.45}
+.x{margin-left:auto;flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--chip);border:1px solid var(--chip-border);font-size:15px;line-height:1;transition:all .15s}
+.x:hover{background:var(--row-hover);transform:rotate(90deg)}
+.sheet-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.sheet-actions .sp{flex:1}
+.form{display:flex;flex-direction:column;gap:18px;overflow:auto;padding-right:4px}
+.group h4{font-size:10.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--accent-ink);margin-bottom:8px}
+.field label{display:block;font-weight:600;font-size:13px;margin-bottom:4px}
+.field .hint{font-size:12px;color:var(--text2);margin-bottom:7px;line-height:1.45}
+.field input,.field textarea{width:100%;height:38px;border-radius:12px;border:1px solid var(--chip-border);background:rgba(0,0,0,.25);padding:0 12px;outline:0;font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+.field textarea{height:70px;padding:8px 12px;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:rgba(100,176,255,.6)}
+.field .res{font-size:12px;margin-top:6px;color:var(--text2);min-height:16px}
+.res.ok{color:var(--green)} .res.bad{color:var(--red)}
+.rowx{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07);font-size:12.5px}
+.rowx:first-of-type{border-top:0}
+.rowx .l{min-width:0}
+.stepper{display:flex;align-items:center;gap:2px;border-radius:999px;background:var(--chip);border:1px solid var(--chip-border);padding:2px;flex:none}
+.stepper button{display:grid;place-items:center;width:25px;height:23px;border-radius:999px;font-size:15px;font-weight:600}
+.stepper button:hover{background:var(--row-hover)}
+.stepper>span{display:grid;place-items:center;min-width:44px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums;font-size:12px}
+.custom{display:flex;gap:6px;align-items:center}
+.custom input{width:180px;height:31px;border-radius:999px;border:1px solid var(--chip-border);background:rgba(0,0,0,.25);padding:0 12px;outline:0;font-size:12px}
+.usage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.ucard{padding:13px 14px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid var(--chip-border);box-shadow:inset 0 1px 0 var(--inner-top);min-width:0}
+.ucard .uh{font-weight:600;font-size:12.5px;margin-bottom:6px}
+.ucard .big{font-size:20px;font-weight:700;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.ucard .big small{font-size:12px;font-weight:500;color:var(--text2)}
+.ucard .meter{height:5px;border-radius:999px;background:rgba(255,255,255,.12);margin:7px 0 8px;overflow:hidden}
+.ucard .meter i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#34c759,#30b0c7);transition:width .8s var(--ease)}
+.ucard .meter i.warn{background:linear-gradient(90deg,#ff9f0a,#ff453a)}
+.ucard .ur{font-size:11.5px;color:var(--text2);line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ucard .ur b{color:var(--text);font-weight:600}
+.logbox{flex:1;min-height:200px;overflow:auto;border-radius:16px;background:rgba(0,0,0,.28);border:1px solid var(--chip-border);padding:6px 4px;user-select:text;-webkit-user-select:text}
+.lg{display:flex;gap:10px;padding:7px 10px;border-radius:10px;align-items:flex-start;font-size:12px}
+.lg:hover{background:rgba(255,255,255,.05)}
+.lg .t{color:var(--text3);flex:none;width:86px;font-variant-numeric:tabular-nums}
+.lg .k{flex:none;width:78px;text-align:center;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:999px}
+.k-light{background:rgba(10,132,255,.25);color:var(--accent-ink)} .k-full{background:rgba(94,92,230,.32);color:#c9c7ff} .k-auto{background:rgba(52,199,89,.22);color:var(--green)}
+.lg .m{flex:1;min-width:0;color:var(--text);line-height:1.45}
+.lg .m small{display:block;color:var(--text2)}
+.lg .c{flex:none;font-weight:600;font-variant-numeric:tabular-nums}
+.lg.bad .m{color:var(--red)}
+.faq{overflow:auto;padding:0 8px 6px 2px;user-select:text;-webkit-user-select:text}
+.faq h4{font-size:13.5px;font-weight:650;margin:16px 0 5px}
+.faq h4:first-child{margin-top:2px}
+.faq p,.faq li{color:var(--text2);font-size:12.8px;line-height:1.55}
+.faq ul{padding-left:18px;margin-top:3px}
+.faq b{color:var(--text);font-weight:600}
+
+::-webkit-scrollbar{width:8px} ::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+@media (max-width:1180px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.vt .mini{display:none;position:absolute;right:6px;top:6px;z-index:2;height:18px;align-items:center;padding:0 6px;border-radius:999px;font-size:10px;font-weight:700;color:#fff;background:color-mix(in srgb,var(--c) 75%,#000)}
+@media (hover:none){.vt .mini{display:inline-flex}.vt .tr{top:28px}}
+.mode.sync.off{opacity:.6}
+@media (max-width:760px){
+  html,body{height:auto;overflow:auto}
+  body{font-size:14px}
+  .app{flex-direction:column;height:auto;min-height:100vh;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));gap:10px}
+  .glass{-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%)}
+  .sidebar{width:auto;padding:14px;gap:12px;border-radius:24px}
+  .accs{min-height:0;flex:none}
+  .accs .sec-head{margin-bottom:0}
+  .accs .scroll{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;flex:none;margin:0 -14px;padding:0 14px 2px;scrollbar-width:none}
+  .accs .scroll::-webkit-scrollbar{display:none}
+  .acc{flex:none;width:auto;max-width:210px;padding:7px 12px 7px 7px;background:rgba(255,255,255,.06)}
+  .opts,.est{display:none}
+  main{gap:10px}
+  .toolbar{flex-wrap:wrap;border-radius:22px;padding:8px;row-gap:8px}
+  .toolbar .crumb{flex:1 1 auto;min-width:0}
+  .toolbar .search{order:10;flex:1 1 100%!important}
+  .toolbar .seg{order:11;flex:1 1 100%}
+  .toolbar .seg button{flex:1}
+  .toolbar .lbl{display:none}
+  .toolbar .btn:has(.lbl){width:36px;padding:0}
+  .view{overflow:visible;padding:0;margin:0;flex:none}
+  .tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .tile{padding:11px 12px;border-radius:18px}
+  .tile .v{font-size:18px}
+  .tile .k{font-size:9.5px;letter-spacing:.3px}
+  .tile .d{font-size:10px}
+  .hero{flex-wrap:wrap;padding:14px;gap:12px}
+  .hero .avatar{width:52px;height:52px}
+  .hero .meta{margin-left:0;text-align:left;width:100%}
+  .hero>div:not(.meta){flex:1 1 0;min-width:0}
+  .hero h2{font-size:18px}
+  .hero .badges .badge{font-size:10px}
+  .card{padding:14px}
+  .card-head .note{display:none}
+  .card-head{flex-wrap:wrap}
+  .card-head .seg{order:3;flex:1 1 100%;overflow-x:auto}
+  .kgrid{grid-template-columns:1fr 1fr;gap:8px}
+  .kbox{padding:11px 12px}
+  .kbox .kv{font-size:18px}
+  .kbox .krow{flex-direction:column;align-items:flex-start;gap:6px}
+  .kbox .kv{white-space:normal}
+  .kbox .kv small{display:block;margin-top:2px;white-space:normal}
+  .kbox .btn{white-space:normal;height:auto;min-height:30px;padding:6px 10px;max-width:100%;text-align:left}
+  .card-head h3{flex:1}
+  .agrid{grid-template-columns:1fr}
+  .vgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .vt{border-radius:13px}
+  .statusbar{flex-wrap:wrap;border-radius:22px;padding:10px 12px;gap:8px}
+  .statusbar .progress{flex:1 1 100%;width:auto}
+  #status{flex:1 1 100%}
+  .overlay{padding:10px;align-items:flex-end}
+  .sheet{width:100%!important;max-height:90vh;padding:18px 16px calc(16px + env(safe-area-inset-bottom));border-radius:26px}
+  .usage{grid-template-columns:1fr}
+  .rowx{flex-wrap:wrap}
+  input,select,textarea{font-size:16px!important}
+  .toast{bottom:calc(20px + env(safe-area-inset-bottom));white-space:normal;text-align:center;border-radius:18px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <aside class="glass sidebar">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg></div>
+      <div><h1>Views Tracker</h1><p>TikTok · Apify</p></div>
+      <button class="round" id="setBtn" title="Настройки"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+      <button class="round" id="logBtn" title="Журнал запусков и расход"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg></button>
+      <button class="round" id="faqBtn" title="Как это работает">?</button>
+    </div>
+
+    <section>
+      <h3>Добавить аккаунт</h3>
+      <form class="addf" id="addForm"><input id="addInput" placeholder="@username или ссылка" autocomplete="off" spellcheck="false"><button class="round" title="Добавить"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></form>
+    </section>
+
+    <section class="accs">
+      <div class="sec-head"><h3>Аккаунты</h3><span class="n" id="accN"></span></div>
+      <div class="scroll" id="accList"></div>
+    </section>
+
+    <section class="opts">
+      <div class="opt"><span>Режим<div class="sub" id="modeSub"></div></span><div class="seg mini" id="optMode"><button data-k="smart">Экономный</button><button data-k="full">Полный</button></div></div>
+      <div class="opt"><span>Автообновление<div class="sub">пока окно открыто</div></span><label class="pick"><select id="optAuto"></select></label></div>
+    </section>
+
+    <div class="est" id="est"></div>
+  </aside>
+
+  <main>
+    <div class="glass toolbar" id="toolbar"></div>
+    <div class="view" id="view"></div>
+    <div class="glass statusbar" id="statusbar">
+      <div class="progress"><div id="bar"></div></div>
+      <span id="status">Готов к работе</span>
+      <span class="mode" id="spendChip" title="Расход Apify за месяц — открыть журнал"></span>
+      <span class="mode" id="autoChip" title="Автообновление — открыть настройки"></span>
+      <span class="mode sync" id="syncChip" title="Синхронизация через Apify — нажми, чтобы синхронизировать сейчас"></span>
+    </div>
+  </main>
+</div>
+<div class="glass toast" id="toast"></div>
+<div id="layer"></div>
+
+<script>
+"use strict";
+const NATIVE = false; // vt_app.py switches this on inside the Mac window
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const now = () => Date.now();
+const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+const ICON = {
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>',
+  heart: "♥", refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>',
+  scan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  grid: '<svg viewBox="0 0 24 24" fill="#fff"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>',
+  film: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M10 9.5v5l4-2.5z" fill="#fff"/></svg>',
+};
+
+/* ================= storage ================= */
+const LS = "vtmac.v1";
+const DEF = {
+  token: "", mode: "smart", autoMin: 0, freshDays: 7, freshMin: 10, fullEveryDays: 7,
+  sync: true, spikeFull: true, minGapMin: 15, maxChargeRun: 0.5, rpm: 0.5, qualPct: 50, incMinOnly: true,
+  videoActor: "igolaizola/tiktok-scraper", profileActor: "dami_studio/tiktok-scraper", backupActor: "clockworks/tiktok-scraper",
+  customInput: '{"profiles": {{profiles}}, "maxItems": {{limit}}}'
+};
+function parseState(txt) {
+  try { const s = JSON.parse(txt || "null"); if (s && typeof s === "object") return { settings: { ...DEF, ...s.settings }, accounts: s.accounts || {}, runs: s.runs || [], meta: s.meta || {} }; } catch (e) {}
+  return { settings: { ...DEF }, accounts: {}, runs: [], meta: {} };
+}
+let S = parseState(null);
+let bridge = null;
+function load() { return parseState(localStorage.getItem(LS)); }
+let saveT;
+function save() {
+  queuePush();
+  if (!bridge) { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) { toast("Не удалось сохранить: " + e.message); } return; }
+  clearTimeout(saveT); saveT = setTimeout(() => bridge.save(JSON.stringify(S)).catch(e => toast("Не удалось сохранить: " + e)), 250);
+}
+
+/* ================= helpers ================= */
+function fmt(n) { n = +n || 0; const a = Math.abs(n); if (a >= 1e9) return (n / 1e9).toFixed(a >= 1e10 ? 0 : 1).replace(".", ",") + " млрд"; if (a >= 1e6) return (n / 1e6).toFixed(a >= 1e7 ? 1 : 2).replace(".", ",") + " млн"; if (a >= 1e4) return (n / 1e3).toFixed(a >= 1e5 ? 0 : 1).replace(".", ",") + " тыс"; return Math.round(n).toLocaleString("ru-RU"); }
+function short(n) { n = +n || 0; const a = Math.abs(n); if (a >= 1e6) return (n / 1e6).toFixed(a >= 1e7 ? 0 : 1).replace(".", ",") + "M"; if (a >= 1e4) return Math.round(n / 1e3) + "K"; if (a >= 1e3) return (n / 1e3).toFixed(1).replace(".", ",").replace(",0", "") + "K"; return String(Math.round(n)); }
+const full = n => Math.round(+n || 0).toLocaleString("ru-RU");
+function dpill(n) { if (n == null || !isFinite(n)) return ""; if (n === 0) return '<span class="dp zero">±0</span>'; return `<span class="dp ${n > 0 ? "up" : "down"}">${n > 0 ? "+" : "−"}${fmt(Math.abs(n))}</span>`; }
+const usd3 = n => "$" + (n >= 1 ? n.toFixed(2) : n.toFixed(3));
+const usd = n => "$" + (n >= 1 ? n.toFixed(2) : n >= 0.1 ? n.toFixed(3) : n.toFixed(4));
+function ago(t) { if (!t) return "никогда"; const m = Math.round((now() - t) / 60000); if (m < 1) return "только что"; if (m < 60) return m + " мин назад"; const h = Math.round(m / 60); if (h < 24) return h + " ч назад"; return Math.round(h / 24) + " дн назад"; }
+const dstr = t => new Date(t).toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
+const dtstr = t => new Date(t).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+function plural(n, a, b, c) { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? a : m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20) ? b : c; }
+function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 2800); }
+function parseNames(txt) {
+  const out = [];
+  for (const raw of String(txt).split(/[\s,;]+/)) { if (!raw) continue; const m = raw.match(/tiktok\.com\/@([A-Za-z0-9._]+)/i); const n = m ? m[1] : raw.replace(/^@/, ""); if (/^[A-Za-z0-9._]{2,30}$/.test(n)) out.push(n.toLowerCase()); }
+  return [...new Set(out)];
+}
+function openUrl(u) { if (!/^https:\/\//.test(u)) return; if (bridge) bridge.open_url(u); else window.open(u, "_blank", "noopener"); }
+
+/* ================= Apify ================= */
+const API = "https://api.apify.com/v2";
+async function api(path, opt = {}) {
+  let status, txt;
+  if (bridge) {
+    const r = await bridge.apify(opt.method || "GET", path, opt.body || null, S.settings.token.trim());
+    if (r.error) throw new Error("нет связи с Apify (" + r.error + ")");
+    status = r.status; txt = r.text;
+  } else {
+    let r; try { r = await fetch(API + path, { ...opt, headers: { Authorization: "Bearer " + S.settings.token.trim(), "Content-Type": "application/json" } }); }
+    catch (e) { throw new Error("нет связи с Apify (" + e.message + ")"); }
+    status = r.status; txt = await r.text();
+  }
+  let j = null; try { j = JSON.parse(txt); } catch (e) {}
+  if (status < 200 || status >= 300) { if (status === 401) throw new Error("неверный токен Apify"); throw new Error((j && j.error && j.error.message) || "Apify HTTP " + status); }
+  return j;
+}
+const DONE = ["SUCCEEDED", "FAILED", "ABORTED", "TIMED-OUT"];
+let RUN_POLL_MS = 3000;
+async function runActor(actor, input, maxUsd, label) {
+  const id = encodeURIComponent(actor.trim().replace("/", "~"));
+  const run = (await api(`/acts/${id}/runs?memory=1024&timeout=900&maxTotalChargeUsd=${maxUsd.toFixed(4)}`, { method: "POST", body: JSON.stringify(input) })).data;
+  let r = run; const t0 = now();
+  while (!DONE.includes(r.status)) {
+    await sleep(RUN_POLL_MS); setStatus(`${label} · ${Math.round((now() - t0) / 1000)} с`, "running");
+    r = (await api("/actor-runs/" + run.id)).data;
+    if (now() - t0 > 960e3) throw new Error("Apify не ответил за 16 минут");
+  }
+  const items = await api(`/datasets/${r.defaultDatasetId}/items?clean=1&format=json`);
+  await sleep(RUN_POLL_MS / 2); try { r = (await api("/actor-runs/" + run.id)).data; } catch (e) {}
+  return { status: r.status, items: Array.isArray(items) ? items : [], usd: +r.usageTotalUsd || 0, runId: run.id };
+}
+const PRESETS = {
+  "igolaizola/tiktok-scraper": { label: "igolaizola — видео, точные цифры (~$0.30/1000)", perVideo: 0.0003,
+    videos: (profiles, limit) => ({ profiles, maxVideosPerInput: limit, profileVideoSort: "latest" }) },
+  "dami_studio/tiktok-scraper": { label: "dami_studio — профиль, до 10 видео (~$0.25/1000)", perVideo: 0.00025,
+    profile: profiles => ({ profiles, resultsPerInput: 1, maxRunSeconds: 60 }),
+    videos: (profiles, limit) => ({ profiles, resultsPerInput: limit, maxRunSeconds: 120 }) },
+  "clockworks/tiktok-scraper": { label: "clockworks — надёжный, дорогой (~$3.70/1000)", perVideo: 0.0037,
+    profile: profiles => ({ profiles, resultsPerPage: 1, profileSorting: "latest", shouldDownloadVideos: false, shouldDownloadCovers: false, shouldDownloadAvatars: false }),
+    videos: (profiles, limit) => ({ profiles, resultsPerPage: limit, profileSorting: "latest", excludePinnedPosts: false, shouldDownloadVideos: false, shouldDownloadCovers: false, shouldDownloadAvatars: false, shouldDownloadSlideshowImages: false }) },
+};
+function inputFor(actor, kind, profiles, limit) {
+  const p = PRESETS[actor];
+  if (p) { if (kind === "profile") return p.profile ? p.profile(profiles) : p.videos(profiles, 1); return (p.videos || p.profile)(profiles, limit); }
+  const tpl = S.settings.customInput.replace(/"?\{\{profiles\}\}"?/g, JSON.stringify(profiles)).replace(/"?\{\{limit\}\}"?/g, String(kind === "profile" ? 1 : limit));
+  try { return JSON.parse(tpl); } catch (e) { throw new Error("шаблон input для своего actor'а — не JSON"); }
+}
+const perVideo = actor => (PRESETS[actor] || {}).perVideo || 0.001;
+function pick(o, paths) { for (const p of paths) { const v = p.split(".").reduce((a, k) => a == null ? a : a[k], o); if (v !== undefined && v !== null && v !== "") return v; } }
+function normalize(items) {
+  const videos = [], profiles = [];
+  for (const it of items) {
+    if (!it || typeof it !== "object") continue;
+    const acct = String(pick(it, ["input", "profile", "sourceInput", "authorMeta.name", "author.uniqueId", "author.unique_id", "author.username", "uniqueId", "username", "profileMeta.username"]) || "").replace(/^@/, "").replace(/.*tiktok\.com\/@/i, "").split(/[/?]/)[0].toLowerCase();
+    const plays = pick(it, ["playCount", "plays", "play_count", "views", "viewCount", "stats.playCount", "statistics.play_count"]);
+    const vid = pick(it, ["id", "video_id", "aweme_id"]);
+    if (plays != null && vid != null) {
+      let t = pick(it, ["createTime", "create_time"]); t = t ? +t : Date.parse(pick(it, ["createTimeISO", "createdAt"]) || "") / 1000 || 0;
+      videos.push({ acct, id: String(vid), t, v: +plays || 0,
+        l: +pick(it, ["diggCount", "likes", "likeCount", "digg_count", "stats.diggCount"]) || 0,
+        c: +pick(it, ["commentCount", "comments", "comment_count", "stats.commentCount"]) || 0,
+        s: +pick(it, ["shareCount", "shares", "share_count", "stats.shareCount"]) || 0,
+        sv: +pick(it, ["collectCount", "saves", "collect_count", "stats.collectCount"]) || 0,
+        text: String(pick(it, ["text", "desc", "description", "title"]) || "").slice(0, 160),
+        url: pick(it, ["webVideoUrl", "url", "share_url"]) || "",
+        cover: pick(it, ["videoMeta.coverUrl", "video.cover", "video.coverUrl", "cover", "coverUrl"]) || "",
+        d: (x => x == null ? null : +x)(pick(it, ["duration", "videoMeta.duration", "video.duration"])),
+        rg: String(pick(it, ["region", "locationCreated"]) || "").toUpperCase().slice(0, 2) });
+      const fans = pick(it, ["authorMeta.fans", "authorMeta.followerCount", "author.followerCount"]);
+      if (fans != null && +fans > 0) profiles.push({ acct, followers: +fans, hearts: +pick(it, ["authorMeta.heart", "authorMeta.heartCount", "author.heartCount"]) || 0, videoCount: +pick(it, ["authorMeta.video", "authorMeta.videoCount", "author.videoCount"]) || 0, nick: pick(it, ["authorMeta.nickName", "author.nickname"]) || "", avatar: pick(it, ["authorMeta.avatar", "author.avatar"]) || "" });
+    } else {
+      const fol = pick(it, ["followerCount", "followers", "fans", "follower_count", "stats.followerCount"]);
+      if (fol != null) profiles.push({ acct, followers: +fol || 0, hearts: +pick(it, ["heartCount", "heart", "totalLikes", "likes", "stats.heartCount"]) || 0, videoCount: +pick(it, ["videoCount", "videos", "stats.videoCount"]) || 0, nick: pick(it, ["nickname", "nickName"]) || "", avatar: pick(it, ["avatar", "avatarLarger", "avatarUrl", "avatarThumb"]) || "" });
+    }
+  }
+  return { videos, profiles };
+}
+function matchAcct(acct, names) { if (names.includes(acct)) return acct; if (names.length === 1) return names[0]; return names.find(n => acct && (acct.includes(n) || n.includes(acct))); }
+
+/* ================= refresh logic ================= */
+let busy = false, busyNames = [];
+const fullLimit = 2000;
+function freshLimit(n) { const a = S.accounts[n]; const cut = now() / 1000 - S.settings.freshDays * 86400; const k = Object.values(a.videos || {}).filter(v => v.t > cut).length; return Math.min(80, Math.max(S.settings.freshMin, k + 3)); }
+function estimate(names, kind) {
+  if (!names.length) return 0;
+  const start = 0.001;
+  if (kind === "profile") return start + names.length * 0.00025;
+  const pv = perVideo(S.settings.videoActor);
+  if (kind === "full") return start + names.reduce((s, n) => { const a = S.accounts[n]; return s + Math.max(a.profile?.videoCount || 0, Object.keys(a.videos || {}).length, 30) * pv; }, 0);
+  const lim = Math.max(...names.map(freshLimit)); return start + names.length * lim * pv;
+}
+async function step(kind, names, log) {
+  const actorMain = kind === "profile" ? S.settings.profileActor : S.settings.videoActor;
+  const limit = kind === "full" ? fullLimit : kind === "light" ? Math.max(...names.map(freshLimit)) : 1;
+  const label = { profile: "Профили", light: "Свежие видео", full: "Полный скан" }[kind];
+  let todo = names.slice(); const tried = [];
+  for (const actor of [actorMain, S.settings.backupActor]) {
+    if (!todo.length || !actor || tried.includes(actor)) continue; tried.push(actor);
+    const est = Math.max(estimate(todo, kind) * (actor === actorMain ? 1 : perVideo(actor) / perVideo(actorMain)), 0.002);
+    const cap = Math.min(Math.max(est * 1.6 + 0.01, 0.02), Math.max(S.settings.maxChargeRun, 0.02));
+    let res;
+    try { res = await runActor(actor, inputFor(actor, kind, todo, limit), cap, label + (actor !== actorMain ? " (запасной)" : "")); }
+    catch (e) { log.steps.push({ kind, actor, err: e.message }); if (/токен/.test(e.message)) throw e; continue; }
+    res.usd = Math.max(res.usd, 0.001 + res.items.length * perVideo(actor)); // Apify finalizes usage with a lag
+    log.usd += res.usd;
+    const { videos, profiles } = normalize(res.items);
+    const got = applyResults(kind, todo, videos, profiles, actor !== actorMain);
+    log.steps.push({ kind, actor, usd: res.usd, items: res.items.length, status: res.status, accts: got.length });
+    todo = todo.filter(n => !got.includes(n));
+  }
+  for (const n of todo) S.accounts[n].error = { t: now(), msg: `${label}: ни один actor не отдал данные` };
+  return names.filter(n => !todo.includes(n));
+}
+function applyResults(kind, names, videos, profiles, backup) {
+  const got = new Set(); const t = now();
+  for (const p of profiles) {
+    const n = matchAcct(p.acct, names); if (!n) continue; const a = S.accounts[n];
+    if (a.profile && p.followers === 0 && a.profile.followers > 50) continue;
+    a.profile = { followers: p.followers, hearts: p.hearts || a.profile?.hearts || 0, videoCount: p.videoCount || a.profile?.videoCount || 0, at: t };
+    if (p.nick) a.nick = p.nick; if (p.avatar) a.avatar = p.avatar;
+    if (kind === "profile") got.add(n);
+  }
+  if (kind !== "profile") {
+    const by = {}; for (const v of videos) { const n = matchAcct(v.acct, names); if (n) (by[n] = by[n] || []).push(v); }
+    for (const n of names) {
+      const list = by[n]; if (!list || !list.length) continue;
+      const a = S.accounts[n]; const old = a.videos || {}; const next = kind === "full" ? {} : { ...old };
+      let guarded = 0;
+      for (const v of list) {
+        const p = old[v.id]; let nv = { ...v }; delete nv.acct;
+        if (p && v.v < p.v * 0.9) { nv = { ...p }; guarded++; }
+        else { nv.pv = p ? p.v : null; nv.pl = p ? p.l : null; nv.pat = p ? p.at : null; nv.at = t; if (nv.d == null && p) nv.d = p.d; if (!nv.rg && p) nv.rg = p.rg; nv.first = p ? p.first : t; if (!nv.cover && p) nv.cover = p.cover; }
+        next[v.id] = nv;
+      }
+      if (kind === "full") { a.lastFullAt = t; a.fullCount = list.length; } else a.lastLightAt = t;
+      a.videos = next; a.lastAt = t; a.backupUsed = backup ? t : a.backupUsed; a.error = null; a.guarded = guarded;
+      got.add(n);
+    }
+  }
+  return [...got];
+}
+function totals(a) {
+  const vs = Object.values(a.videos || {});
+  return { f: a.profile?.followers ?? 0, h: a.profile?.hearts ?? vs.reduce((s, v) => s + v.l, 0), v: vs.reduce((s, v) => s + v.v, 0), c: vs.reduce((s, v) => s + v.c, 0), s: vs.reduce((s, v) => s + v.s, 0), n: a.profile?.videoCount || vs.length };
+}
+function snapshot(n) {
+  const a = S.accounts[n]; const p = { t: now(), ...totals(a) }; a.hist = a.hist || [];
+  const last = a.hist[a.hist.length - 1]; if (last && p.t - last.t < 5 * 60e3) a.hist[a.hist.length - 1] = p; else a.hist.push(p);
+  if (a.hist.length > 3000) a.hist.splice(0, a.hist.length - 3000);
+}
+function d24(a, key) { const h = a.hist || []; if (h.length < 2) return null; const cur = h[h.length - 1]; const target = cur.t - 864e5; let base = h[0]; for (const p of h) { if (p.t <= target) base = p; else break; } if (base === cur) return null; return cur[key] - base[key]; }
+
+async function refresh(names, { kind = "auto", manual = false } = {}) {
+  if (busy) { toast("Уже обновляется — подожди"); return; }
+  if (!S.settings.token.trim()) { openSettings("Сначала вставь токен Apify"); return; }
+  names = names.filter(n => S.accounts[n]);
+  if (!manual) names = names.filter(n => now() - (S.accounts[n].lastAt || 0) > S.settings.minGapMin * 60e3);
+  if (!names.length) return;
+  busy = true; busyNames = names.slice(); renderBusy();
+  const log = { t: now(), kind, accounts: names.slice(), steps: [], usd: 0, ok: true };
+  try {
+    const prevH = Object.fromEntries(names.map(n => [n, S.accounts[n].profile?.hearts]));
+    await step("profile", names, log);
+    const fullL = [], light = [];
+    for (const n of names) { const a = S.accounts[n]; const need = kind === "full" || S.settings.mode === "full" || !a.lastFullAt || now() - a.lastFullAt > S.settings.fullEveryDays * 864e5 || (a.spike && !a.spike.done); (need ? fullL : light).push(n); }
+    if (light.length) {
+      const before = Object.fromEntries(light.map(n => [n, Object.fromEntries(Object.values(S.accounts[n].videos || {}).map(v => [v.id, v.l]))]));
+      const t0 = now(); await step("light", light, log);
+      if (S.settings.spikeFull) for (const n of light) {
+        const a = S.accounts[n]; if (prevH[n] == null || !a.profile) continue;
+        const dH = a.profile.hearts - prevH[n];
+        const dF = Object.values(a.videos || {}).filter(v => v.at >= t0).reduce((s, v) => s + (v.l - (before[n][v.id] ?? 0)), 0);
+        const extra = dH - dF;
+        if (extra > Math.max(500, dF * 0.5)) { a.spike = { t: now(), extra }; fullL.push(n); log.steps.push({ kind: "spike", acct: n, extra }); }
+      }
+    }
+    if (fullL.length) {
+      const est = estimate(fullL, "full");
+      if (est > S.settings.maxChargeRun && !(manual && await ask("Полный скан дороже лимита", `Оценка ≈ ${usd(est)}, лимит на запуск ${usd(S.settings.maxChargeRun)}. Запустить один раз с лимитом ${usd(est * 1.6)}?`, "Запустить"))) {
+        log.steps.push({ kind: "full", skipped: "дороже лимита " + usd(S.settings.maxChargeRun) });
+      } else {
+        const keep = S.settings.maxChargeRun; if (est > keep) S.settings.maxChargeRun = est * 1.6;
+        try { await step("full", fullL, log); } finally { S.settings.maxChargeRun = keep; }
+        for (const n of fullL) if (S.accounts[n].spike) S.accounts[n].spike.done = true;
+      }
+    }
+    for (const n of names) if (S.accounts[n].lastAt >= log.t || S.accounts[n].profile?.at >= log.t) snapshot(n);
+    if (log.steps.some(s => s.err) && !log.steps.some(s => s.items)) log.ok = false;
+  } catch (e) { log.ok = false; log.err = e.message; toast("Ошибка: " + e.message); }
+  finally {
+    S.runs.unshift(log); S.runs = S.runs.slice(0, 300); S.meta.lastRunAt = now();
+    busy = false; busyNames = []; save(); render(); usage();
+    const sp = log.steps.find(s => s.kind === "spike"); if (sp) toast(`⚡ @${sp.acct}: стрельнуло старое видео — сделал полный скан`);
+  }
+}
+async function usage() {
+  if (!S.settings.token.trim()) return;
+  try {
+    const [l, me] = await Promise.all([api("/users/me/limits"), api("/users/me")]);
+    const d = l.data; S.meta.usage = { spent: d.current.monthlyUsageUsd, limit: d.limits.maxMonthlyUsageUsd, start: Date.parse(d.monthlyUsageCycle.startAt), end: Date.parse(d.monthlyUsageCycle.endAt), plan: me.data.plan?.id || "", user: me.data.username, at: now() };
+    S.meta.usageErr = null; save(); renderStatus();
+  } catch (e) { S.meta.usageErr = e.message; renderStatus(); }
+}
+
+/* ================= virality & income ================= */
+const median = arr => { if (!arr.length) return 0; const s = arr.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+const clamp01 = x => Math.max(0, Math.min(1, x));
+const pct = x => (x * 100).toFixed(x >= 0.1 ? 0 : 1).replace(".", ",") + "%";
+const money = n => n == null ? "—" : "$" + (n >= 100 ? Math.round(n).toLocaleString("ru-RU") : n >= 10 ? n.toFixed(1) : n.toFixed(2)).replace(".", ",");
+const ST = new WeakMap();
+function acctStats(a) {
+  const key = a.videos; let st = ST.get(key);
+  if (!st) { st = { med: Math.max(1, median(Object.values(a.videos || {}).map(v => v.v))) }; ST.set(key, st); }
+  st.followers = a.profile?.followers || 0; return st;
+}
+function viral(v, a) {
+  const st = acctStats(a);
+  const ratio = v.v / st.med, er = v.v ? (v.l + v.c + v.s) / v.v : 0, sr = v.v ? v.s / v.v : 0;
+  const reach = st.followers ? v.v / st.followers : null;
+  const score = Math.round(100 * (0.45 * clamp01(Math.log2(Math.max(ratio, 1)) / 4) + 0.2 * clamp01(er / 0.15) + 0.2 * clamp01(sr / 0.02) + 0.15 * (reach == null ? 0 : clamp01(Math.log10(reach + 1) / Math.log10(11)))));
+  const ageH = v.t ? Math.max(1, (now() / 1000 - v.t) / 3600) : null;
+  const speed = v.pv != null && v.pat && v.at > v.pat && v.v >= v.pv ? (v.v - v.pv) / ((v.at - v.pat) / 3600e3) : null;
+  return { score, ratio, er, sr, reach, avgSpeed: ageH ? v.v / ageH : null, speed };
+}
+const vLabel = s => s >= 75 ? "вирусное" : s >= 50 ? "заходит" : s >= 25 ? "норм" : "слабое";
+const vColor = s => s >= 75 ? "#ff6b6b" : s >= 50 ? "#ffb84d" : s >= 25 ? "#5ac8fa" : "#8e8e93";
+function monet(v) { if (!S.settings.incMinOnly) return true; if (v.d == null) return null; return v.d >= 60; }
+const rpmOf = a => a.rpm ?? S.settings.rpm;
+function income(v, a) { const m = monet(v); if (m === null) return null; if (!m) return 0; return v.v * (S.settings.qualPct / 100) * rpmOf(a) / 1000; }
+const dur = d => d == null ? "" : Math.floor(d / 60) + ":" + String(Math.round(d % 60)).padStart(2, "0");
+function acctMoney(a) {
+  const vs = Object.values(a.videos || {}); const cut = now() / 1000 - 30 * 86400;
+  let total = 0, m30 = 0, eligible = 0, unknown = 0;
+  for (const v of vs) { const inc = income(v, a); if (inc === null) { unknown++; continue; } if (inc > 0 || monet(v)) eligible++; total += inc; if (v.t > cut) m30 += inc; }
+  return { total, m30, eligible, unknown, count: vs.length };
+}
+function acctViral(a) {
+  const vs = Object.values(a.videos || {}); if (!vs.length) return null;
+  const recent = vs.slice().sort((x, y) => y.t - x.t).slice(0, 10); const vr = recent.map(v => viral(v, a));
+  const sum = k => recent.reduce((s, v) => s + v[k], 0); const views = sum("v") || 1;
+  let best = null, bestS = -1; for (const v of vs) { const x = viral(v, a); if (x.score > bestS) { bestS = x.score; best = { v, x }; } }
+  const geo = {}; for (const v of vs) if (v.rg) geo[v.rg] = (geo[v.rg] || 0) + 1;
+  return { score: Math.round(vr.reduce((s, x) => s + x.score, 0) / vr.length), hits: vs.filter(v => viral(v, a).ratio >= 2).length, er: (sum("l") + sum("c") + sum("s")) / views, sr: sum("s") / views,
+    reach: a.profile?.followers ? median(recent.map(v => v.v / a.profile.followers)) : null, best, geo: Object.entries(geo).sort((x, y) => y[1] - x[1]) };
+}
+function ring(score, size = 54) { return `<div class="ring" style="--v:${score};--c:${vColor(score)};width:${size}px;height:${size}px"><span>${score}</span></div>`; }
+function viralIncomeHtml(a) {
+  const V = acctViral(a); if (!V) return "";
+  const M = acctMoney(a); const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc].map(c => 127397 + c.charCodeAt(0))) : "";
+  return card("viral", `<h3>Виральность и доход</h3><span class="note">оценка по публичным цифрам · доход — по ставке ${money(rpmOf(a))} за 1000 засчитанных${a.rpm != null ? " (твоя, откалибрована)" : ""}</span>`, () => `<div class="kgrid stagger">
+    <div class="kbox" style="--i:0"><div class="kh">Виральность</div><div class="krow">${ring(V.score)}<div><b style="color:${vColor(V.score)}">${vLabel(V.score)}</b><small>средний балл 10 последних видео</small></div></div></div>
+    <div class="kbox" style="--i:1"><div class="kh">Выстрелы</div><div class="kv">${V.hits}<small> ${plural(V.hits, "видео", "видео", "видео")} ×2+ от обычного</small></div><small>лучшее: ×${V.best.x.ratio.toFixed(1).replace(".", ",")} · ${short(V.best.v.v)} просмотров</small></div>
+    <div class="kbox" style="--i:2"><div class="kh">Вовлечённость</div><div class="kv">${pct(V.er)}<small> лайки+комменты+репосты</small></div><small>репосты ${pct(V.sr)} от просмотров</small></div>
+    <div class="kbox" style="--i:3"><div class="kh">Охват</div><div class="kv">${V.reach == null ? "—" : "×" + V.reach.toFixed(V.reach >= 10 ? 0 : 1).replace(".", ",")}<small> просмотров на подписчика</small></div><small>${V.reach == null ? "нет данных о подписчиках" : V.reach >= 1 ? "видео уходят дальше подписчиков" : "смотрят в основном подписчики"}</small></div>
+    <div class="kbox money" style="--i:4"><div class="kh">Доход ≈</div><div class="kv">${money(M.total)}<small> всего</small></div><small>за 30 дн ≈ <b>${money(M.m30)}</b> · ${M.eligible} из ${M.count} видео ≥ 1 мин${M.unknown ? ` · у ${M.unknown} нет длительности — нужен полный скан` : ""}</small><button class="btn" data-a="calib">Указать реальный доход</button></div>
+    <div class="kbox" style="--i:5"><div class="kh">Гео заливки</div><div class="kv">${V.geo.length ? V.geo.slice(0, 3).map(([c, n]) => `${flag(c)} ${c}`).join(" ") : "—"}</div><small>${V.geo.length ? "страна, из которой залиты видео: " + V.geo.slice(0, 4).map(([c, n]) => c + " " + n).join(", ") : "появится после обновления"} · откуда зрители — только в TikTok Studio</small></div>
+  </div>`);
+}
+async function calibrate(a) {
+  const o = sheet(head("$", "Реальный доход @" + esc(a.username), "Посмотри в TikTok Studio → Creator Rewards, сколько пришло за последние 30 дней. Программа вычислит твою реальную ставку за 1000 просмотров и будет считать по ней.", "green") +
+    `<div class="field"><label>Пришло за последние 30 дней, $</label><input id="cPaid" type="number" step="0.01" min="0" placeholder="например 12.50"></div><div class="res" id="cRes"></div>
+     <div class="sheet-actions"><button class="btn blue" id="cOk">Посчитать</button>${a.rpm != null ? '<button class="btn" id="cReset">Сбросить на общую ставку</button>' : ""}</div>`, 520);
+  o.querySelector("#cOk").onclick = () => {
+    const paid = +o.querySelector("#cPaid").value; const cut = now() / 1000 - 30 * 86400;
+    const views = Object.values(a.videos || {}).filter(v => v.t > cut && monet(v)).reduce((s, v) => s + v.v, 0) * S.settings.qualPct / 100;
+    const r = o.querySelector("#cRes");
+    if (!(paid > 0)) { r.className = "res bad"; r.textContent = "Впиши сумму больше 0"; return; }
+    if (!views) { r.className = "res bad"; r.textContent = "За 30 дней нет видео ≥ 1 мин с данными — сделай полный скан"; return; }
+    a.rpm = paid / (views / 1000); save(); closeSheet(o); redrawBody(); toast(`Твоя ставка: ${money(a.rpm)} за 1000 засчитанных просмотров`);
+  };
+  const rs = o.querySelector("#cReset"); if (rs) rs.onclick = () => { delete a.rpm; save(); closeSheet(o); redrawBody(); toast("Ставка сброшена"); };
+  setTimeout(() => o.querySelector("#cPaid").focus(), 60);
+}
+/* ================= sync Mac ↔ phone через хранилище Apify ================= */
+const SYNC_STORE = "views-tracker", SYNC_KEY = "data";
+let pushT = null, syncBusy = false, lastPushed = "";
+const syncOn = () => S.settings.sync !== false && !!S.settings.token.trim();
+function syncPayload() { const st = { ...S.settings }; delete st.token; return JSON.stringify({ v: 1, settings: st, settingsAt: S.meta.settingsAt || 0, accounts: S.accounts, runs: S.runs, deleted: S.meta.deleted || {} }); }
+function queuePush() { if (!syncOn() || syncBusy) return; clearTimeout(pushT); pushT = setTimeout(syncPush, 4000); }
+async function kvId() { if (S.meta.kvId) return S.meta.kvId; const r = await api(`/key-value-stores?name=${SYNC_STORE}`, { method: "POST" }); S.meta.kvId = r.data.id; return S.meta.kvId; }
+function mergeHist(a = [], b = []) { const m = new Map(); for (const p of [...a, ...b]) m.set(Math.round(p.t / 60e3), p); return [...m.values()].sort((x, y) => x.t - y.t).slice(-3000); }
+function mergeRemote(R) {
+  let changed = false; const del = { ...(S.meta.deleted || {}) };
+  for (const [n, t] of Object.entries(R.deleted || {})) if (!del[n] || del[n] < t) { del[n] = t; changed = true; }
+  S.meta.deleted = del;
+  for (const [n, ra] of Object.entries(R.accounts || {})) {
+    if (del[n] && (ra.addedAt || 0) <= del[n]) continue;
+    const la = S.accounts[n];
+    if (!la) { S.accounts[n] = ra; changed = true; continue; }
+    const remoteNewer = (ra.lastAt || ra.addedAt || 0) > (la.lastAt || la.addedAt || 0);
+    const hist = mergeHist(la.hist, ra.hist);
+    if (remoteNewer || hist.length !== (la.hist || []).length || (ra.rpm != null && la.rpm == null)) {
+      const base = remoteNewer ? ra : la, other = remoteNewer ? la : ra;
+      S.accounts[n] = { ...base, hist, rpm: base.rpm ?? other.rpm }; changed = true;
+    }
+  }
+  for (const n of Object.keys(S.accounts)) if (del[n] && (S.accounts[n].addedAt || 0) <= del[n]) { delete S.accounts[n]; changed = true; }
+  const seen = new Set(S.runs.map(r => r.t + r.kind));
+  for (const r of R.runs || []) if (!seen.has(r.t + r.kind)) { S.runs.push(r); changed = true; }
+  S.runs.sort((a, b) => b.t - a.t); S.runs = S.runs.slice(0, 300);
+  if ((R.settingsAt || 0) > (S.meta.settingsAt || 0) && R.settings) { const tok = S.settings.token; S.settings = { ...DEF, ...R.settings, token: tok, sync: true }; S.meta.settingsAt = R.settingsAt; changed = true; }
+  return changed;
+}
+async function syncPush() {
+  if (!syncOn() || busy) { if (busy) queuePush(); return; }
+  const body = syncPayload(); if (body === lastPushed) return;
+  try { const id = await kvId(); await api(`/key-value-stores/${id}/records/${SYNC_KEY}`, { method: "PUT", body }); lastPushed = body; S.meta.syncAt = now(); S.meta.syncErr = null; }
+  catch (e) { S.meta.syncErr = e.message; }
+  renderStatus();
+}
+async function syncPull(quiet) {
+  if (!syncOn() || busy || syncBusy) return;
+  syncBusy = true;
+  try {
+    const id = await kvId(); let R = null;
+    try { R = await api(`/key-value-stores/${id}/records/${SYNC_KEY}`); } catch (e) { if (!/not found|404/i.test(e.message)) throw e; }
+    if (R && mergeRemote(R)) { syncBusy = false; save(); render(); if (!quiet) toast("Синхронизировано с другими устройствами"); }
+    S.meta.syncAt = now(); S.meta.syncErr = null;
+  } catch (e) { S.meta.syncErr = e.message; }
+  finally { syncBusy = false; renderStatus(); syncPush(); }
+}
+/* ================= UI state ================= */
+let view = { acct: null, metric: "v", sort: "new", asort: "v", q: "", shown: 60 };
+let lastKey = null;
+const NUMS = {};
+const METRICS = [["v", "Просмотры"], ["h", "Лайки"], ["f", "Подписчики"], ["c", "Комменты"], ["s", "Репосты"], ["n", "Видео"]];
+
+function avatar(a, cls = "") {
+  const l = esc((a.username || "?")[0].toUpperCase()); const h = hue(a.username || "");
+  return a.avatar ? `<img class="avatar ${cls}" style="--h:${h}" src="${esc(a.avatar)}" alt="" referrerpolicy="no-referrer" onerror="this.outerHTML='<span class=&quot;avatar ${cls}&quot; style=&quot;--h:${h}&quot;>${l}</span>'">` : `<span class="avatar ${cls}" style="--h:${h}">${l}</span>`;
+}
+function countUp() {
+  $$("[data-num]").forEach(el => {
+    const key = el.dataset.key, to = +el.dataset.num, f = el.dataset.f === "full" ? full : fmt;
+    const from = NUMS[key] ?? 0; NUMS[key] = to;
+    if (from === to || matchMedia("(prefers-reduced-motion:reduce)").matches) { el.textContent = f(to); return; }
+    const t0 = performance.now(), dur = 900;
+    const stepF = t => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = f(from + (to - from) * e); if (p < 1) requestAnimationFrame(stepF); };
+    requestAnimationFrame(stepF);
+  });
+}
+function segPills(root = document) {
+  root.querySelectorAll(".seg").forEach(g => {
+    let p = g.querySelector(".pill"); if (!p) { p = document.createElement("span"); p.className = "pill"; g.prepend(p); }
+    const on = g.querySelector("button.on"); if (!on) { p.style.width = "0"; return; }
+    if (!p.dataset.ready) { p.style.transition = "none"; requestAnimationFrame(() => { p.style.transition = ""; p.dataset.ready = 1; }); }
+    p.style.width = on.offsetWidth + "px"; p.style.transform = `translateX(${on.offsetLeft}px)`; p.style.height = on.offsetHeight + "px"; p.style.top = on.offsetTop + "px";
+  });
+}
+function segSet(g, k) { g.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.k === k)); segPills(g.parentElement || document); }
+
+const UIS = () => (S.meta.ui = S.meta.ui || {});
+const isClosed = id => !!UIS()["c_" + id];
+function card(id, head, body) {
+  const closed = isClosed(id);
+  return `<div class="glass card ${closed ? "closed" : ""}" data-card="${id}"><div class="card-head" data-toggle>${head}<span class="chev" title="${closed ? "Развернуть" : "Свернуть"}">${ICON.chev}</span></div><div class="cbody"><div class="cin"><div class="cpad">${closed && id === "videos" ? "" : body()}</div></div></div></div>`;
+}
+/* ================= render ================= */
+function render() { renderSide(); renderMain(); renderStatus(); }
+function renderSide() {
+  const accs = Object.values(S.accounts).sort((a, b) => totals(b).v - totals(a).v);
+  $("#accN").textContent = accs.length ? accs.length + " " + plural(accs.length, "аккаунт", "аккаунта", "аккаунтов") : "";
+  const seen = renderSide.seen || (renderSide.seen = new Set());
+  const all = { v: 0 }; accs.forEach(a => all.v += totals(a).v);
+  $("#accList").innerHTML = (accs.length ? `<button class="acc ${!view.acct ? "on" : ""}" data-n=""><span class="avatar all">${ICON.grid}</span><span class="info"><span class="u">Все аккаунты</span><span class="s"><b>${fmt(all.v)}</b> просмотров</span></span></button>` : "") +
+    accs.map(a => { const x = totals(a); const d = d24(a, "v"); const isNew = !seen.has(a.username); seen.add(a.username);
+      return `<button class="acc ${view.acct === a.username ? "on" : ""} ${isNew && renderSide.ready ? "enter" : ""}" data-n="${esc(a.username)}">${avatar(a)}<span class="info"><span class="u">@${esc(a.username)}</span><span class="s"><b>${fmt(x.v)}</b>${d ? ` · <span style="color:${d > 0 ? "var(--green)" : "var(--red)"}">${d > 0 ? "+" : "−"}${short(Math.abs(d))}</span> за 24 ч` : !a.lastFullAt ? " · ждёт скан" : ""}</span></span>${busyNames.includes(a.username) ? '<span class="spin"></span>' : ""}</button>`; }).join("");
+  renderSide.ready = true;
+  segSet($("#optMode"), S.settings.mode);
+  $("#modeSub").textContent = S.settings.mode === "smart" ? "свежие видео + скан раз в " + S.settings.fullEveryDays + " дн" : "каждый раз все видео";
+  const sel = $("#optAuto"); if (!sel.options.length) sel.innerHTML = [[0, "выкл"], [60, "1 ч"], [120, "2 ч"], [180, "3 ч"], [360, "6 ч"], [720, "12 ч"], [1440, "24 ч"]].map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
+  sel.value = String(S.settings.autoMin);
+  const names = Object.keys(S.accounts);
+  $("#est").innerHTML = names.length ? `Обновление ≈ <b>${usd3(estimate(names, "profile") + estimate(names, S.settings.mode === "full" ? "full" : "light"))}</b> · полный скан ≈ <b>${usd3(estimate(names, "profile") + estimate(names, "full"))}</b>` : S.settings.token ? "Добавь аккаунт — первый скан ≈ 2 цента" : "Вставь токен Apify в ⚙ Настройках";
+  renderBusy();
+}
+function renderBusy() {
+  const b = $("#toolbar [data-a='lightall']");
+  if (b) { b.classList.toggle("running", busy); b.innerHTML = ICON.refresh + (busy ? "Обновляю…" : "Обновить все"); b.disabled = busy || !Object.keys(S.accounts).length; }
+  const fa = $("#toolbar [data-a='fullall']"); if (fa) fa.disabled = busy || !Object.keys(S.accounts).length;
+  $("#statusbar").classList.toggle("running", busy);
+  $$(".acc").forEach(el => { const on = busyNames.includes(el.dataset.n); const sp = el.querySelector(".spin"); if (on && !sp) el.insertAdjacentHTML("beforeend", '<span class="spin"></span>'); if (!on && sp) sp.remove(); });
+  $$("[data-a='light'],[data-a='full']").forEach(x => x.disabled = busy);
+}
+function renderMain() {
+  if (view.acct && !S.accounts[view.acct]) view.acct = null;
+  const key = view.acct || "";
+  const v = $("#view");
+  if (key !== lastKey) { renderToolbar(); v.classList.remove("in-r", "in-l"); void v.offsetWidth; v.classList.add(view.acct ? "in-r" : "in-l"); v.scrollTop = 0; if (matchMedia("(max-width:760px)").matches) scrollTo(0, 0); view.shown = 60; }
+  else updateToolbar();
+  lastKey = key;
+  v.innerHTML = view.acct ? accountHtml(S.accounts[view.acct]) : overviewHtml();
+  countUp(); segPills(v);
+}
+function tilesHtml(t, d, keyp) {
+  return `<div class="tiles stagger">${METRICS.map(([k, l], i) => `<div class="glass tile" style="--i:${i}"><div class="k">${l}</div><div class="v" title="${full(t[k])}" data-num="${t[k]}" data-key="${keyp}${k}">${fmt(NUMS[keyp + k] ?? 0)}</div><div class="d">${d && d[k] != null ? dpill(d[k]) + " за 24 ч" : "&nbsp;"}</div></div>`).join("")}</div>`;
+}
+function renderToolbar() {
+  const tb = $("#toolbar");
+  if (!view.acct) {
+    tb.innerHTML = `<div class="crumb">Обзор</div><div class="search">${ICON.search}<input id="q" placeholder="Поиск по аккаунтам и описаниям видео" value="${esc(view.q)}"></div>
+      <div class="seg" id="asort"><button data-k="v">Просмотры</button><button data-k="f">Подписчики</button><button data-k="g">Рост за 24 ч</button></div>
+      <button class="btn blue" data-a="lightall">${ICON.refresh}Обновить все</button><button class="btn" data-a="fullall" title="Полный скан всех">${ICON.scan}<span class="lbl">Полный скан</span></button>`;
+    segSet($("#asort"), view.asort);
+  } else {
+    const a = S.accounts[view.acct];
+    tb.innerHTML = `<button class="btn icon" id="back" title="Все аккаунты">${ICON.back}</button><div class="crumb">${avatar(a)}@${esc(a.username)}</div>
+      <div class="search">${ICON.search}<input id="q" placeholder="Фильтр видео по описанию" value="${esc(view.q)}"></div>
+      <div class="seg" id="vsort"><button data-k="new">Новые</button><button data-k="top">Топ</button><button data-k="grow">Растут</button><button data-k="viral">🔥</button></div>
+      <button class="btn" data-a="light" title="Обновить">${ICON.refresh}<span class="lbl">Обновить</span></button><button class="btn" data-a="full" title="Полный скан">${ICON.scan}<span class="lbl">Полный скан</span></button>
+      <button class="btn icon" data-a="tt" title="Открыть в TikTok">${ICON.ext}</button><button class="btn icon danger" data-a="del" title="Удалить аккаунт">${ICON.trash}</button>`;
+    segSet($("#vsort"), view.sort);
+    tb.querySelector(".crumb .avatar").style.cssText += ";width:26px;height:26px;font-size:11px";
+  }
+  segPills(tb); renderBusy();
+}
+function updateToolbar() { const g = $("#vsort") || $("#asort"); if (g) segSet(g, view.acct ? view.sort : view.asort); }
+
+function overviewHtml() {
+  const accs = Object.values(S.accounts);
+  if (!accs.length) return `<div class="empty"><div class="big">${ICON.film}</div><h2>${S.settings.token ? "Добавь первый аккаунт" : "Подключи Apify"}</h2><p>${S.settings.token ? "Впиши @username слева в «Добавить аккаунт». Программа сделает первый полный скан — все видео, подписчики и лайки (≈ 2 цента за 70 видео)." : "Открой ⚙ Настройки и вставь Personal API token с console.apify.com → Settings → API & Integrations."}</p>${S.settings.token ? "" : '<button class="btn blue" onclick="openSettings()">Открыть настройки</button>'}</div>`;
+  const t = { f: 0, h: 0, v: 0, c: 0, s: 0, n: 0 }, d = { f: 0, h: 0, v: 0, c: 0, s: 0, n: 0 }; let hasD = false;
+  for (const a of accs) { const x = totals(a); for (const k in t) { t[k] += x[k]; const dd = d24(a, k); if (dd != null) { d[k] += dd; hasD = true; } } }
+  const q = view.q.trim().toLowerCase();
+  let list = accs.filter(a => !q || a.username.includes(q) || (a.nick || "").toLowerCase().includes(q));
+  const sk = view.asort; list.sort((a, b) => sk === "f" ? totals(b).f - totals(a).f : sk === "g" ? (d24(b, "v") || 0) - (d24(a, "v") || 0) : totals(b).v - totals(a).v);
+  const grow = []; for (const a of accs) for (const v of Object.values(a.videos || {})) if (v.pv != null && v.v > v.pv && (!q || (v.text || "").toLowerCase().includes(q) || a.username.includes(q))) grow.push([a, v]);
+  grow.sort((x, y) => (y[1].v - y[1].pv) - (x[1].v - x[1].pv));
+  return tilesHtml(t, hasD ? d : null, "all.") +
+    card("accs", `<h3>Аккаунты</h3><span class="note">нажми, чтобы открыть видео и графики</span>`, () => `<div class="agrid stagger">${list.map((a, i) => acardHtml(a, i)).join("") || '<div style="color:var(--text3)">Ничего не найдено</div>'}</div>`) +
+    card("grow", `<h3>Растут сейчас</h3><span class="note">видео с самым большим приростом с прошлой проверки</span>`, () => grow.length ? `<div class="vgrid stagger">${grow.slice(0, 24).map(([a, v], i) => vtileHtml(v, i, a)).join("")}</div>` : '<div style="color:var(--text3);padding:2px 0 4px">Появится после следующего обновления</div>');
+}
+function acardHtml(a, i) {
+  const x = totals(a); const h = (a.hist || []).slice(-60);
+  const b = badgesHtml(a);
+  return `<button class="acard" style="--i:${i}" data-open="${esc(a.username)}"><div class="top">${avatar(a)}<div style="min-width:0;flex:1"><div class="u">@${esc(a.username)}</div><div class="nk">${esc(a.nick || "")}${a.lastAt ? " · " + ago(a.lastAt) : ""}</div>${(V => V ? `<div class="vi"><span style="color:${vColor(V.score)}">🔥 ${V.score} · ${vLabel(V.score)}</span><span>💰 ≈ ${money(acctMoney(a).total)}</span></div>` : "")(acctViral(a))}</div></div>
+    ${b ? `<div class="badges">${b}</div>` : ""}
+    <div class="st3"><div>Просмотры<b>${fmt(x.v)}</b>${dpill(d24(a, "v"))}</div><div>Подписчики<b>${fmt(x.f)}</b>${dpill(d24(a, "f"))}</div><div>Лайки<b>${fmt(x.h)}</b>${dpill(d24(a, "h"))}</div></div>${spark(h.map(p => p.v), a.username)}</button>`;
+}
+function badgesHtml(a) {
+  const b = [];
+  if (!a.lastFullAt) b.push('<span class="badge warn">ждёт первый скан</span>');
+  if (a.spike && now() - a.spike.t < 864e5) b.push(`<span class="badge hot">⚡ стрельнуло старое видео · +${short(a.spike.extra)} лайков</span>`);
+  if (a.backupUsed && now() - a.backupUsed < 864e5) b.push('<span class="badge warn">работал запасной actor</span>');
+  if (a.error && now() - a.error.t < 864e5) b.push(`<span class="badge bad">${esc(a.error.msg)}</span>`);
+  if (a.guarded) b.push(`<span class="badge warn">отброшено кривых цифр: ${a.guarded}</span>`);
+  return b.join("");
+}
+function spark(vals, id) {
+  if (vals.length < 2) return "";
+  const mn = Math.min(...vals), mx = Math.max(...vals), r = mx - mn || 1;
+  const pts = vals.map((v, i) => [i / (vals.length - 1) * 300, 34 - (v - mn) / r * 30]);
+  const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join("");
+  const gid = "sg" + hue(id);
+  return `<svg class="spark" viewBox="0 0 300 38" preserveAspectRatio="none"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ac8fa" stop-opacity=".35"/><stop offset="1" stop-color="#5ac8fa" stop-opacity="0"/></linearGradient></defs><path d="${d}L300 38L0 38Z" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="#5ac8fa" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function chart(points, key) {
+  if (points.length < 2) return `<div class="chart-empty">График появится после второго обновления</div>`;
+  const W = Math.max(320, Math.round(($("#view").clientWidth || 900) - 44)), H = 210, P = 8, PR = 84; const lab = v => r < mx * 0.05 ? full(v) : fmt(v);
+  const xs = points.map(p => p.t), ys = points.map(p => p[key]); const x0 = xs[0], x1 = xs[xs.length - 1]; const mn = Math.min(...ys), mx = Math.max(...ys), r = mx - mn || Math.max(1, mx * 0.01);
+  const X = t => P + (t - x0) / (x1 - x0 || 1) * (W - P - PR), Y = v => H - 24 - (v - mn) / r * (H - 44);
+  const d = points.map((p, i) => (i ? "L" : "M") + X(p.t).toFixed(1) + " " + Y(p[key]).toFixed(1)).join("");
+  const grid = [0, .5, 1].map(f => { const v = mn + r * f; return `<line x1="${P}" x2="${W - PR}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,.08)"/><text x="${W - PR + 10}" y="${Y(v) + 4}" font-size="11" fill="rgba(235,235,245,.45)">${lab(v)}</text>`; }).join("");
+  const last = points[points.length - 1];
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a84ff" stop-opacity=".45"/><stop offset="1" stop-color="#0a84ff" stop-opacity="0"/></linearGradient></defs>${grid}
+   <path class="area" d="${d}L${X(x1)} ${H - 24}L${X(x0)} ${H - 24}Z" fill="url(#cg)"/><path class="line" pathLength="1" d="${d}" fill="none" stroke="#5ac8fa" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+   <circle class="dot" cx="${X(last.t)}" cy="${Y(last[key])}" r="5" fill="#fff" stroke="#0a84ff" stroke-width="3"/>
+   <text x="${P}" y="${H - 4}" font-size="11" fill="rgba(235,235,245,.45)">${dtstr(x0)}</text><text x="${W - PR}" y="${H - 4}" font-size="11" fill="rgba(235,235,245,.45)" text-anchor="end">${dtstr(x1)}</text></svg>`;
+}
+function vtileHtml(v, i, a) {
+  const cut = now() / 1000 - S.settings.freshDays * 86400; const dv = v.pv != null ? v.v - v.pv : 0;
+  const x = viral(v, a), inc = income(v, a), m = monet(v);
+  const url = v.url || `https://www.tiktok.com/@${a.username}/video/${v.id}`;
+  return `<button class="vt" style="--i:${Math.min(i, 18)};--h:${200 + hue(v.id) % 90}" data-url="${esc(url)}" title="${esc((v.text || "").slice(0, 120))}">
+    <span class="ph">${ICON.play}</span>${v.cover ? `<img src="${esc(v.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
+    ${a && view.acct ? (v.t > cut ? '<span class="tl new">новое</span>' : `<span class="tl">${v.t ? dstr(v.t * 1000) : ""}</span>`) : `<span class="who">@${esc(a.username)}</span>`}
+    ${dv > 0 ? `<span class="tr">+${short(dv)}</span>` : ""}<span class="mini" style="--c:${vColor(x.score)}">🔥${x.score}</span>
+    <span class="bt"><span class="views">${ICON.play}${short(v.v)}${x.score >= 75 ? '<span class="fire">🔥</span>' : ""}</span><span class="sm"><span>♥ ${short(v.l)}</span><span>💬 ${short(v.c)}</span></span></span>
+    <span class="cap" style="--c:${vColor(x.score)}"><span class="sc">${x.score}</span><span class="lb">${vLabel(x.score)}</span>
+      <span class="rw"><span title="во столько раз больше просмотров, чем у обычного видео аккаунта">×${x.ratio.toFixed(1).replace(".", ",")}</span><span>${m === null ? "—" : m === false ? "&lt;1 мин" : "≈ " + money(inc)}</span></span></span></button>`;
+}
+function accountHtml(a) {
+  const x = totals(a); const d = {}; for (const [k] of METRICS) d[k] = d24(a, k);
+  const q = view.q.trim().toLowerCase();
+  let vs = Object.values(a.videos || {}).filter(v => !q || (v.text || "").toLowerCase().includes(q));
+  if (view.sort === "new") vs.sort((p, r) => r.t - p.t); else if (view.sort === "top") vs.sort((p, r) => r.v - p.v); else if (view.sort === "viral") vs.sort((p, r) => viral(r, a).score - viral(p, a).score); else vs.sort((p, r) => (r.v - (r.pv ?? r.v)) - (p.v - (p.pv ?? p.v)));
+  const missing = (a.profile?.videoCount || 0) - (a.fullCount || 0);
+  const b = badgesHtml(a);
+  return `<div class="glass hero">${avatar(a)}<div style="min-width:0"><h2>@${esc(a.username)}</h2><p>${esc(a.nick || "")}</p>${b ? `<div class="badges">${b}</div>` : ""}</div>
+    <div class="meta">обновлено <b>${ago(a.lastAt)}</b><br>полный скан: <b>${a.lastFullAt ? ago(a.lastFullAt) : "ещё не было"}</b>${a.fullCount ? `<br>TikTok отдал <b>${a.fullCount}</b> из ${a.profile?.videoCount || a.fullCount} видео` : ""}</div></div>
+   ${tilesHtml(x, d, a.username + ".")}
+   ${viralIncomeHtml(a)}
+   ${card("chart", `<h3>Динамика</h3><span class="note"></span><div class="seg mini" id="mseg">${METRICS.slice(0, 5).map(([k, l]) => `<button data-k="${k}" class="${view.metric === k ? "on" : ""}">${l}</button>`).join("")}</div>`, () => chart(a.hist || [], view.metric))}
+   ${card("videos", `<h3>Видео · ${vs.length}</h3><span class="note">${missing > 0 ? `≈${missing} видео TikTok не отдаёт (карусели/скрытые) — их просмотры не в total · ` : ""}свежие (за ${S.settings.freshDays} дн) обновляются каждый раз</span>`,
+     () => vs.length ? `<div class="vgrid stagger">${vs.slice(0, view.shown).map((v, i) => vtileHtml(v, i, a)).join("")}</div>${vs.length > view.shown ? `<div class="more"><button class="btn" data-a="more">Показать ещё ${Math.min(60, vs.length - view.shown)}</button></div>` : ""}` : `<div style="color:var(--text3);padding:2px 0 6px">${a.lastFullAt ? "Ничего не найдено" : "Видео появятся после первого скана"}</div>`)}`;
+}
+function renderStatus() {
+  const last = S.runs[0];
+  if (!busy) setStatus(last ? (last.ok ? "Обновлено " : "Ошибка · ") + ago(last.t) + (last.ok ? ` · ${usd(last.usd)}` : last.err ? " · " + last.err : "") : S.settings.token ? "Готов к работе" : "Нужен токен Apify — ⚙ Настройки", last && !last.ok ? "err" : "");
+  const u = S.meta.usage, sc = $("#spendChip");
+  if (!S.settings.token) { sc.className = "mode warn"; sc.textContent = "Apify не подключён"; }
+  else if (!u) { sc.className = "mode"; sc.textContent = S.meta.usageErr ? "Apify: " + S.meta.usageErr : "Apify: загружаю…"; }
+  else { const fr = u.limit ? u.spent / u.limit : 0; sc.className = "mode " + (fr > .8 ? "warn" : "ok"); sc.innerHTML = `Apify ${esc(u.plan)} · ${usd(u.spent)} из ${usd(u.limit)} <span class="m"><i style="width:${Math.min(100, fr * 100).toFixed(1)}%"></i></span>`; }
+  const ac = $("#autoChip"); const m = S.settings.autoMin;
+  const sy = $("#syncChip"); if (sy) { if (!syncOn()) { sy.className = "mode sync off"; sy.textContent = "☁︎ выкл"; } else if (S.meta.syncErr) { sy.className = "mode sync warn"; sy.textContent = "☁︎ ошибка"; sy.title = S.meta.syncErr; } else { sy.className = "mode sync ok"; sy.textContent = "☁︎ " + (S.meta.syncAt ? ago(S.meta.syncAt) : "…"); } }
+  ac.className = "mode" + (m ? " ok" : ""); ac.textContent = m ? "Авто · каждые " + (m >= 60 ? m / 60 + " ч" : m + " мин") : "Авто выкл";
+}
+function setStatus(t, cls) { $("#status").textContent = t; const sb = $("#statusbar"); sb.classList.toggle("err", cls === "err"); if (cls === "running") sb.classList.add("running"); }
+
+/* ================= actions ================= */
+async function cardAction(act, n) {
+  const a = S.accounts[n];
+  if (act === "del") { if (await ask("Удалить @" + n + "?", "Вся история и графики этого аккаунта удалятся из программы.", "Удалить", "red")) { delete S.accounts[n]; (S.meta.deleted = S.meta.deleted || {})[n] = now(); view.acct = null; save(); render(); toast("Удалено"); } return; }
+  if (act === "tt") return openUrl("https://www.tiktok.com/@" + n);
+  if (act === "full") { const est = estimate([n], "full") + estimate([n], "profile"); if (!(await ask("Полный скан @" + n, `Все видео аккаунта (~${Math.max(a.profile?.videoCount || 0, Object.keys(a.videos || {}).length)} шт). Примерно ${usd(est)}.`, "Запустить"))) return; return refresh([n], { kind: "full", manual: true }); }
+  if (a.lastAt && now() - a.lastAt < S.settings.minGapMin * 60e3 && !(await ask("Только что обновлялось", `@${n} обновлялся ${ago(a.lastAt)}. Всё равно обновить (≈ ${usd(estimate([n], "light") + estimate([n], "profile"))})?`, "Обновить"))) return;
+  refresh([n], { kind: "light", manual: true });
+}
+async function addAccounts(txt) {
+  const names = parseNames(txt).filter(n => !S.accounts[n]);
+  if (!names.length) { toast("Не вижу новых @username"); return; }
+  if (!S.settings.token.trim()) { openSettings("Сначала вставь токен Apify"); return; }
+  for (const n of names) S.accounts[n] = { username: n, addedAt: now(), videos: {}, hist: [] };
+  $("#addInput").value = ""; save(); render(); toast("Добавлено: " + names.map(n => "@" + n).join(", ") + " — делаю первый скан");
+  refresh(names, { kind: "full", manual: true });
+}
+function openAcct(n) { if (view.acct === n) return; view.acct = n || null; view.q = ""; render(); }
+
+$("#addForm").onsubmit = e => { e.preventDefault(); addAccounts($("#addInput").value); };
+$("#accList").onclick = e => { const b = e.target.closest(".acc"); if (b) openAcct(b.dataset.n); };
+$("#optMode").onclick = e => { const b = e.target.closest("button"); if (!b) return; S.settings.mode = b.dataset.k; S.meta.settingsAt = now(); save(); renderSide(); };
+$("#optAuto").onchange = e => { S.settings.autoMin = +e.target.value; S.meta.lastAutoAt = now(); S.meta.settingsAt = now(); save(); renderStatus(); toast(S.settings.autoMin ? "Автообновление включено" : "Автообновление выключено"); };
+$("#setBtn").onclick = () => openSettings(); $("#logBtn").onclick = openLog; $("#faqBtn").onclick = openFaq;
+$("#spendChip").onclick = openLog; $("#syncChip").onclick = () => { if (!syncOn()) return openSettings(); syncPull(); }; $("#autoChip").onclick = () => openSettings();
+$("#toolbar").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.id === "back") return openAcct(null);
+  if (b.parentElement.id === "vsort") { view.sort = b.dataset.k; view.shown = 60; segSet(b.parentElement, view.sort); return redrawBody(); }
+  if (b.parentElement.id === "asort") { view.asort = b.dataset.k; segSet(b.parentElement, view.asort); return redrawBody(); }
+  if (b.dataset.a === "lightall") return refresh(Object.keys(S.accounts), { kind: "light", manual: true });
+  if (b.dataset.a === "fullall") { const all = Object.keys(S.accounts); if (!all.length) return; ask("Полный скан всех аккаунтов", `Все видео всех аккаунтов. Примерно ${usd(estimate(all, "full") + estimate(all, "profile"))}.`, "Запустить").then(ok => ok && refresh(all, { kind: "full", manual: true })); return; }
+  if (b.dataset.a && view.acct) cardAction(b.dataset.a, view.acct);
+});
+$("#toolbar").addEventListener("input", e => { if (e.target.id === "q") { view.q = e.target.value; view.shown = 60; clearTimeout(redrawBody.t); redrawBody.t = setTimeout(redrawBody, 120); } });
+function redrawBody() { const v = $("#view"); const y = v.scrollTop; v.innerHTML = view.acct ? accountHtml(S.accounts[view.acct]) : overviewHtml(); v.scrollTop = y; countUp(); segPills(v); renderBusy(); }
+$("#view").addEventListener("click", e => {
+  const t = e.target.closest("[data-url]"); if (t) return openUrl(t.dataset.url);
+  const o = e.target.closest("[data-open]"); if (o) return openAcct(o.dataset.open);
+  const m = e.target.closest("#mseg button"); if (m) { view.metric = m.dataset.k; segSet(m.parentElement, view.metric); const c = m.closest(".card"); c.querySelector("svg.chart,.chart-empty").outerHTML = chart(S.accounts[view.acct].hist || [], view.metric); return; }
+  const cb = e.target.closest("[data-a='calib']"); if (cb) return calibrate(S.accounts[view.acct]);
+  const mo = e.target.closest("[data-a='more']"); if (mo) { view.shown += 60; redrawBody(); return; }
+  const h = e.target.closest("[data-toggle]");
+  if (h && !e.target.closest(".seg")) {
+    const c = h.closest(".card"), id = c.dataset.card, closing = !c.classList.contains("closed");
+    UIS()["c_" + id] = closing; save();
+    if (!closing && !c.querySelector(".cpad").children.length) { redrawBody(); return; }
+    c.classList.toggle("closed", closing); c.querySelector(".chev").title = closing ? "Развернуть" : "Свернуть";
+  }
+});
+addEventListener("keydown", e => {
+  if (e.key === "Escape") { const o = $$(".overlay").pop(); if (o) closeSheet(o); else if (view.acct) openAcct(null); }
+  if ((e.metaKey || e.ctrlKey) && e.key === "r") { e.preventDefault(); if (!busy) refresh(Object.keys(S.accounts), { kind: "light", manual: true }); }
+});
+let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { segPills(); if (view.acct) { const c = $("#mseg"); if (c) c.closest(".card").querySelector("svg.chart,.chart-empty").outerHTML = chart(S.accounts[view.acct].hist || [], view.metric); } }, 150); });
+
+/* ================= sheets ================= */
+function sheet(html, width = 640) {
+  const o = document.createElement("div"); o.className = "overlay";
+  o.innerHTML = `<div class="glass sheet" style="width:min(${width}px,100%)">${html}</div>`;
+  $("#layer").appendChild(o);
+  o.addEventListener("mousedown", e => { if (e.target === o) closeSheet(o); });
+  o.querySelectorAll("[data-close]").forEach(b => b.onclick = () => closeSheet(o));
+  return o;
+}
+function closeSheet(o) { if (o.classList.contains("closing")) return; o.classList.add("closing"); o._onclose && o._onclose(); setTimeout(() => o.remove(), 180); }
+const head = (icon, title, sub, cls = "") => `<div class="sheet-head"><div class="icon ${cls}">${icon}</div><div><h2>${title}</h2><p>${sub}</p></div><button class="x" data-close>✕</button></div>`;
+function ask(title, text, ok = "OK", tone = "") {
+  return new Promise(res => {
+    const o = sheet(head(tone === "red" ? "!" : "?", esc(title), esc(text), tone) + `<div class="sheet-actions" style="justify-content:flex-end"><button class="btn" data-r="0">Отмена</button><button class="btn blue" data-r="1">${esc(ok)}</button></div>`, 460);
+    let done = false; const fin = v => { if (!done) { done = true; res(v); } };
+    o._onclose = () => fin(false);
+    o.querySelectorAll("[data-r]").forEach(b => b.onclick = () => { fin(b.dataset.r === "1"); closeSheet(o); });
+    setTimeout(() => o.querySelector("[data-r='1']").focus(), 50);
+  });
+}
+function stepper(id, val, unit, step, mn, mx, dec = 0) { return `<div class="stepper" data-id="${id}" data-step="${step}" data-min="${mn}" data-max="${mx}" data-dec="${dec}"><button data-d="-1">−</button><span data-v="${val}">${val.toFixed ? (+val).toFixed(dec) : val}${unit}</span><button data-d="1">+</button></div>`; }
+function actorPick(id, val, allowEmpty) {
+  const known = Object.keys(PRESETS); const custom = val && !known.includes(val);
+  return `<div class="custom"><label class="pick"><select id="${id}">${allowEmpty ? `<option value="">— нет —</option>` : ""}${known.map(k => `<option value="${k}" ${k === val ? "selected" : ""}>${esc(PRESETS[k].label)}</option>`).join("")}<option value="__custom" ${custom ? "selected" : ""}>Свой actor…</option></select></label><input id="${id}C" placeholder="user/actor-name" value="${custom ? esc(val) : ""}" ${custom ? "" : "hidden"}></div>`;
+}
+function openSettings(hint) {
+  const s = S.settings;
+  const o = sheet(head("⚙", "Настройки", hint ? `<span style="color:var(--gold)">${esc(hint)}</span>` : "Всё хранится только на этом Mac, в папке программы") + `<div class="form">
+    <div class="field"><label>Apify API token</label><div class="hint">console.apify.com → Settings → API &amp; Integrations → Personal API token. $5 в месяц бесплатно.</div><input id="sToken" type="password" value="${esc(s.token)}" placeholder="apify_api_…" autocomplete="off" spellcheck="false"><div class="res" id="rToken"></div></div>
+    <div class="group"><h4>Обновления</h4>
+      <div class="rowx"><div class="l">Режим<div class="sub">Экономный: свежие видео каждый раз, все видео — по расписанию</div></div><div class="seg mini" id="sMode"><button data-k="smart" class="${s.mode === "smart" ? "on" : ""}">Экономный</button><button data-k="full" class="${s.mode === "full" ? "on" : ""}">Полный</button></div></div>
+      <div class="rowx"><div class="l">Автообновление<div class="sub">пока приложение открыто</div></div><label class="pick"><select id="sAuto">${[[0, "выкл"], [60, "1 ч"], [120, "2 ч"], [180, "3 ч"], [360, "6 ч"], [720, "12 ч"], [1440, "24 ч"]].map(([v, l]) => `<option value="${v}" ${+s.autoMin === v ? "selected" : ""}>${l}</option>`).join("")}</select></label></div>
+      <div class="rowx"><div class="l">Свежие видео — за сколько дней<div class="sub">они обновляются каждый раз</div></div>${stepper("freshDays", s.freshDays, " дн", 1, 1, 60)}</div>
+      <div class="rowx"><div class="l">…и не меньше скольких видео</div>${stepper("freshMin", s.freshMin, " шт", 1, 3, 80)}</div>
+      <div class="rowx"><div class="l">Полный скан всех видео — раз в<div class="sub">в экономном режиме</div></div>${stepper("fullEveryDays", s.fullEveryDays, " дн", 1, 1, 60)}</div>
+      <div class="rowx"><div class="l">Ловить «стрельнувшие» старые видео<div class="sub">если общие лайки выросли больше, чем на свежих видео — сразу полный скан</div></div><input type="checkbox" class="switch" id="sSpike" ${s.spikeFull ? "checked" : ""}></div>
+      <div class="rowx"><div class="l">Не обновлять акк чаще, чем раз в<div class="sub">защита от лишних трат при автообновлении</div></div>${stepper("minGapMin", s.minGapMin, " мин", 5, 0, 600)}</div>
+      <div class="rowx"><div class="l">Лимит трат на один запуск<div class="sub">actor не потратит больше, даже если глюканёт</div></div>${stepper("maxChargeRun", s.maxChargeRun, " $", 0.05, 0.05, 20, 2)}</div>
+    </div>
+    <div class="group"><h4>Доход (оценка)</h4>
+      <div class="rowx"><div class="l">Ставка за 1000 засчитанных просмотров<div class="sub">Creator Rewards обычно $0.40–1.00; у аккаунта можно откалибровать по реальным выплатам</div></div>${stepper("rpm", s.rpm, " $", 0.05, 0.05, 10, 2)}</div>
+      <div class="rowx"><div class="l">Какая доля просмотров засчитывается<div class="sub">TikTok платит за просмотры от 5 сек из стран программы — обычно ~50%</div></div>${stepper("qualPct", s.qualPct, " %", 5, 5, 100)}</div>
+      <div class="rowx"><div class="l">Считать только видео от 1 минуты<div class="sub">Creator Rewards не платит за ролики короче минуты</div></div><input type="checkbox" class="switch" id="sMinOnly" ${s.incMinOnly ? "checked" : ""}></div>
+    </div>
+    <div class="group"><h4>Кто собирает данные</h4>
+      <div class="rowx"><div class="l">Видео</div>${actorPick("aV", s.videoActor)}</div>
+      <div class="rowx"><div class="l">Профиль<div class="sub">подписчики, лайки</div></div>${actorPick("aP", s.profileActor)}</div>
+      <div class="rowx"><div class="l">Запасной<div class="sub">если основной сломался</div></div>${actorPick("aB", s.backupActor, true)}</div>
+      <div class="field" id="tplWrap" hidden><div class="hint" style="margin-top:8px">Input для своего actor'а (JSON). <b>{{profiles}}</b> — список аккаунтов, <b>{{limit}}</b> — сколько видео.</div><textarea id="sTpl">${esc(s.customInput)}</textarea></div>
+    </div>
+    <div class="group"><h4>Данные</h4>
+      <div class="rowx"><div class="l">Синхронизация Мак ↔ телефон<div class="sub">аккаунты, история и настройки лежат в твоём Apify (хранилище «views-tracker»); токен не синхронизируется — вставь его на каждом устройстве</div></div><input type="checkbox" class="switch" id="sSync" ${s.sync !== false ? "checked" : ""}></div>
+      <div class="rowx"><div class="l">Резервная копия<div class="sub">${bridge ? "программа и так каждый день кладёт копию в папку «Резервные копии»" : "файл со всеми аккаунтами и историей"}</div></div><div style="display:flex;gap:6px"><button class="btn" id="sExp">Сохранить в файл</button><button class="btn" id="sImp">Загрузить</button></div></div>
+    </div></div>
+    <div class="sheet-actions"><button class="btn blue" id="sSave">Сохранить</button><button class="btn" id="sCheck">Проверить токен</button></div>`);
+  o.querySelector("#sMode").onclick = e => { const b = e.target.closest("button"); if (b) segSet(o.querySelector("#sMode"), b.dataset.k); };
+  requestAnimationFrame(() => segPills(o));
+  o.querySelectorAll(".stepper").forEach(st => st.onclick = e => {
+    const b = e.target.closest("button"); if (!b) return; const sp = st.querySelector(":scope > span"); const step = +st.dataset.step, dec = +st.dataset.dec;
+    let v = +sp.dataset.v + step * +b.dataset.d; v = Math.min(+st.dataset.max, Math.max(+st.dataset.min, +v.toFixed(4)));
+    sp.dataset.v = v; sp.textContent = v.toFixed(dec) + sp.textContent.replace(/^[\d.,]+/, "");
+    sp.animate([{ transform: "scale(1.18)" }, { transform: "scale(1)" }], { duration: 220, easing: "ease-out" });
+  });
+  const syncTpl = () => { let any = false; for (const id of ["aV", "aP", "aB"]) { const c = o.querySelector("#" + id).value === "__custom"; o.querySelector("#" + id + "C").hidden = !c; any = any || c; } o.querySelector("#tplWrap").hidden = !any; };
+  ["aV", "aP", "aB"].forEach(id => o.querySelector("#" + id).onchange = syncTpl); syncTpl();
+  const actorVal = id => { const v = o.querySelector("#" + id).value; return v === "__custom" ? o.querySelector("#" + id + "C").value.trim() : v; };
+  o.querySelector("#sCheck").onclick = async () => {
+    const r = o.querySelector("#rToken"); r.className = "res"; r.textContent = "Проверяю…";
+    const keep = S.settings.token; S.settings.token = o.querySelector("#sToken").value.trim();
+    try { const me = await api("/users/me"); r.className = "res ok"; r.textContent = `✓ Работает: ${me.data.username}, план ${me.data.plan?.id || "?"}`; }
+    catch (e) { r.className = "res bad"; r.textContent = "✕ " + e.message; }
+    S.settings.token = keep;
+  };
+  o.querySelector("#sExp").onclick = exportData; o.querySelector("#sImp").onclick = () => importData(o);
+  o.querySelector("#sSave").onclick = () => {
+    const sv = id => +o.querySelector(`.stepper[data-id="${id}"] > span`).dataset.v;
+    Object.assign(S.settings, { token: o.querySelector("#sToken").value.trim(), freshDays: sv("freshDays"), freshMin: sv("freshMin"), fullEveryDays: sv("fullEveryDays"), minGapMin: sv("minGapMin"), maxChargeRun: sv("maxChargeRun"), mode: o.querySelector("#sMode .on").dataset.k, autoMin: +o.querySelector("#sAuto").value, sync: o.querySelector("#sSync").checked, spikeFull: o.querySelector("#sSpike").checked, rpm: sv("rpm"), qualPct: sv("qualPct"), incMinOnly: o.querySelector("#sMinOnly").checked,
+      videoActor: actorVal("aV") || DEF.videoActor, profileActor: actorVal("aP") || DEF.profileActor, backupActor: actorVal("aB"), customInput: o.querySelector("#sTpl").value });
+    S.meta.settingsAt = now(); save(); closeSheet(o); render(); usage(); if (syncOn()) syncPull(true); toast("Настройки сохранены");
+  };
+}
+async function exportData() {
+  const txt = JSON.stringify(S, (k, v) => k === "token" ? undefined : v, 1); const name = `views-tracker-${new Date().toISOString().slice(0, 10)}.json`;
+  if (bridge) { const p = await bridge.export_file(name, txt); if (p) toast("Сохранено: " + p.split("/").pop()); return; }
+  const u = URL.createObjectURL(new Blob([txt], { type: "application/json" })); Object.assign(document.createElement("a"), { href: u, download: name }).click(); setTimeout(() => URL.revokeObjectURL(u), 2000);
+}
+async function importData(o) {
+  let txt = null;
+  if (bridge) txt = await bridge.import_file();
+  else txt = await new Promise(r => { const i = Object.assign(document.createElement("input"), { type: "file", accept: ".json" }); i.onchange = async () => r(i.files[0] ? await i.files[0].text() : null); i.click(); });
+  if (!txt) return;
+  try { const d = JSON.parse(txt); if (!d.accounts) throw new Error("это не файл Views Tracker");
+    if (!(await ask("Загрузить копию?", `Аккаунтов в файле: ${Object.keys(d.accounts).length}. Текущие данные заменятся.`, "Загрузить"))) return;
+    S = { settings: { ...DEF, ...d.settings, token: S.settings.token }, accounts: d.accounts, runs: d.runs || [], meta: d.meta || {} }; save(); closeSheet(o); view.acct = null; lastKey = null; render(); toast("Загружено");
+  } catch (e) { toast("✕ " + e.message); }
+}
+function openLog() {
+  const u = S.meta.usage; const runs = u ? S.runs.filter(r => r.t >= u.start) : S.runs;
+  const spentApp = runs.reduce((s, r) => s + r.usd, 0); const fr = u && u.limit ? u.spent / u.limit : 0;
+  const days = u ? Math.max((now() - u.start) / 864e5, .5) : 1, cyc = u ? (u.end - u.start) / 864e5 : 30, fc = u ? u.spent / days * cyc : 0;
+  const vids = Object.values(S.accounts).reduce((s, a) => s + Object.keys(a.videos || {}).length, 0);
+  const K = { auto: ["k-auto", "Авто"], light: ["k-light", "Обновление"], full: ["k-full", "Полный скан"] }, SK = { profile: "профили", light: "свежие видео", full: "все видео" };
+  const rows = S.runs.slice(0, 150).map(r => `<div class="lg ${r.ok ? "" : "bad"}"><span class="t">${dtstr(r.t)}</span><span class="k ${K[r.kind][0]}">${K[r.kind][1]}</span><span class="m">${r.accounts.map(a => "@" + esc(a)).join(", ")}<small>${r.steps.map(s => s.kind === "spike" ? `⚡ @${esc(s.acct)}: +${short(s.extra)} лайков не от свежих видео → полный скан` : `${SK[s.kind]}: ${esc((s.actor || "").split("/")[0])} ${s.err ? "✕ " + esc(s.err) : s.skipped ? "пропущено, " + esc(s.skipped) : `${s.items} ${plural(s.items, "строка", "строки", "строк")}`}`).join(" · ")}${r.err ? " · ✕ " + esc(r.err) : ""}</small></span><span class="c">${usd(r.usd)}</span></div>`).join("");
+  const o = sheet(head("≡", "Журнал", "Каждый запуск и сколько он стоил · расход Apify за месяц") +
+    `<div class="usage"><div class="ucard"><div class="uh">Apify · ${u ? esc(u.plan) : "—"}</div><div class="big">${u ? usd(u.spent) : "—"} <small>из ${u ? usd(u.limit) : "—"}</small></div><div class="meter"><i class="${fr > .8 ? "warn" : ""}" style="width:0" data-w="${Math.min(100, fr * 100)}"></i></div><div class="ur">прогноз на месяц ≈ <b>${u ? usd(fc) : "—"}</b> · сброс <b>${u ? dstr(u.end + 1000) : "—"}</b></div></div>
+     <div class="ucard"><div class="uh">Эта программа</div><div class="big">${runs.length} <small>${plural(runs.length, "запуск", "запуска", "запусков")}</small></div><div class="ur">потрачено ≈ <b>${usd(spentApp)}</b></div><div class="ur">в среднем ≈ <b>${usd(runs.length ? spentApp / runs.length : 0)}</b> за запуск</div></div>
+     <div class="ucard"><div class="uh">Под наблюдением</div><div class="big">${Object.keys(S.accounts).length} <small>${plural(Object.keys(S.accounts).length, "аккаунт", "аккаунта", "аккаунтов")}</small></div><div class="ur"><b>${vids}</b> видео в базе</div><div class="ur">обновление всех ≈ <b>${usd(estimate(Object.keys(S.accounts), "profile") + estimate(Object.keys(S.accounts), "light"))}</b></div></div></div>
+     <div class="logbox">${rows || '<div style="padding:30px;text-align:center;color:var(--text3)">Пока пусто — запусков ещё не было</div>'}</div>
+     <div class="sheet-actions"><button class="btn" id="lBal">Обновить баланс</button>${bridge ? '<button class="btn" id="lFolder">Папка с данными</button>' : ""}</div>`, 940);
+  o.querySelector(".sheet").style.height = "min(720px,100%)";
+  requestAnimationFrame(() => requestAnimationFrame(() => o.querySelectorAll("[data-w]").forEach(i => i.style.width = i.dataset.w + "%")));
+  o.querySelector("#lBal").onclick = async () => { await usage(); closeSheet(o); setTimeout(openLog, 200); };
+  const f = o.querySelector("#lFolder"); if (f) f.onclick = () => bridge.reveal_data();
+}
+function openFaq() {
+  sheet(head("?", "Как это работает", "Коротко о каждой функции Views Tracker") + `<div class="faq">
+    <h4>📥 Откуда цифры</h4><p>Программа не заходит в твой TikTok. Данные собирают «actors» на <b>Apify</b>: <b>igolaizola</b> — видео (точные просмотры, лайки, комменты, репосты), <b>dami_studio</b> — профиль (подписчики, общие лайки, число видео). Если один сломался — сам включится запасной <b>clockworks</b> (дороже, но надёжный).</p>
+    <h4>👁 Тотал просмотров</h4><p>TikTok не показывает общие просмотры аккаунта — программа складывает просмотры всех видео. Пару видео (карусели, скрытые) TikTok не отдаёт — их просмотры не попадают в тотал, это видно в шапке аккаунта.</p>
+    <h4>💸 Экономный режим</h4><ul><li><b>Первый раз</b> — полный скан: все видео (≈ 2 цента за 70 видео).</li><li><b>Дальше</b> — только свежие видео (за 7 дн, минимум 10) + подписчики: ≈ 0,3 цента на акк. Старые видео берутся из памяти.</li><li><b>Раз в неделю</b> — снова полный скан для сверки.</li><li><b>«Полный»</b> режим — каждый раз все видео: точнее, но в 5–7 раз дороже.</li></ul>
+    <h4>⚡ Стрельнувшие старые видео</h4><p>Если общие лайки аккаунта выросли сильно больше, чем лайки на свежих видео — значит, «выстрелило» что-то старое. Программа сама делает полный скан и показывает это видео первым во вкладке <b>Растут</b>.</p>
+    <h4>🛡 Защита от трат и мусора</h4><ul><li><b>Лимит на запуск</b> — actor физически не потратит больше.</li><li>Автообновление не трогает акк, если он обновлялся недавно (15 мин).</li><li>Если просмотры видео вдруг «упали» — это сбой, программа оставит прошлые цифры.</li></ul>
+    <h4>🔁 Автообновление</h4><p>Слева внизу — интервал. Работает, пока окно программы открыто. <span style="white-space:nowrap"><b>⌘R</b></span> — обновить все вручную.</p>
+    <h4>🎞 Видео</h4><p>Плитки: ▶ просмотры, ♥ лайки, 💬 комменты, ↗ репосты. Зелёная метка — прирост с прошлой проверки. Наведи — увидишь описание, нажми — откроется в TikTok. Сортировка: <b>Новые / Топ / Растут</b>.</p>
+    <h4>≡ Журнал</h4><p>Каждый запуск: что обновлялось, какие actors, сколько строк и сколько $ ушло. Сверху — расход Apify за месяц и прогноз.</p></div>`, 740);
+}
+
+/* ================= label wrapping ================= */
+const LABELS = ".btn,.seg button,.round,.mode,.badge,.dp,.tl,.tr,.x,.stepper button,.stepper>span,.crumb";
+function wrapLabels(root) {
+  const els = root.matches && root.matches(LABELS) ? [root, ...root.querySelectorAll(LABELS)] : root.querySelectorAll ? root.querySelectorAll(LABELS) : [];
+  for (const el of els) for (const n of [...el.childNodes]) if (n.nodeType === 3 && n.textContent.trim()) { const sp = document.createElement("span"); sp.className = "t"; n.replaceWith(sp); sp.appendChild(n); }
+}
+new MutationObserver(ms => { for (const m of ms) { if (m.type === "characterData") { const el = m.target.parentElement; if (el && el.matches(LABELS)) wrapLabels(el); continue; } for (const n of m.addedNodes) { if (n.nodeType === 1) wrapLabels(n); else if (n.nodeType === 3 && n.parentElement && n.parentElement.matches(LABELS)) wrapLabels(n.parentElement); } } })
+  .observe(document.body, { childList: true, subtree: true, characterData: true });
+wrapLabels(document.body);
+/* ================= auto + boot ================= */
+function tick() {
+  if (busy || !S.settings.autoMin || !S.settings.token) return;
+  if (now() - (S.meta.lastAutoAt || 0) >= S.settings.autoMin * 60e3) { S.meta.lastAutoAt = now(); save(); refresh(Object.keys(S.accounts), { kind: "auto" }); }
+}
+async function boot() {
+  if (NATIVE) {
+    await new Promise(r => { if (window.pywebview && window.pywebview.api && window.pywebview.api.load) r(); else addEventListener("pywebviewready", r, { once: true }); });
+    bridge = window.pywebview.api;
+    try { S = parseState(await bridge.load()); } catch (e) { toast("Не удалось прочитать данные: " + e); }
+  } else S = load();
+  render(); usage(); syncPull(true);
+  setInterval(() => { if (document.visibilityState === "visible") syncPull(true); }, 5 * 60e3);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { syncPull(true); tick(); } });
+  if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+  setInterval(tick, 60e3); setInterval(() => { renderStatus(); }, 30e3); setTimeout(tick, 3000);
+  addEventListener("storage", e => { if (!bridge && e.key === LS && !busy) { S = load(); render(); } });
+}
+boot();
+if (document.fonts) document.fonts.ready.then(() => segPills());
+</script>
+</body>
+</html>
