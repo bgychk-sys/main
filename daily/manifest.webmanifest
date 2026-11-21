@@ -1,13 +1,13 @@
 {
   "name": "Graphite",
   "short_name": "Graphite",
-  "description": "Graphite: your everyday apps — Moneta (shifts & pay), English and more",
+  "description": "Graphite: your everyday services — ShiftsTracker, TikTokChecker, English",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#000000",
-  "theme_color": "#0a1636",
+  "theme_color": "#101012",
   "lang": "en",
   "icons": [
     {

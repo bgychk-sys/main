@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a1636">
+<meta name="theme-color" content="#101012">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,18 +22,13 @@
   --inner-top:rgba(255,255,255,.2); --shadow:0 10px 30px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.16);
   --chip:rgba(255,255,255,.08); --chip-border:rgba(255,255,255,.14); --row-hover:rgba(255,255,255,.06);
   --spring:cubic-bezier(.3,1.3,.5,1); --ease:cubic-bezier(.2,.8,.2,1);
-  --bg-a:#060d24; --bg-b:#0d2259; --bg-c:#1b4fb8; --c1:#2f80ff; --c2:#22d3ee; --c3:#1e3a8a;
+  --base:#101012; --wall:#101012; --c1:#2f80ff; --c2:#22d3ee; --c3:#1e3a8a;
   --bar-a:rgba(30,48,100,.82); --bar-b:rgba(14,26,62,.82); --pop-a:rgba(32,50,104,.96); --pop-b:rgba(14,24,58,.96); --sh-a:rgba(28,44,92,.97); --sh-b:rgba(12,22,52,.97); --toast:rgba(20,34,72,.95);
   color-scheme:dark;
 }
-[data-wp="obsidian"]{--bg-a:#030304;--bg-b:#0c0d11;--bg-c:#1d1f27;--c1:#4b5063;--c2:#8a8fa3;--c3:#23252f;--bar-a:rgba(40,42,52,.84);--bar-b:rgba(17,18,23,.84);--pop-a:rgba(42,44,54,.97);--pop-b:rgba(16,17,22,.97);--sh-a:rgba(38,40,50,.98);--sh-b:rgba(14,15,20,.98);--toast:rgba(32,34,42,.96)}
-[data-wp="forest"]{--bg-a:#02120b;--bg-b:#07301d;--bg-c:#0f7a49;--c1:#22c55e;--c2:#a3e635;--c3:#065f46;--bar-a:rgba(22,72,48,.84);--bar-b:rgba(8,34,22,.84);--pop-a:rgba(24,76,50,.97);--pop-b:rgba(8,32,21,.97);--sh-a:rgba(20,66,44,.98);--sh-b:rgba(7,28,19,.98);--toast:rgba(14,52,34,.96)}
-[data-wp="violet"]{--bg-a:#0b0520;--bg-b:#261055;--bg-c:#6a2bd4;--c1:#a855f7;--c2:#ec4899;--c3:#4c1d95;--bar-a:rgba(58,30,110,.84);--bar-b:rgba(24,12,52,.84);--pop-a:rgba(60,32,114,.97);--pop-b:rgba(22,11,48,.97);--sh-a:rgba(52,28,100,.98);--sh-b:rgba(20,10,44,.98);--toast:rgba(40,20,80,.96)}
-[data-wp="sunset"]{--bg-a:#16060d;--bg-b:#46102c;--bg-c:#c2410c;--c1:#f97316;--c2:#f43f5e;--c3:#7c2d12;--bar-a:rgba(96,30,50,.84);--bar-b:rgba(40,10,22,.84);--pop-a:rgba(100,32,52,.97);--pop-b:rgba(38,10,20,.97);--sh-a:rgba(88,28,46,.98);--sh-b:rgba(34,9,18,.98);--toast:rgba(70,22,36,.96)}
-[data-wp="ocean"]{--bg-a:#02161c;--bg-b:#063d4a;--bg-c:#0e7490;--c1:#06b6d4;--c2:#34d399;--c3:#155e75;--bar-a:rgba(14,74,90,.84);--bar-b:rgba(5,34,42,.84);--pop-a:rgba(16,78,94,.97);--pop-b:rgba(5,32,40,.97);--sh-a:rgba(14,68,82,.98);--sh-b:rgba(4,28,35,.98);--toast:rgba(10,54,66,.96)}
 *{box-sizing:border-box;margin:0;padding:0}
-html{background:var(--bg-a)}
-body{min-height:100vh;color:var(--text);background:linear-gradient(160deg,var(--bg-a) 0%,var(--bg-b) 50%,var(--bg-c) 100%) fixed;
+html{background:var(--base)}
+body{min-height:100vh;color:var(--text);background:var(--base);
   font:15px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;
   -webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
@@ -43,12 +38,12 @@ input,select,textarea{font:inherit;color:inherit}
 .num{font-variant-numeric:tabular-nums}
 .t{display:inline-block;line-height:1.2;text-box:trim-both cap alphabetic;white-space:nowrap}
 
-.bg{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none}
-.blob{position:absolute;border-radius:50%}
+.bg{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none;background:var(--wall)}
+.blob{position:absolute;border-radius:50%;display:var(--blob-d,none)}
 .b1{background:radial-gradient(closest-side,var(--c1),transparent);width:70vmax;height:70vmax;left:-24vmax;bottom:-26vmax;opacity:.55}
 .b2{background:radial-gradient(closest-side,var(--c2),transparent);width:56vmax;height:56vmax;right:-18vmax;top:-22vmax;opacity:.4}
 .b3{background:radial-gradient(closest-side,var(--c3),transparent);width:60vmax;height:60vmax;left:24vmax;top:4vmax;opacity:.45}
-body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:env(safe-area-inset-top);pointer-events:none;background:linear-gradient(180deg,var(--bg-a) 0%,var(--bg-a) 70%,transparent 100%)}
+body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:env(safe-area-inset-top);pointer-events:none;background:linear-gradient(180deg,var(--base) 0%,var(--base) 70%,transparent 100%)}
 
 .glass{position:relative;background:var(--glass);border-radius:24px;box-shadow:var(--shadow),inset 0 1px 1px var(--inner-top);
   -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
@@ -87,9 +82,9 @@ body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:en
 .appbtn .name{white-space:nowrap}.appbtn .name .pf{color:var(--text2);font-weight:600}.appbtn .name .dot{margin:0 6px;color:var(--text3)}
 .menu hr{border:0;height:1px;background:rgba(255,255,255,.08);margin:6px 10px}
 .mi .aicon.gear{background:var(--chip);box-shadow:inset 0 0 0 1px var(--chip-border)}.mi .aicon.gear svg{width:18px;height:18px}
-.wps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.wps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .wp{display:flex;flex-direction:column;gap:7px;align-items:stretch;text-align:center;font-size:12.5px;font-weight:600;color:var(--text2)}
-.wp i{display:block;aspect-ratio:9/13;border-radius:16px;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);transition:transform .2s var(--spring),box-shadow .2s}
+.wp i{display:block;aspect-ratio:4/5;border-radius:16px;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);transition:transform .2s var(--spring),box-shadow .2s}
 .wp i::after{content:"";position:absolute;left:12%;right:12%;top:12%;height:13%;border-radius:999px;background:rgba(255,255,255,.14)}
 .wp i::before{content:"";position:absolute;left:12%;right:12%;top:31%;height:24%;border-radius:12px;background:rgba(255,255,255,.1)}
 .wp:active i{transform:scale(.95)}.wp.on{color:var(--text)}.wp.on i{box-shadow:0 0 0 2px var(--text),0 0 0 4px rgba(255,255,255,.18)}
@@ -291,35 +286,36 @@ const ICONS = {
 };
 
 /* ================= hub ================= */
+/* Graphite wallpapers (shared by every Graphite service; choice lives in localStorage "daily.hub".wp) */
+const GWALLS = [{"id":"graphite","name":"Graphite","base":"#101012","tint":[150,150,170],"css":"radial-gradient(60% 80% at 85% -10%, rgba(150,150,170,0.32), rgba(150,150,170,0) 60%), radial-gradient(55% 75% at 5% 110%, rgba(95,105,130,0.28), rgba(95,105,130,0) 60%), radial-gradient(40% 50% at 45% 55%, rgba(255,255,255,0.04), rgba(255,255,255,0) 70%), #101012"},{"id":"midnight","name":"Midnight","base":"#0A0C16","tint":[70,95,190],"css":"radial-gradient(65% 85% at 88% -12%, rgba(70,95,190,0.34), rgba(70,95,190,0) 60%), radial-gradient(60% 80% at 0% 112%, rgba(45,60,140,0.3), rgba(45,60,140,0) 60%), radial-gradient(40% 50% at 45% 55%, rgba(150,170,255,0.05), rgba(150,170,255,0) 70%), #0A0C16"},{"id":"deep-teal","name":"Deep teal","base":"#091113","tint":[40,150,155],"css":"radial-gradient(62% 85% at 85% -10%, rgba(40,150,155,0.3), rgba(40,150,155,0) 60%), radial-gradient(58% 78% at 4% 112%, rgba(25,90,110,0.3), rgba(25,90,110,0) 60%), radial-gradient(40% 50% at 45% 55%, rgba(180,255,255,0.04), rgba(180,255,255,0) 70%), #091113"},{"id":"aubergine","name":"Aubergine","base":"#110C15","tint":[150,80,175],"css":"radial-gradient(62% 85% at 86% -10%, rgba(150,80,175,0.32), rgba(150,80,175,0) 60%), radial-gradient(58% 78% at 4% 110%, rgba(85,55,130,0.3), rgba(85,55,130,0) 60%), radial-gradient(40% 50% at 45% 55%, rgba(255,220,255,0.04), rgba(255,220,255,0) 70%), #110C15"},{"id":"ember","name":"Ember","base":"#140D0B","tint":[190,100,55],"css":"radial-gradient(62% 85% at 86% -10%, rgba(190,100,55,0.28), rgba(190,100,55,0) 60%), radial-gradient(58% 78% at 4% 110%, rgba(120,50,40,0.3), rgba(120,50,40,0) 60%), radial-gradient(40% 50% at 45% 55%, rgba(255,230,210,0.04), rgba(255,230,210,0) 70%), #140D0B"},{"id":"forest","name":"Forest","base":"#0B110D","tint":[70,140,90],"css":"radial-gradient(62% 85% at 86% -10%, rgba(70,140,90,0.28), rgba(70,140,90,0) 60%), radial-gradient(58% 78% at 4% 110%, rgba(45,90,80,0.28), rgba(45,90,80,0) 60%), radial-gradient(40% 50% at 45% 55%, rgba(220,255,230,0.04), rgba(220,255,230,0) 70%), #0B110D"},{"id":"ocean-dusk","name":"Ocean dusk","base":"#0C0E15","tint":[55,120,180],"css":"radial-gradient(65% 85% at 10% -12%, rgba(55,120,180,0.32), rgba(55,120,180,0) 60%), radial-gradient(60% 80% at 96% 112%, rgba(135,75,155,0.28), rgba(135,75,155,0) 60%), radial-gradient(40% 50% at 55% 55%, rgba(255,255,255,0.04), rgba(255,255,255,0) 70%), #0C0E15"},{"id":"rosewood","name":"Rosewood","base":"#140C0F","tint":[180,70,105],"css":"radial-gradient(62% 85% at 86% -10%, rgba(180,70,105,0.28), rgba(180,70,105,0) 60%), radial-gradient(58% 78% at 4% 110%, rgba(100,55,100,0.3), rgba(100,55,100,0) 60%), radial-gradient(40% 50% at 45% 55%, rgba(255,220,235,0.04), rgba(255,220,235,0) 70%), #140C0F"},{"id":"aurora","name":"Aurora","base":"#090E11","tint":[45,175,140],"css":"radial-gradient(65% 80% at 10% -12%, rgba(45,175,140,0.24), rgba(45,175,140,0) 60%), radial-gradient(62% 82% at 96% 112%, rgba(80,95,190,0.3), rgba(80,95,190,0) 60%), radial-gradient(45% 45% at 70% 40%, rgba(120,200,170,0.06), rgba(120,200,170,0) 70%), #090E11"},{"id":"steel","name":"Steel","base":"#0E0F11","tint":[135,140,150],"css":"radial-gradient(80% 70% at 50% -20%, rgba(135,140,150,0.24), rgba(135,140,150,0) 60%), radial-gradient(70% 70% at 50% 125%, rgba(75,80,95,0.28), rgba(75,80,95,0) 60%), radial-gradient(40% 50% at 45% 55%, rgba(255,255,255,0.03), rgba(255,255,255,0) 70%), #0E0F11"},{"id":"classic","name":"Classic blue","base":"#060d24","tint":[47,90,200],"css":"linear-gradient(160deg,#060d24 0%,#0d2259 50%,#1b4fb8 100%)","blobs":true}];
+function gwHub() { try { return JSON.parse(localStorage.getItem("daily.hub")) || {}; } catch (e) { return {}; } }
+function gwApply(id) {
+  const w = GWALLS.find(x => x.id === id) || GWALLS[0], st = document.documentElement.style;
+  const b = w.base.slice(1).match(/../g).map(h => parseInt(h, 16)), mix = (k, a) => `rgba(${b.map((v, i) => Math.round(v + (w.tint[i] - v) * k)).join(",")},${a})`;
+  st.setProperty("--wall", w.css); st.setProperty("--base", w.base); st.setProperty("--blob-d", w.blobs ? "block" : "none");
+  st.setProperty("--bar-a", mix(.26, .84)); st.setProperty("--bar-b", mix(.08, .84));
+  st.setProperty("--pop-a", mix(.26, .97)); st.setProperty("--pop-b", mix(.06, .97));
+  st.setProperty("--sh-a", mix(.22, .98)); st.setProperty("--sh-b", mix(.05, .98));
+  st.setProperty("--toast", mix(.22, .96)); st.setProperty("--strong", mix(.3, .6)); st.setProperty("--ring", mix(.2, .92));
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = w.base;
+  return w;
+}
+gwApply(gwHub().wp);
+
 const APPS = [
-  { id: "moneta", name: "Moneta", sub: "Shifts & pay", cls: "ic-moneta" },
+  { id: "moneta", name: "ShiftsTracker", sub: "Shifts & pay", cls: "ic-moneta" },
   { id: "english", name: "English", sub: "Words & daily practice", cls: "ic-english", soon: true },
-  { id: "views", name: "Views Tracker", sub: "TikTok views & income", cls: "ic-views", href: "../" },
+  { id: "views", name: "TikTokChecker", sub: "TikTok views & income", cls: "ic-views", href: "../" },
 ];
 const HUB_LS = "daily.hub";
 let hub = (() => { try { return JSON.parse(localStorage.getItem(HUB_LS)) || {}; } catch (e) { return {}; } })();
 const saveHub = () => { try { localStorage.setItem(HUB_LS, JSON.stringify(hub)); } catch (e) {} };
-const WPS = [
-  { id: "midnight", name: "Midnight", c: ["#060d24", "#0d2259", "#1b4fb8", "#2f80ff", "#22d3ee"] },
-  { id: "obsidian", name: "Obsidian", c: ["#030304", "#0c0d11", "#1d1f27", "#4b5063", "#8a8fa3"] },
-  { id: "forest", name: "Forest", c: ["#02120b", "#07301d", "#0f7a49", "#22c55e", "#a3e635"] },
-  { id: "violet", name: "Violet", c: ["#0b0520", "#261055", "#6a2bd4", "#a855f7", "#ec4899"] },
-  { id: "sunset", name: "Sunset", c: ["#16060d", "#46102c", "#c2410c", "#f97316", "#f43f5e"] },
-  { id: "ocean", name: "Ocean", c: ["#02161c", "#063d4a", "#0e7490", "#06b6d4", "#34d399"] },
-];
 const LOGO = `<svg viewBox="130 130 380 380" aria-hidden="true"><path fill="#fff" d="M145,159 L144,478 L147,482 L155,483 L318,320 L320,321 L320,478 L323,482 L331,483 L401,413 L407,410 L414,413 L484,483 L490,483 L494,480 L495,161 L492,157 L484,156 L321,319 L319,318 L319,161 L316,157 L308,156 L238,226 L232,229 L225,226 L155,156 L149,156Z"/></svg>`;
-function applyWp() {
-  const w = WPS.find(x => x.id === hub.wp) || WPS[0];
-  if (w.id === "midnight") delete document.documentElement.dataset.wp; else document.documentElement.dataset.wp = w.id;
-  document.querySelector('meta[name="theme-color"]').content = w.c[0];
-}
-applyWp();
-const wpSwatch = w => `linear-gradient(160deg,${w.c[0]} 0%,${w.c[1]} 50%,${w.c[2]} 100%)`;
-const wpBg = w => `radial-gradient(circle at 10% 95%,${w.c[3]}aa 0,transparent 55%),radial-gradient(circle at 95% 0%,${w.c[4]}88 0,transparent 50%),${wpSwatch(w)}`;
+const applyWp = () => gwApply(hub.wp);
 function hubSettings() {
   const o = sheet(sheetHead("Graphite settings") + `
-    <div class="sec"><h4>Wallpaper</h4><div class="wps">${WPS.map(w => `<button class="wp ${(hub.wp || "midnight") === w.id ? "on" : ""}" data-wp="${w.id}"><i style="background:${wpBg(w)}"></i>${w.name}</button>`).join("")}</div></div>
-    <p class="muted" style="text-align:center;margin-top:14px">Saved on this device.</p>`);
+    <div class="sec"><h4>Wallpaper</h4><div class="wps">${GWALLS.map(w => `<button class="wp ${(GWALLS.find(x => x.id === hub.wp) || GWALLS[0]).id === w.id ? "on" : ""}" data-wp="${w.id}"><i style="background:${w.css}"></i>${w.name}</button>`).join("")}</div></div>
+    <p class="muted" style="text-align:center;margin-top:14px">Applies to every Graphite service on this device.</p>`);
   o.querySelectorAll("[data-wp]").forEach(b => b.onclick = () => { hub.wp = b.dataset.wp; saveHub(); applyWp(); o.querySelectorAll("[data-wp]").forEach(x => x.classList.toggle("on", x === b)); });
 }
 const fromHash = location.hash.slice(1);
@@ -518,7 +514,7 @@ const TABS = ["overview", "shifts", "pay"];
 function goTab(k) { if (k === mv.tab || !TABS.includes(k)) return; slideDir = TABS.indexOf(k) > TABS.indexOf(mv.tab) ? "from-r" : "from-l"; mv.tab = k; segSet($("#mtabs"), k); setTimeout(() => render(true), 0); }
 function render(fresh) {
   const main = $("#main"); renderSync();
-  if (current === "english") { main.innerHTML = `<div class="view"><div class="glass card soon"><div class="aicon ic-english">Aa</div><h2>English is coming next</h2><p class="muted">Words from your day, 5 minutes of smart flashcards, and a personal dictionary with your progress.</p><button class="btn" style="margin-top:14px" onclick="setApp('moneta')">Back to Moneta</button></div></div>`; return; }
+  if (current === "english") { main.innerHTML = `<div class="view"><div class="glass card soon"><div class="aicon ic-english">Aa</div><h2>English is coming next</h2><p class="muted">Words from your day, 5 minutes of smart flashcards, and a personal dictionary with your progress.</p><button class="btn" style="margin-top:14px" onclick="setApp('moneta')">Back to ShiftsTracker</button></div></div>`; return; }
   const tabs = [["overview", "Overview"], ["shifts", "Shifts"], ["pay", "Pay"]];
   const body = mv.tab === "overview" ? vOverview() : mv.tab === "shifts" ? vShifts() : vPay();
   main.innerHTML = `<div class="seg tabs" id="mtabs">${tabs.map(([k, l]) => `<button data-k="${k}" class="${mv.tab === k ? "on" : ""}">${l}</button>`).join("")}</div>
@@ -579,7 +575,7 @@ function vPay() {
   const pd = nextPayday(), pdData = monthData(pd.forMonth);
   h += `<div class="glass card"><div class="payday"><div class="cd"><b>${pd.days}</b><small>${pd.days === 1 ? "day" : "days"}</small></div><div><div class="lbl">Next payday · ${pd.date.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</div><div style="font-size:22px;font-weight:700;margin-top:3px">≈ ${money(pdData.net)}</div><div class="muted">for ${esc(mShort(pd.forMonth))}</div></div></div></div>`;
   const list = M.pays.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-  if (!list.length) return h + `<div class="glass card empty"><div class="big">💶</div><b>No payouts logged</b><p class="muted">When salary arrives, tap + and enter what landed on your account. Moneta checks it against your shifts.</p></div>`;
+  if (!list.length) return h + `<div class="glass card empty"><div class="big">💶</div><b>No payouts logged</b><p class="muted">When salary arrives, tap + and enter what landed on your account. ShiftsTracker checks it against your shifts.</p></div>`;
   const T = { salary: ["pay", "Salary"], holiday: ["hol", "Holiday pay"], bonus: ["pay", "Bonus"] };
   h += `<div class="glass card"><div class="card-h"><h3>Payouts</h3></div><div class="rows stagger">` + list.map((p, i) => {
     const dt = new Date(p.date + "T12:00"); let chk = "";
@@ -653,7 +649,7 @@ function paySheet(p) {
 function openMSettings() {
   const d = clone(MS()); d.surcharges = d.surcharges || []; d.presets = d.presets || []; d.otDays = d.otDays || [];
   const vtTok = (() => { try { return !!JSON.parse(localStorage.getItem("vtmac.v1") || "null")?.settings?.token; } catch (e) { return false; } })();
-  const o = sheet(sheetHead("Moneta settings") + `<div id="sBody"></div><div class="acts"><button class="btn" data-close>Cancel</button><button class="btn green" id="stOk">Save</button></div>`);
+  const o = sheet(sheetHead("ShiftsTracker settings") + `<div id="sBody"></div><div class="acts"><button class="btn" data-close>Cancel</button><button class="btn green" id="stOk">Save</button></div>`);
   const draw = () => {
     o.querySelector("#sBody").innerHTML = `
     <div class="sec"><h4>Pay</h4><div class="fields"><label class="f">Hourly rate, gross<input id="stRate" inputmode="decimal" value="${num(d.rate)}"></label><label class="f">Take-home, % of gross<input id="stNet" type="number" min="1" max="100" value="${num(d.netPct)}"></label><label class="f">Currency<input id="stCur" maxlength="3" value="${esc(d.currency)}"></label></div>
@@ -668,7 +664,7 @@ function openMSettings() {
       <div class="fields" style="margin:0"><label class="f">From<input type="time" data-p="from" data-i="${i}" value="${esc(r.from)}"></label><label class="f">To<input type="time" data-p="to" data-i="${i}" value="${esc(r.to === "24:00" ? "00:00" : r.to)}"></label></div></div>`).join("")}<button class="btn" id="pAdd">+ Add premium</button></div>
     <div class="sec"><h4>Shift presets</h4><p>Quick buttons at the top of “Add shift”.</p>${d.presets.map((r, i) => `<div class="prem"><div class="fields" style="margin:0;grid-template-columns:1fr 1fr 64px 32px;gap:8px;align-items:end"><label class="f">Start<input type="time" data-q="start" data-i="${i}" value="${esc(r.start)}"></label><label class="f">End<input type="time" data-q="end" data-i="${i}" value="${esc(r.end)}"></label><label class="f">Break<input type="number" min="0" data-q="brk" data-i="${i}" value="${num(r.brk)}"></label><button class="x" data-qdel="${i}" aria-label="Remove">✕</button></div></div>`).join("")}<button class="btn" id="qAdd">+ Add preset</button></div>
     <div class="sec"><h4>Sync phone ↔ Mac</h4><div class="switchrow"><span>Sync through Apify<small>${vtTok && !d.token ? "uses the token from Views Tracker" : "stored in your Apify (store “daily-apps”)"}</small></span><input type="checkbox" class="switch" id="stSync" ${d.sync !== false ? "checked" : ""}></div>
-      <div class="fields" style="margin-top:8px"><label class="f">Apify token ${vtTok ? "(optional — Views Tracker's is used)" : ""}<input id="stTok" type="password" placeholder="apify_api_…" value="${esc(d.token || "")}"></label></div></div>
+      <div class="fields" style="margin-top:8px"><label class="f">Apify token ${vtTok ? "(optional — TikTokChecker's is used)" : ""}<input id="stTok" type="password" placeholder="apify_api_…" value="${esc(d.token || "")}"></label></div></div>
     <div class="sec"><h4>Backup</h4><p>Export a file now and then. Import also accepts a backup from the old Moneta artifact (shifts and income).</p><div class="acts"><button class="btn" id="stExp">Export</button><button class="btn" id="stImp">Import</button></div></div>`;
     o.querySelectorAll("[data-p]").forEach(inp => inp.oninput = () => { const r = d.surcharges[+inp.dataset.i]; r[inp.dataset.p] = inp.dataset.p === "pct" ? num(inp.value) : inp.value; });
     o.querySelectorAll("[data-pday]").forEach(b => b.onclick = () => { const r = d.surcharges[+b.dataset.pday], w = +b.dataset.d; r.days = r.days || []; r.days = r.days.includes(w) ? r.days.filter(x => x !== w) : [...r.days, w]; b.classList.toggle("on"); });
