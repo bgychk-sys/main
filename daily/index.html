@@ -191,6 +191,9 @@ body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:en
 .f select option{background:#14244f}
 .chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
 .chip{height:34px;padding:0 13px;border-radius:999px;background:var(--chip);border:1px solid var(--chip-border);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;transition:transform .15s,background .15s}
+.chip.ghost{background:transparent;border-style:dashed;color:var(--mut,rgba(255,255,255,.7))}
+.presed{padding:12px;border-radius:18px;background:rgba(255,255,255,.05);margin-bottom:12px}.presed h4{font-size:10.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--accent-ink);margin:0 0 10px}.presed .mut{opacity:.6;margin:0 0 6px}
+.prow{display:grid;grid-template-columns:1fr 1fr 60px 32px;gap:8px;align-items:center;margin-bottom:8px}.prow input{width:100%;min-width:0;height:44px;border-radius:13px;border:1px solid var(--chip-border);background:rgba(0,0,0,.25);padding:0 10px;outline:0;font-size:16px;font-weight:500;color:var(--text);-webkit-appearance:none;appearance:none;display:flex;align-items:center}.prow input:focus{border-color:rgba(100,176,255,.6)}
 .chip:active{transform:scale(.95)} .chip.on{background:rgba(74,222,128,.22);border-color:rgba(74,222,128,.5)}
 .preview{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:16px;background:rgba(74,222,128,.12);margin-bottom:12px;font-size:13.5px}
 .preview b{font-size:18px;color:var(--mint)}
@@ -539,9 +542,8 @@ function vPay() {
 function shiftSheet(s) {
   const isNew = !s; const last = M.shifts.slice().sort((x, y) => (y.date + y.start).localeCompare(x.date + x.start))[0];
   s = s ? { ...s } : { id: rid(), date: mv.month === mKey(new Date()) ? today() : mv.month + "-01", start: last ? last.start : "07:00", end: last ? last.end : "15:30", brk: last ? last.brk || 0 : 30, note: "" };
-  const presets = []; (MS().presets || []).forEach(x => { const k = x.start + x.end + (x.brk || 0); if (x.start && x.end && !presets.some(p => p.k === k)) presets.push({ k, start: x.start, end: x.end, brk: x.brk || 0 }); }); const nSaved = presets.length; M.shifts.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "")).forEach(x => { const k = x.start + x.end + (x.brk || 0); if (presets.length < nSaved + 3 && !presets.some(p => p.k === k)) presets.push({ k, start: x.start, end: x.end, brk: x.brk || 0 }); });
   const o = sheet(sheetHead(isNew ? "Add shift" : "Edit shift") + `
-    ${presets.length ? `<div class="chips">${presets.map(p => `<button class="chip" data-s="${p.start}" data-e="${p.end}" data-b="${p.brk}">${p.start}–${p.end}${+p.brk ? " · " + p.brk + "m" : ""}</button>`).join("")}</div>` : ""}
+    <div id="chipsBox"></div>
     <div class="fields"><label class="f">Date<input type="date" id="sDate" value="${esc(s.date)}"></label></div>
     <div class="fields"><label class="f">Start<input type="time" id="sStart" value="${esc(s.start)}"></label><label class="f">End<input type="time" id="sEnd" value="${esc(s.end)}"></label><label class="f">Break, min<input type="number" id="sBrk" inputmode="numeric" min="0" value="${num(s.brk)}"></label></div>
     <div class="fields"><label class="f">Note (optional)<input type="text" id="sNote" value="${esc(s.note || "")}" placeholder="e.g. overtime, line 2"></label></div>
@@ -550,7 +552,23 @@ function shiftSheet(s) {
   const read = () => ({ ...s, date: o.querySelector("#sDate").value, start: o.querySelector("#sStart").value, end: o.querySelector("#sEnd").value, brk: Math.max(0, num(o.querySelector("#sBrk").value)), note: o.querySelector("#sNote").value.trim() });
   const prev = () => { const x = read(); if (!x.date || !x.start || !x.end) return; const c = shiftCalc(x); o.querySelector("#sPrev").innerHTML = `<span>${hrs(c.hours)}${c.extra ? ` · +${money(c.extra)} premiums` : ""}</span><b>${money(c.total)}</b>`; };
   o.querySelectorAll("input").forEach(i => i.addEventListener("input", prev)); prev();
-  o.querySelectorAll(".chip").forEach(c => c.onclick = () => { o.querySelector("#sStart").value = c.dataset.s; o.querySelector("#sEnd").value = c.dataset.e; o.querySelector("#sBrk").value = c.dataset.b; o.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c)); prev(); });
+  let pr = clone(MS().presets || []);
+  const box = o.querySelector("#chipsBox");
+  const drawChips = edit => {
+    if (!edit) {
+      box.innerHTML = `<div class="chips">${pr.map(p => `<button class="chip" data-s="${p.start}" data-e="${p.end}" data-b="${p.brk || 0}">${p.start}–${p.end}${+p.brk ? " · " + p.brk + "m" : ""}</button>`).join("")}<button class="chip ghost" id="prEdit">${pr.length ? "✎ Edit" : "+ Preset"}</button></div>`;
+      box.querySelectorAll(".chip[data-s]").forEach(c => c.onclick = () => { o.querySelector("#sStart").value = c.dataset.s; o.querySelector("#sEnd").value = c.dataset.e; o.querySelector("#sBrk").value = c.dataset.b; box.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c)); prev(); });
+      box.querySelector("#prEdit").onclick = () => drawChips(true);
+      return;
+    }
+    box.innerHTML = `<div class="presed"><h4>Presets</h4>${pr.map((r, i) => `<div class="prow"><input type="time" data-q="start" data-i="${i}" value="${esc(r.start)}" aria-label="Start"><input type="time" data-q="end" data-i="${i}" value="${esc(r.end)}" aria-label="End"><input type="number" min="0" inputmode="numeric" data-q="brk" data-i="${i}" value="${num(r.brk)}" aria-label="Break, min"><button class="x" data-qdel="${i}" aria-label="Remove">✕</button></div>`).join("") || '<p class="mut">No presets yet.</p>'}
+      <div class="acts" style="margin-top:8px"><button class="btn" id="prAdd">+ Add current times</button><button class="btn green" id="prDone">Done</button></div></div>`;
+    box.querySelectorAll("[data-q]").forEach(inp => inp.oninput = e => { e.stopPropagation(); const r = pr[+inp.dataset.i]; r[inp.dataset.q] = inp.dataset.q === "brk" ? Math.max(0, num(inp.value)) : inp.value; });
+    box.querySelectorAll("[data-qdel]").forEach(b => b.onclick = () => { pr.splice(+b.dataset.qdel, 1); drawChips(true); });
+    box.querySelector("#prAdd").onclick = () => { const x = read(); pr.push({ start: x.start || "08:00", end: x.end || "17:00", brk: x.brk || 0 }); drawChips(true); };
+    box.querySelector("#prDone").onclick = () => { pr = pr.filter(r => r.start && r.end); M.settings = { ...MS(), presets: clone(pr) }; M.settingsAt = now(); mSave(); drawChips(false); toast("Presets saved"); };
+  };
+  drawChips(false);
   o.querySelector("#sOk").onclick = () => { const x = read(); if (!x.date || !x.start || !x.end) return toast("Fill in date, start and end"); upsert("shifts", x); closeSheet(o); if (x.date.slice(0, 7) !== mv.month) { mv.month = x.date.slice(0, 7); render(); } toast(isNew ? `Shift saved · ${money(shiftCalc(x).total)}` : "Shift updated"); };
   const del = o.querySelector("#sDel"); if (del) del.onclick = () => { closeSheet(o); remove("shifts", s.id); };
 }
