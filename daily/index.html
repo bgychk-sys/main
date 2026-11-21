@@ -105,6 +105,9 @@ body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:en
 @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .view{animation:fadeIn .3s var(--ease) both}
+.view.from-r{animation:slideR .32s var(--ease) both} .view.from-l{animation:slideL .32s var(--ease) both}
+@keyframes slideR{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes slideL{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
 .stagger>*{animation:pop .42s var(--spring) both;animation-delay:calc(var(--i,0)*30ms)}
 .stagger>.glass{animation-name:fadeIn}
 .seg{position:relative;display:flex;padding:3px;border-radius:999px;background:rgba(0,0,0,.22);gap:2px;isolation:isolate}
@@ -507,7 +510,9 @@ function remove(coll, id) {
 }
 
 /* ================= Moneta: views ================= */
-let mv = { tab: "overview", month: mKey(new Date()) };
+let mv = { tab: "overview", month: mKey(new Date()) }, slideDir = "";
+const TABS = ["overview", "shifts", "pay"];
+function goTab(k) { if (k === mv.tab || !TABS.includes(k)) return; slideDir = TABS.indexOf(k) > TABS.indexOf(mv.tab) ? "from-r" : "from-l"; mv.tab = k; segSet($("#mtabs"), k); setTimeout(() => render(true), 0); }
 function render(fresh) {
   const main = $("#main"); renderSync();
   if (current === "english") { main.innerHTML = `<div class="view"><div class="glass card soon"><div class="aicon ic-english">Aa</div><h2>English is coming next</h2><p class="muted">Words from your day, 5 minutes of smart flashcards, and a personal dictionary with your progress.</p><button class="btn" style="margin-top:14px" onclick="setApp('moneta')">Back to Moneta</button></div></div>`; return; }
@@ -515,10 +520,11 @@ function render(fresh) {
   const body = mv.tab === "overview" ? vOverview() : mv.tab === "shifts" ? vShifts() : vPay();
   main.innerHTML = `<div class="seg tabs" id="mtabs">${tabs.map(([k, l]) => `<button data-k="${k}" class="${mv.tab === k ? "on" : ""}">${l}</button>`).join("")}</div>
     ${mv.tab !== "pay" ? `<div class="month"><button class="round" data-m="-1" aria-label="Previous month">${ICONS.left}</button><div class="label">${mLabel(mv.month)}<small>${mv.month === mKey(new Date()) ? "this month" : "&nbsp;"}</small></div><button class="round" data-m="1" aria-label="Next month">${ICONS.right}</button></div>` : ""}
-    <div class="view ${fresh ? "" : "still"}" id="mview">${body}</div>
+    <div class="view ${fresh ? slideDir : "still"}" id="mview">${body}</div>
     <p class="foot">${syncOn() ? "Synced through your Apify" : "Stored on this device"} · <button onclick="openMSettings()">Settings &amp; backup</button></p>
     <button class="fab" id="fab" aria-label="${mv.tab === "pay" ? "Add payout" : "Add shift"}">${ICONS.plus}</button>`;
   if (!fresh) $("#mview").style.animation = "none";
+  slideDir = "";
   segPills(main); countUp(main);
 }
 function vOverview() {
@@ -699,13 +705,30 @@ function importM(o) {
 
 /* ================= events ================= */
 $("#main").addEventListener("click", e => {
-  const t = e.target.closest("#mtabs button"); if (t) { mv.tab = t.dataset.k; segSet($("#mtabs"), mv.tab); setTimeout(() => render(true), 0); return; }
+  const t = e.target.closest("#mtabs button"); if (t) { goTab(t.dataset.k); return; }
   const m = e.target.closest("[data-m]"); if (m) { mv.month = mAdd(mv.month, +m.dataset.m); render(true); return; }
   const s = e.target.closest("[data-shift]"); if (s) return shiftSheet(M.shifts.find(x => x.id === s.dataset.shift));
   const p = e.target.closest("[data-pay]"); if (p) return paySheet(M.pays.find(x => x.id === p.dataset.pay));
   if (e.target.closest("#fab")) return mv.tab === "pay" ? paySheet() : shiftSheet();
 });
 $("#setBtn").onclick = () => openMSettings();
+// swipe left/right between Overview · Shifts · Pay
+let sw = null;
+$("#main").addEventListener("touchstart", e => {
+  sw = null; if (current !== "moneta" || e.touches.length !== 1 || $(".overlay") || $(".menu") || e.target.closest("input,textarea,select")) return;
+  const t = e.touches[0]; if (t.clientX < 16 || t.clientX > innerWidth - 16) return;
+  sw = { x: t.clientX, y: t.clientY, t: Date.now(), lock: "" };
+}, { passive: true });
+$("#main").addEventListener("touchmove", e => {
+  if (!sw || sw.lock) return; const t = e.touches[0], dx = t.clientX - sw.x, dy = t.clientY - sw.y;
+  if (Math.abs(dx) > 12 || Math.abs(dy) > 12) sw.lock = Math.abs(dx) > Math.abs(dy) * 1.4 ? "x" : "y";
+}, { passive: true });
+$("#main").addEventListener("touchend", e => {
+  if (!sw || sw.lock !== "x") { sw = null; return; }
+  const t = e.changedTouches[0], dx = t.clientX - sw.x, dy = t.clientY - sw.y, dt = Date.now() - sw.t; sw = null;
+  if (Math.abs(dy) > Math.abs(dx)) return;
+  if (Math.abs(dx) > 60 || (Math.abs(dx) > 30 && dt < 250)) { const i = TABS.indexOf(mv.tab) + (dx < 0 ? 1 : -1); if (TABS[i]) goTab(TABS[i]); }
+}, { passive: true });
 let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => segPills(), 120); });
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") pull(true); });
 if (document.fonts) document.fonts.ready.then(() => segPills());
