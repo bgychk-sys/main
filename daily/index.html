@@ -7,11 +7,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Daily">
+<meta name="apple-mobile-web-app-title" content="Graphite">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
-<title>Daily</title>
+<title>Graphite</title>
 <style>
 /* "Midnight" glass, same system as Views Tracker. Layout: sticky top bar (app switcher · title · settings), app tabs, scrolling view. */
 :root{
@@ -22,11 +22,18 @@
   --inner-top:rgba(255,255,255,.2); --shadow:0 10px 30px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.16);
   --chip:rgba(255,255,255,.08); --chip-border:rgba(255,255,255,.14); --row-hover:rgba(255,255,255,.06);
   --spring:cubic-bezier(.3,1.3,.5,1); --ease:cubic-bezier(.2,.8,.2,1);
+  --bg-a:#060d24; --bg-b:#0d2259; --bg-c:#1b4fb8; --c1:#2f80ff; --c2:#22d3ee; --c3:#1e3a8a;
+  --bar-a:rgba(30,48,100,.82); --bar-b:rgba(14,26,62,.82); --pop-a:rgba(32,50,104,.96); --pop-b:rgba(14,24,58,.96); --sh-a:rgba(28,44,92,.97); --sh-b:rgba(12,22,52,.97); --toast:rgba(20,34,72,.95);
   color-scheme:dark;
 }
+[data-wp="obsidian"]{--bg-a:#030304;--bg-b:#0c0d11;--bg-c:#1d1f27;--c1:#4b5063;--c2:#8a8fa3;--c3:#23252f;--bar-a:rgba(40,42,52,.84);--bar-b:rgba(17,18,23,.84);--pop-a:rgba(42,44,54,.97);--pop-b:rgba(16,17,22,.97);--sh-a:rgba(38,40,50,.98);--sh-b:rgba(14,15,20,.98);--toast:rgba(32,34,42,.96)}
+[data-wp="forest"]{--bg-a:#02120b;--bg-b:#07301d;--bg-c:#0f7a49;--c1:#22c55e;--c2:#a3e635;--c3:#065f46;--bar-a:rgba(22,72,48,.84);--bar-b:rgba(8,34,22,.84);--pop-a:rgba(24,76,50,.97);--pop-b:rgba(8,32,21,.97);--sh-a:rgba(20,66,44,.98);--sh-b:rgba(7,28,19,.98);--toast:rgba(14,52,34,.96)}
+[data-wp="violet"]{--bg-a:#0b0520;--bg-b:#261055;--bg-c:#6a2bd4;--c1:#a855f7;--c2:#ec4899;--c3:#4c1d95;--bar-a:rgba(58,30,110,.84);--bar-b:rgba(24,12,52,.84);--pop-a:rgba(60,32,114,.97);--pop-b:rgba(22,11,48,.97);--sh-a:rgba(52,28,100,.98);--sh-b:rgba(20,10,44,.98);--toast:rgba(40,20,80,.96)}
+[data-wp="sunset"]{--bg-a:#16060d;--bg-b:#46102c;--bg-c:#c2410c;--c1:#f97316;--c2:#f43f5e;--c3:#7c2d12;--bar-a:rgba(96,30,50,.84);--bar-b:rgba(40,10,22,.84);--pop-a:rgba(100,32,52,.97);--pop-b:rgba(38,10,20,.97);--sh-a:rgba(88,28,46,.98);--sh-b:rgba(34,9,18,.98);--toast:rgba(70,22,36,.96)}
+[data-wp="ocean"]{--bg-a:#02161c;--bg-b:#063d4a;--bg-c:#0e7490;--c1:#06b6d4;--c2:#34d399;--c3:#155e75;--bar-a:rgba(14,74,90,.84);--bar-b:rgba(5,34,42,.84);--pop-a:rgba(16,78,94,.97);--pop-b:rgba(5,32,40,.97);--sh-a:rgba(14,68,82,.98);--sh-b:rgba(4,28,35,.98);--toast:rgba(10,54,66,.96)}
 *{box-sizing:border-box;margin:0;padding:0}
-html{background:#0a1636}
-body{min-height:100vh;color:var(--text);background:linear-gradient(160deg,#060d24 0%,#0d2259 50%,#1b4fb8 100%) fixed;
+html{background:var(--bg-a)}
+body{min-height:100vh;color:var(--text);background:linear-gradient(160deg,var(--bg-a) 0%,var(--bg-b) 50%,var(--bg-c) 100%) fixed;
   font:15px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;
   -webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
@@ -38,10 +45,10 @@ input,select,textarea{font:inherit;color:inherit}
 
 .bg{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none}
 .blob{position:absolute;border-radius:50%}
-.b1{background:radial-gradient(closest-side,#2f80ff,rgba(47,128,255,0));width:70vmax;height:70vmax;left:-24vmax;bottom:-26vmax;opacity:.55}
-.b2{background:radial-gradient(closest-side,#22d3ee,rgba(34,211,238,0));width:56vmax;height:56vmax;right:-18vmax;top:-22vmax;opacity:.4}
-.b3{background:radial-gradient(closest-side,#1e3a8a,rgba(30,58,138,0));width:60vmax;height:60vmax;left:24vmax;top:4vmax;opacity:.45}
-body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:env(safe-area-inset-top);pointer-events:none;background:linear-gradient(180deg,#060d24 0%,#060d24 70%,rgba(6,13,36,0) 100%)}
+.b1{background:radial-gradient(closest-side,var(--c1),transparent);width:70vmax;height:70vmax;left:-24vmax;bottom:-26vmax;opacity:.55}
+.b2{background:radial-gradient(closest-side,var(--c2),transparent);width:56vmax;height:56vmax;right:-18vmax;top:-22vmax;opacity:.4}
+.b3{background:radial-gradient(closest-side,var(--c3),transparent);width:60vmax;height:60vmax;left:24vmax;top:4vmax;opacity:.45}
+body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:env(safe-area-inset-top);pointer-events:none;background:linear-gradient(180deg,var(--bg-a) 0%,var(--bg-a) 70%,transparent 100%)}
 
 .glass{position:relative;background:var(--glass);border-radius:24px;box-shadow:var(--shadow),inset 0 1px 1px var(--inner-top);
   -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
@@ -53,7 +60,7 @@ body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:en
 
 /* ---------- top bar */
 .top{position:sticky;top:calc(env(safe-area-inset-top) + 6px);z-index:10;display:flex;align-items:center;gap:10px;padding:8px;border-radius:999px;margin-bottom:12px;
-  --glass:linear-gradient(140deg,rgba(30,48,100,.82),rgba(14,26,62,.82))}
+  --glass:linear-gradient(140deg,var(--bar-a),var(--bar-b))}
 .appbtn{display:flex;align-items:center;gap:10px;padding:4px 12px 4px 4px;border-radius:999px;transition:background .2s}
 .appbtn:hover{background:var(--row-hover)}
 .appbtn:active{transform:scale(.97)}
@@ -72,7 +79,17 @@ body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:en
 .round svg{width:17px;height:17px}
 
 .menu{position:fixed;z-index:30;left:max(12px,calc(50% - 368px));top:calc(env(safe-area-inset-top) + 66px);width:min(320px,calc(100vw - 24px));padding:8px;border-radius:24px;
-  --glass:linear-gradient(140deg,rgba(32,50,104,.96),rgba(14,24,58,.96));transform-origin:24px 0;animation:drop .32s var(--spring) both}
+  --glass:linear-gradient(140deg,var(--pop-a),var(--pop-b));transform-origin:24px 0;animation:drop .32s var(--spring) both}
+.brand{display:flex;align-items:center;gap:10px;padding:8px 10px 10px;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand .lg{width:30px;height:30px;border-radius:9px;background:#000;display:grid;place-items:center;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.brand .lg svg{width:20px;height:20px}.brand b{font-size:16px;font-weight:750;letter-spacing:-.2px}.brand small{margin-left:auto;font-size:11px;color:var(--text3)}
+.mi .aicon.gear{background:var(--chip);box-shadow:inset 0 0 0 1px var(--chip-border)}.mi .aicon.gear svg{width:18px;height:18px}
+.wps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.wp{display:flex;flex-direction:column;gap:7px;align-items:stretch;text-align:center;font-size:12.5px;font-weight:600;color:var(--text2)}
+.wp i{display:block;aspect-ratio:9/13;border-radius:16px;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);transition:transform .2s var(--spring),box-shadow .2s}
+.wp i::after{content:"";position:absolute;left:12%;right:12%;top:12%;height:13%;border-radius:999px;background:rgba(255,255,255,.14)}
+.wp i::before{content:"";position:absolute;left:12%;right:12%;top:31%;height:24%;border-radius:12px;background:rgba(255,255,255,.1)}
+.wp:active i{transform:scale(.95)}.wp.on{color:var(--text)}.wp.on i{box-shadow:0 0 0 2px var(--text),0 0 0 4px rgba(255,255,255,.18)}
 .menu.closing{animation:lift .16s ease forwards}
 @keyframes drop{from{opacity:0;transform:translateY(-8px) scale(.94)}to{opacity:1;transform:none}}
 @keyframes lift{to{opacity:0;transform:translateY(-6px) scale(.96)}}
@@ -176,7 +193,7 @@ body::before{content:"";position:fixed;z-index:15;left:0;right:0;top:0;height:en
 .overlay.closing .sheet{animation:sink .18s ease forwards}
 @keyframes fadeOut{to{opacity:0}} @keyframes sink{to{opacity:0;transform:translateY(14px)}}
 .sheet{width:min(560px,100%);max-height:calc(100vh - 20px - env(safe-area-inset-top));overflow:auto;padding:18px 18px calc(18px + env(safe-area-inset-bottom));border-radius:28px;
-  --glass:linear-gradient(140deg,rgba(28,44,92,.97),rgba(12,22,52,.97));animation:rise .34s var(--spring) both}
+  --glass:linear-gradient(140deg,var(--sh-a),var(--sh-b));animation:rise .34s var(--spring) both}
 @media (min-width:700px){.overlay{align-items:center}}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 .sheet-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
@@ -202,7 +219,7 @@ i.ot{font-style:normal;font-size:10px;font-weight:700;padding:1px 5px;border-rad
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 .acts .btn{flex:1}
 .sec{padding:12px 0;border-top:1px solid rgba(255,255,255,.08)}
-.sec:first-of-type{border-top:0;padding-top:0}
+.sec:first-of-type,.sheet-h+.sec{border-top:0;padding-top:0}
 .sec h4{font-size:10.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--accent-ink);margin-bottom:8px}
 .sec p{font-size:12.5px;color:var(--text2);line-height:1.45;margin:-2px 0 10px}
 .prem{padding:10px;border-radius:16px;background:rgba(255,255,255,.05);margin-bottom:8px}
@@ -218,7 +235,7 @@ i.ot{font-style:normal;font-size:10px;font-weight:700;padding:1px 5px;border-rad
 .res{font-size:12.5px;min-height:16px;margin-top:6px;color:var(--text2)} .res.ok{color:var(--green)} .res.bad{color:var(--red)}
 
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));z-index:50;transform:translate(-50%,16px);opacity:0;display:flex;align-items:center;gap:12px;padding:10px 12px 10px 18px;border-radius:999px;
-  --glass:rgba(20,34,72,.95);transition:all .3s var(--spring);pointer-events:none;max-width:calc(100vw - 24px)}
+  --glass:var(--toast);transition:all .3s var(--spring);pointer-events:none;max-width:calc(100vw - 24px)}
 .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 .toast button{font-weight:700;color:var(--accent-ink);padding:4px 8px}
 
@@ -276,6 +293,29 @@ const APPS = [
 const HUB_LS = "daily.hub";
 let hub = (() => { try { return JSON.parse(localStorage.getItem(HUB_LS)) || {}; } catch (e) { return {}; } })();
 const saveHub = () => { try { localStorage.setItem(HUB_LS, JSON.stringify(hub)); } catch (e) {} };
+const WPS = [
+  { id: "midnight", name: "Midnight", c: ["#060d24", "#0d2259", "#1b4fb8", "#2f80ff", "#22d3ee"] },
+  { id: "obsidian", name: "Obsidian", c: ["#030304", "#0c0d11", "#1d1f27", "#4b5063", "#8a8fa3"] },
+  { id: "forest", name: "Forest", c: ["#02120b", "#07301d", "#0f7a49", "#22c55e", "#a3e635"] },
+  { id: "violet", name: "Violet", c: ["#0b0520", "#261055", "#6a2bd4", "#a855f7", "#ec4899"] },
+  { id: "sunset", name: "Sunset", c: ["#16060d", "#46102c", "#c2410c", "#f97316", "#f43f5e"] },
+  { id: "ocean", name: "Ocean", c: ["#02161c", "#063d4a", "#0e7490", "#06b6d4", "#34d399"] },
+];
+const LOGO = `<svg viewBox="130 130 380 380" aria-hidden="true"><path fill="#fff" d="M145,159 L144,478 L147,482 L155,483 L318,320 L320,321 L320,478 L323,482 L331,483 L401,413 L407,410 L414,413 L484,483 L490,483 L494,480 L495,161 L492,157 L484,156 L321,319 L319,318 L319,161 L316,157 L308,156 L238,226 L232,229 L225,226 L155,156 L149,156Z"/></svg>`;
+function applyWp() {
+  const w = WPS.find(x => x.id === hub.wp) || WPS[0];
+  if (w.id === "midnight") delete document.documentElement.dataset.wp; else document.documentElement.dataset.wp = w.id;
+  document.querySelector('meta[name="theme-color"]').content = w.c[0];
+}
+applyWp();
+const wpSwatch = w => `linear-gradient(160deg,${w.c[0]} 0%,${w.c[1]} 50%,${w.c[2]} 100%)`;
+const wpBg = w => `radial-gradient(circle at 10% 95%,${w.c[3]}aa 0,transparent 55%),radial-gradient(circle at 95% 0%,${w.c[4]}88 0,transparent 50%),${wpSwatch(w)}`;
+function hubSettings() {
+  const o = sheet(sheetHead("Graphite settings") + `
+    <div class="sec"><h4>Wallpaper</h4><div class="wps">${WPS.map(w => `<button class="wp ${(hub.wp || "midnight") === w.id ? "on" : ""}" data-wp="${w.id}"><i style="background:${wpBg(w)}"></i>${w.name}</button>`).join("")}</div></div>
+    <p class="muted" style="text-align:center;margin-top:14px">Saved on this device.</p>`);
+  o.querySelectorAll("[data-wp]").forEach(b => b.onclick = () => { hub.wp = b.dataset.wp; saveHub(); applyWp(); o.querySelectorAll("[data-wp]").forEach(x => x.classList.toggle("on", x === b)); });
+}
 const fromHash = location.hash.slice(1);
 let current = APPS.find(a => a.id === fromHash && !a.href && !a.soon) ? fromHash : APPS.find(a => a.id === hub.app && !a.href) ? hub.app : "moneta";
 if (fromHash) history.replaceState(null, "", location.pathname + location.search);
@@ -288,7 +328,7 @@ function setApp(id) {
 function renderShell() {
   const a = APPS.find(x => x.id === current);
   $("#appIcon").className = "aicon " + a.cls; $("#appIcon").innerHTML = ICONS[a.id];
-  $("#appName").textContent = a.name; document.title = a.name + " · Daily";
+  $("#appName").textContent = a.name; document.title = a.name + " · Graphite";
   $("#setBtn").hidden = current !== "moneta";
 }
 function toggleMenu(open) {
@@ -297,8 +337,9 @@ function toggleMenu(open) {
   if (ex) return;
   const scrim = document.createElement("div"); scrim.className = "scrim"; scrim.onclick = () => toggleMenu(false); document.body.appendChild(scrim);
   const m = document.createElement("div"); m.className = "glass menu"; m.setAttribute("role", "menu");
-  m.innerHTML = `<h4>Your apps</h4>` + APPS.map((a, i) => `<button class="mi ${a.id === current ? "on" : ""}" style="--i:${i}" data-app="${a.id}" ${a.soon ? "disabled" : ""} role="menuitem"><span class="aicon ${a.cls}">${ICONS[a.id]}</span><span><b>${a.name}</b><small>${a.sub}</small></span>${a.soon ? '<span class="tag">Soon</span>' : a.href ? '<span class="tag">↗</span>' : ""}</button>`).join("");
-  m.onclick = e => { const b = e.target.closest("[data-app]"); if (!b || b.disabled) return; toggleMenu(false); setApp(b.dataset.app); };
+  m.innerHTML = `<div class="brand"><span class="lg">${LOGO}</span><b>Graphite</b></div><h4>Your apps</h4>` + APPS.map((a, i) => `<button class="mi ${a.id === current ? "on" : ""}" style="--i:${i}" data-app="${a.id}" ${a.soon ? "disabled" : ""} role="menuitem"><span class="aicon ${a.cls}">${ICONS[a.id]}</span><span><b>${a.name}</b><small>${a.sub}</small></span>${a.soon ? '<span class="tag">Soon</span>' : a.href ? '<span class="tag">↗</span>' : ""}</button>`).join("") +
+    `<h4>Graphite</h4><button class="mi" style="--i:${APPS.length}" data-hub="settings" role="menuitem"><span class="aicon gear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span><b>Settings</b><small>Wallpaper</small></span></button>`;
+  m.onclick = e => { if (e.target.closest("[data-hub]")) { toggleMenu(false); hubSettings(); return; } const b = e.target.closest("[data-app]"); if (!b || b.disabled) return; toggleMenu(false); setApp(b.dataset.app); };
   document.body.appendChild(m); $("#appBtn").setAttribute("aria-expanded", "true");
 }
 $("#appBtn").onclick = () => toggleMenu();
