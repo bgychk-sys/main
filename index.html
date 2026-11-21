@@ -61,7 +61,25 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;
   background:linear-gradient(145deg,#5ac8fa,#0a84ff 55%,#5e5ce6);box-shadow:inset 0 1px 1px rgba(255,255,255,.6),0 6px 16px rgba(10,132,255,.4)}
 .logo svg{width:21px;height:21px}
-.brand h1{font-size:15.5px;font-weight:700;letter-spacing:-.2px;white-space:nowrap}
+.brand h1{font-size:15.5px;font-weight:700;letter-spacing:-.2px;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.brandbtn{display:flex;align-items:center;gap:11px;text-align:left;padding:3px 8px 3px 3px;margin:-3px -8px -3px -3px;border-radius:16px;transition:background .2s,transform .15s;min-width:0}
+.brandbtn:hover{background:var(--row-hover)} .brandbtn:active{transform:scale(.97)}
+.bchev{width:12px;height:12px;opacity:.65;transition:transform .3s var(--spring)}
+.brandbtn[aria-expanded="true"] .bchev{transform:rotate(180deg)}
+.appmenu{position:fixed;z-index:60;width:min(320px,calc(100vw - 24px));padding:8px;border-radius:24px;
+  --glass:linear-gradient(140deg,rgba(32,50,104,.97),rgba(14,24,58,.97));transform-origin:24px 0;animation:drop .32s var(--spring) both}
+.appmenu.closing{animation:lift .16s ease forwards}
+@keyframes drop{from{opacity:0;transform:translateY(-8px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes lift{to{opacity:0;transform:translateY(-6px) scale(.96)}}
+.appmenu h4{font-size:10.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text2);padding:8px 12px 6px}
+.mi{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 10px;border-radius:16px;transition:background .15s;animation:pop .4s var(--spring) both;animation-delay:calc(var(--i,0)*40ms + 40ms)}
+.mi:hover{background:var(--row-hover)} .mi.on{background:rgba(10,132,255,.22)} .mi[disabled]{opacity:.55;cursor:default}
+.mi b{display:block;font-size:14.5px} .mi small{display:block;font-size:12px;color:var(--text2)}
+.mi .tag{margin-left:auto;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--text2)}
+.mi .aicon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none;color:#fff;font-weight:800;font-size:16px;box-shadow:inset 0 1px 1px rgba(255,255,255,.55),0 4px 12px rgba(0,0,0,.3)}
+.mi .aicon svg{width:19px;height:19px}
+.ic-moneta{background:linear-gradient(145deg,#4ade80,#10b981 55%,#0ea5a4)} .ic-english{background:linear-gradient(145deg,#c084fc,#8b5cf6 55%,#6366f1)} .ic-views{background:linear-gradient(145deg,#5ac8fa,#0a84ff 55%,#5e5ce6)}
+.appscrim{position:fixed;inset:0;z-index:59}
 .brand p{font-size:11.5px;color:var(--text2)}
 .round{flex:none;width:31px;height:31px;border-radius:50%;font-weight:700;font-size:14px;display:grid;place-items:center;
   background:var(--chip);border:1px solid var(--chip-border);box-shadow:inset 0 1px 0 var(--inner-top);transition:all .15s}
@@ -440,8 +458,8 @@ svg.chart{width:100%;height:210px;display:block;overflow:visible}
 <div class="app">
   <aside class="glass sidebar">
     <div class="brand">
-      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg></div>
-      <div><h1>Views Tracker</h1><p>TikTok · Apify</p></div>
+      <button class="brandbtn" id="appSwitch" aria-haspopup="true" aria-expanded="false" title="Switch app"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg></span>
+      <span><h1>Views Tracker <svg class="bchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></h1><p>TikTok · Apify</p></span></button>
       <button class="round" id="setBtn" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
       <button class="round" id="logBtn" title="Run log and spending"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg></button>
       <button class="round" id="faqBtn" title="How it works">?</button>
@@ -1098,6 +1116,31 @@ $("#accList").onclick = e => { const b = e.target.closest(".acc"); if (b) openAc
 $("#optMode").onclick = e => { const b = e.target.closest("button"); if (!b) return; S.settings.mode = b.dataset.k; S.meta.settingsAt = now(); save(); renderSide(); };
 $("#optAuto").onchange = e => { S.settings.autoMin = +e.target.value; S.meta.lastAutoAt = now(); S.meta.settingsAt = now(); save(); renderStatus(); toast(S.settings.autoMin ? "Auto refresh on" : "Auto refresh off"); };
 $("#setBtn").onclick = () => openSettings(); $("#logBtn").onclick = openLog; $("#faqBtn").onclick = openFaq;
+/* app switcher: Views Tracker ↔ Daily (Moneta, English) */
+const DAILY_URL = "https://bgychk-sys.github.io/main/daily/";
+const SWITCH = [
+  { id: "views", name: "Views Tracker", sub: "TikTok views & income", cls: "ic-views", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg>' },
+  { id: "moneta", name: "Moneta", sub: "Shifts & pay", cls: "ic-moneta", icon: "€" },
+  { id: "english", name: "English", sub: "Words & daily practice", cls: "ic-english", icon: "Aa", soon: true },
+];
+function appSwitch(open) {
+  const ex = $(".appmenu"), btn = $("#appSwitch");
+  if (ex && open !== true) { ex.classList.add("closing"); $(".appscrim")?.remove(); btn.setAttribute("aria-expanded", "false"); setTimeout(() => ex.remove(), 160); return; }
+  if (ex) return;
+  const r = btn.getBoundingClientRect();
+  const sc = document.createElement("div"); sc.className = "appscrim"; sc.onclick = () => appSwitch(false); document.body.appendChild(sc);
+  const m = document.createElement("div"); m.className = "glass appmenu"; m.setAttribute("role", "menu");
+  m.style.left = Math.max(12, r.left - 6) + "px"; m.style.top = (r.bottom + 10) + "px";
+  m.innerHTML = `<h4>Your apps</h4>` + SWITCH.map((a, i) => `<button class="mi ${a.id === "views" ? "on" : ""}" style="--i:${i}" data-app="${a.id}" ${a.soon ? "disabled" : ""} role="menuitem"><span class="aicon ${a.cls}">${a.icon}</span><span><b>${a.name}</b><small>${a.sub}</small></span>${a.soon ? '<span class="tag">Soon</span>' : a.id !== "views" ? '<span class="tag">↗</span>' : ""}</button>`).join("");
+  m.onclick = e => {
+    const b = e.target.closest("[data-app]"); if (!b || b.disabled) return; appSwitch(false);
+    if (b.dataset.app === "views") return;
+    const url = DAILY_URL + "#" + b.dataset.app;
+    if (bridge) bridge.open_url(url); else location.href = location.protocol === "https:" ? "daily/#" + b.dataset.app : url;
+  };
+  document.body.appendChild(m); btn.setAttribute("aria-expanded", "true");
+}
+$("#appSwitch").onclick = () => appSwitch();
 $("#spendChip").onclick = openLog; $("#syncChip").onclick = () => { if (!syncOn()) return openSettings(); syncPull(); }; $("#autoChip").onclick = () => openSettings();
 $("#toolbar").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
@@ -1135,7 +1178,7 @@ $("#view").addEventListener("click", e => {
   }
 });
 addEventListener("keydown", e => {
-  if (e.key === "Escape") { const o = $$(".overlay").pop(); if (o) closeSheet(o); else if (view.acct) openAcct(null); }
+  if (e.key === "Escape") { const o = $$(".overlay").pop(); if (o) closeSheet(o); else if ($(".appmenu")) appSwitch(false); else if (view.acct) openAcct(null); }
   if ((e.metaKey || e.ctrlKey) && e.key === "r") { e.preventDefault(); if (!busy) refresh(Object.keys(S.accounts), { kind: "light", manual: true }); }
 });
 let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { segPills(); if (view.acct) redrawChart(); }, 150); });

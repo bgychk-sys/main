@@ -271,7 +271,9 @@ const APPS = [
 const HUB_LS = "daily.hub";
 let hub = (() => { try { return JSON.parse(localStorage.getItem(HUB_LS)) || {}; } catch (e) { return {}; } })();
 const saveHub = () => { try { localStorage.setItem(HUB_LS, JSON.stringify(hub)); } catch (e) {} };
-let current = APPS.find(a => a.id === hub.app && !a.href) ? hub.app : "moneta";
+const fromHash = location.hash.slice(1);
+let current = APPS.find(a => a.id === fromHash && !a.href && !a.soon) ? fromHash : APPS.find(a => a.id === hub.app && !a.href) ? hub.app : "moneta";
+if (fromHash) history.replaceState(null, "", location.pathname + location.search);
 
 function setApp(id) {
   const a = APPS.find(x => x.id === id); if (!a) return;
