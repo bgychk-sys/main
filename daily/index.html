@@ -339,7 +339,7 @@ function countUp(root = document) {
 
 /* ================= Moneta: data ================= */
 const M_LS = "daily.moneta.v1";
-const MDEF = { currency: "€", rate: 15.93, netPct: 88, holidayPct: 8, holidayStart: 143.08, surcharges: [], payDay: 25, payFor: "prev", sync: true, token: "" };
+const MDEF = { currency: "€", rate: 15.93, netPct: 88, holidayPct: 8, holidayStart: 143.08, surcharges: [], presets: [{ start: "06:00", end: "14:30", brk: 60 }, { start: "14:30", end: "22:00", brk: 60 }], payDay: 25, payFor: "prev", sync: true, token: "" };
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], DOW_ORDER = [1, 2, 3, 4, 5, 6, 0];
 function mParse(txt) {
   try { const d = JSON.parse(txt || "null"); if (d) return { settings: { ...MDEF, ...d.settings }, shifts: d.shifts || [], pays: d.pays || [], deleted: d.deleted || {}, settingsAt: d.settingsAt || 0, meta: d.meta || {} }; } catch (e) {}
@@ -539,7 +539,7 @@ function vPay() {
 function shiftSheet(s) {
   const isNew = !s; const last = M.shifts.slice().sort((x, y) => (y.date + y.start).localeCompare(x.date + x.start))[0];
   s = s ? { ...s } : { id: rid(), date: mv.month === mKey(new Date()) ? today() : mv.month + "-01", start: last ? last.start : "07:00", end: last ? last.end : "15:30", brk: last ? last.brk || 0 : 30, note: "" };
-  const presets = []; M.shifts.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "")).forEach(x => { const k = x.start + x.end + (x.brk || 0); if (presets.length < 4 && !presets.some(p => p.k === k)) presets.push({ k, start: x.start, end: x.end, brk: x.brk || 0 }); });
+  const presets = []; (MS().presets || []).forEach(x => { const k = x.start + x.end + (x.brk || 0); if (x.start && x.end && !presets.some(p => p.k === k)) presets.push({ k, start: x.start, end: x.end, brk: x.brk || 0 }); }); const nSaved = presets.length; M.shifts.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "")).forEach(x => { const k = x.start + x.end + (x.brk || 0); if (presets.length < nSaved + 3 && !presets.some(p => p.k === k)) presets.push({ k, start: x.start, end: x.end, brk: x.brk || 0 }); });
   const o = sheet(sheetHead(isNew ? "Add shift" : "Edit shift") + `
     ${presets.length ? `<div class="chips">${presets.map(p => `<button class="chip" data-s="${p.start}" data-e="${p.end}" data-b="${p.brk}">${p.start}–${p.end}${+p.brk ? " · " + p.brk + "m" : ""}</button>`).join("")}</div>` : ""}
     <div class="fields"><label class="f">Date<input type="date" id="sDate" value="${esc(s.date)}"></label></div>
@@ -582,7 +582,7 @@ function paySheet(p) {
   const del = o.querySelector("#pDel"); if (del) del.onclick = () => { closeSheet(o); remove("pays", p.id); };
 }
 function openMSettings() {
-  const d = clone(MS()); d.surcharges = d.surcharges || [];
+  const d = clone(MS()); d.surcharges = d.surcharges || []; d.presets = d.presets || [];
   const vtTok = (() => { try { return !!JSON.parse(localStorage.getItem("vtmac.v1") || "null")?.settings?.token; } catch (e) { return false; } })();
   const o = sheet(sheetHead("Moneta settings") + `<div id="sBody"></div><div class="acts"><button class="btn" data-close>Cancel</button><button class="btn green" id="stOk">Save</button></div>`);
   const draw = () => {
@@ -594,6 +594,7 @@ function openMSettings() {
     <div class="sec"><h4>Premiums</h4><p>Extra pay for evenings, nights or weekends. They stack.</p>${d.surcharges.map((r, i) => `<div class="prem"><div class="top2"><label class="f">Name<input data-p="name" data-i="${i}" value="${esc(r.name)}"></label><label class="f">+ %<input data-p="pct" data-i="${i}" type="number" value="${num(r.pct)}"></label><button class="x" data-pdel="${i}" aria-label="Remove">✕</button></div>
       <div class="days">${DOW_ORDER.map(w => `<button data-pday="${i}" data-d="${w}" class="${(r.days || []).includes(w) ? "on" : ""}">${DOW[w].slice(0, 2)}</button>`).join("")}</div>
       <div class="fields" style="margin:0"><label class="f">From<input type="time" data-p="from" data-i="${i}" value="${esc(r.from)}"></label><label class="f">To<input type="time" data-p="to" data-i="${i}" value="${esc(r.to === "24:00" ? "00:00" : r.to)}"></label></div></div>`).join("")}<button class="btn" id="pAdd">+ Add premium</button></div>
+    <div class="sec"><h4>Shift presets</h4><p>Quick buttons at the top of “Add shift”.</p>${d.presets.map((r, i) => `<div class="prem"><div class="fields" style="margin:0;grid-template-columns:1fr 1fr 64px 32px;gap:8px;align-items:end"><label class="f">Start<input type="time" data-q="start" data-i="${i}" value="${esc(r.start)}"></label><label class="f">End<input type="time" data-q="end" data-i="${i}" value="${esc(r.end)}"></label><label class="f">Break<input type="number" min="0" data-q="brk" data-i="${i}" value="${num(r.brk)}"></label><button class="x" data-qdel="${i}" aria-label="Remove">✕</button></div></div>`).join("")}<button class="btn" id="qAdd">+ Add preset</button></div>
     <div class="sec"><h4>Sync phone ↔ Mac</h4><div class="switchrow"><span>Sync through Apify<small>${vtTok && !d.token ? "uses the token from Views Tracker" : "stored in your Apify (store “daily-apps”)"}</small></span><input type="checkbox" class="switch" id="stSync" ${d.sync !== false ? "checked" : ""}></div>
       <div class="fields" style="margin-top:8px"><label class="f">Apify token ${vtTok ? "(optional — Views Tracker's is used)" : ""}<input id="stTok" type="password" placeholder="apify_api_…" value="${esc(d.token || "")}"></label></div></div>
     <div class="sec"><h4>Backup</h4><p>Export a file now and then. Import also accepts a backup from the old Moneta artifact (shifts and income).</p><div class="acts"><button class="btn" id="stExp">Export</button><button class="btn" id="stImp">Import</button></div></div>`;
@@ -601,6 +602,9 @@ function openMSettings() {
     o.querySelectorAll("[data-pday]").forEach(b => b.onclick = () => { const r = d.surcharges[+b.dataset.pday], w = +b.dataset.d; r.days = r.days || []; r.days = r.days.includes(w) ? r.days.filter(x => x !== w) : [...r.days, w]; b.classList.toggle("on"); });
     o.querySelectorAll("[data-pdel]").forEach(b => b.onclick = () => { keep(); d.surcharges.splice(+b.dataset.pdel, 1); draw(); });
     o.querySelector("#pAdd").onclick = () => { keep(); d.surcharges.push({ name: "Evening", pct: 25, days: [1, 2, 3, 4, 5], from: "20:00", to: "24:00" }); draw(); };
+    o.querySelectorAll("[data-q]").forEach(inp => inp.oninput = () => { const r = d.presets[+inp.dataset.i]; r[inp.dataset.q] = inp.dataset.q === "brk" ? Math.max(0, num(inp.value)) : inp.value; });
+    o.querySelectorAll("[data-qdel]").forEach(b => b.onclick = () => { keep(); d.presets.splice(+b.dataset.qdel, 1); draw(); });
+    o.querySelector("#qAdd").onclick = () => { keep(); d.presets.push({ start: "08:00", end: "17:00", brk: 60 }); draw(); };
     o.querySelector("#stExp").onclick = exportM; o.querySelector("#stImp").onclick = () => importM(o);
   };
   const keep = () => { const v = id => o.querySelector(id).value; Object.assign(d, { rate: r2(num(v("#stRate"))), netPct: Math.min(100, Math.max(1, num(v("#stNet")) || 88)), currency: v("#stCur").trim() || "€", payDay: Math.min(31, Math.max(1, num(v("#stDay")) || 25)), payFor: v("#stFor"), holidayPct: Math.max(0, num(v("#stHol"))), holidayStart: r2(Math.max(0, num(v("#stHolS")))), sync: o.querySelector("#stSync").checked, token: v("#stTok").trim() }); };
